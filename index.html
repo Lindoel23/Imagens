@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>MEMORY FRAGMENT — Prompt Assembler</title>
+<style>
+  :root{
+    --bg: #0b0b0d;
+    --panel: #131316;
+    --panel-line: #232328;
+    --ink: #e9e7e2;
+    --ink-dim: #85838c;
+    --mono: 'JetBrains Mono', 'SF Mono', 'Consolas', monospace;
+    --sans: 'Inter', -apple-system, sans-serif;
+    --accent: #ff2e4d;
+    --accent-dim: rgba(255,46,77,0.12);
+  }
+  * { box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    display: flex;
+    min-height: 100vh;
+  }
+
+  .sidebar{
+    width: 220px;
+    flex-shrink: 0;
+    border-right: 1px solid var(--panel-line);
+    padding: 28px 20px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+  .brand{ font-family: var(--mono); font-size: 12px; letter-spacing:0.14em; color: var(--ink-dim); text-transform:uppercase; margin-bottom: 4px; }
+  .brand b{ color: var(--ink); display:block; font-size:14px; letter-spacing:0.04em; margin-top:2px; }
+  .nav{ margin-top: 30px; display:flex; flex-direction:column; gap: 2px; }
+  .nav a{
+    font-family: var(--mono); font-size: 12.5px; color: var(--ink-dim);
+    text-decoration:none; padding: 8px 10px; border-radius: 5px;
+    display:flex; align-items:center; gap:8px; transition: all .15s ease;
+  }
+  .nav a:hover{ color: var(--ink); background: var(--panel); }
+  .nav a .dot{ width:5px; height:5px; border-radius:50%; background: var(--panel-line); flex-shrink:0; }
+  .nav a:hover .dot{ background: var(--accent); }
+
+  .main{ flex: 1; padding: 40px 40px 120px; max-width: 900px; }
+
+  .head{ margin-bottom: 30px; }
+  .eyebrow{
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em;
+    color: var(--ink-dim); text-transform: uppercase; display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{ content:''; width:6px; height:6px; background: var(--accent); display:inline-block; animation: blink 1.6s steps(2) infinite; }
+  @keyframes blink{ 50%{ opacity:0.15; } }
+  h1{ font-family: var(--mono); font-size: 26px; font-weight: 600; margin: 10px 0 6px; letter-spacing: -0.01em; }
+  .sub{ color: var(--ink-dim); font-size: 14px; max-width: 560px; line-height:1.5; }
+
+  section{ scroll-margin-top: 24px; }
+
+  .section-label{
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--ink-dim); margin: 50px 0 16px; display:flex; align-items:center; gap:10px;
+  }
+  .section-label:first-of-type{ margin-top: 10px; }
+  .section-label .n{ color: var(--accent); }
+  .section-label::after{ content:''; flex:1; height:1px; background: var(--panel-line); }
+
+  .opt-group{ margin-bottom: 22px; }
+  .opt-group .label{
+    font-family: var(--mono); font-size: 11px; color: var(--ink-dim);
+    text-transform:uppercase; letter-spacing:0.06em; margin-bottom: 9px;
+  }
+  .pills{ display:flex; flex-wrap:wrap; gap: 8px; }
+  .pill{
+    font-size: 13px; padding: 7px 14px; border-radius: 20px;
+    border: 1px solid var(--panel-line); background: var(--panel);
+    color: var(--ink-dim); cursor:pointer; transition: all .15s ease;
+    white-space: nowrap;
+  }
+  .pill:hover{ border-color: #3a3a42; color: var(--ink); }
+  .pill.selected{ border-color: var(--accent); color: #fff; background: var(--accent-dim); }
+
+  .swatches{ display:flex; flex-wrap:wrap; gap: 10px; margin-top: 10px; }
+  .swatch-btn{
+    width: 34px; height: 34px; border-radius: 50%; cursor: pointer;
+    border: 2px solid transparent; position: relative; flex-shrink:0;
+    transition: transform .12s ease;
+  }
+  .swatch-btn:hover{ transform: scale(1.08); }
+  .swatch-btn.selected{ border-color: #fff; box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent); }
+  .swatch-btn.rimless{ background: transparent; border: 2px dashed #55555c; }
+  .swatch-btn .swatch-label{
+    position:absolute; top: 40px; left:50%; transform: translateX(-50%);
+    font-size: 9.5px; color: var(--ink-dim); white-space:nowrap; font-family: var(--mono);
+    opacity:0; transition: opacity .15s ease; pointer-events:none;
+  }
+  .swatch-btn:hover .swatch-label{ opacity: 1; }
+
+  .sub-panel{
+    margin-top: 12px; padding: 14px; background: rgba(255,255,255,0.02);
+    border: 1px solid var(--panel-line); border-radius: 8px;
+    display:none;
+  }
+  .sub-panel.visible{ display:block; }
+  .sub-panel .label{ margin-bottom: 8px; }
+
+  .grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 10px; }
+  .card{
+    background: var(--panel); border: 1px solid var(--panel-line); border-radius: 6px;
+    padding: 14px 16px; cursor: pointer; transition: all .15s ease; position: relative; overflow:hidden;
+  }
+  .card:hover{ border-color: #3a3a42; }
+  .card.world{ padding-left: 18px; }
+  .card .swatch-bar{ position:absolute; left:0; top:0; bottom:0; width:4px; }
+  .card .tag{ font-family: var(--mono); font-size: 10.5px; color: var(--ink-dim); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; display:block; }
+  .card .name{ font-size: 14px; font-weight: 600; line-height:1.3; }
+  .card .desc{ font-size: 12px; color: var(--ink-dim); margin-top: 4px; line-height:1.4; }
+  .card.selected{ border-color: var(--accent); background: linear-gradient(180deg, var(--accent-dim), transparent 60%), var(--panel); }
+  .card.selected .name{ color: #fff; }
+
+  .output{ margin-top: 20px; background: var(--panel); border: 1px solid var(--panel-line); border-radius: 8px; overflow:hidden; }
+  .output-head{
+    display:flex; align-items:center; justify-content:space-between; padding: 12px 16px;
+    border-bottom: 1px solid var(--panel-line); font-family: var(--mono); font-size: 11px;
+    letter-spacing:0.08em; text-transform:uppercase; color: var(--ink-dim);
+  }
+  .copy-btn{
+    font-family: var(--mono); font-size: 11px; background: transparent; color: var(--ink);
+    border: 1px solid var(--panel-line); padding: 6px 12px; border-radius: 4px; cursor:pointer;
+    letter-spacing: 0.05em; transition: all .15s ease;
+  }
+  .copy-btn:hover{ border-color: var(--accent); color: var(--accent); }
+  .copy-btn.copied{ border-color: #3ddc84; color: #3ddc84; }
+  .output-body{
+    padding: 18px 16px; font-family: var(--mono); font-size: 13px; line-height: 1.65;
+    color: #cfcdd4; white-space: pre-wrap; max-height: 280px; overflow-y: auto;
+  }
+  .output-body.empty{ color: var(--ink-dim); font-style: italic; }
+
+  .note{ font-size: 12.5px; color: var(--ink-dim); line-height:1.6; margin-top: 10px; padding: 0 2px; }
+  .note b{ color: var(--ink); font-weight:600; }
+
+  @media (max-width: 780px){
+    body{ flex-direction: column; }
+    .sidebar{ width: 100%; height: auto; position: relative; border-right:none; border-bottom:1px solid var(--panel-line); }
+    .main{ padding: 30px 20px 100px; }
+    .grid{ grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="brand">memory fragment<b>Prompt Assembler</b></div>
+  <div class="nav">
+    <a href="#sec-character"><span class="dot"></span>01 Personagem</a>
+    <a href="#sec-pose"><span class="dot"></span>02 Pose</a>
+    <a href="#sec-world"><span class="dot"></span>03 Mundo</a>
+    <a href="#sec-output"><span class="dot"></span>04 Prompt final</a>
+  </div>
+</div>
+
+<div class="main">
+
+  <div class="head">
+    <div class="eyebrow">archive tool</div>
+    <h1>Prompt Assembler</h1>
+    <div class="sub">Monte o personagem, escolha a pose e o mundo — tudo por clique. O prompt final é montado sozinho no final da página.</div>
+  </div>
+
+  <section id="sec-character">
+    <div class="section-label"><span class="n">01</span> Personagem</div>
+
+    <div class="opt-group">
+      <div class="label">Comprimento do cabelo</div>
+      <div class="pills" data-group="hairLength">
+        <div class="pill" data-value="short blunt bob-length hair">Curto (bob)</div>
+        <div class="pill" data-value="long hair past the shoulders">Longo</div>
+      </div>
+    </div>
+
+    <div class="opt-group">
+      <div class="label">Estilo de cor do cabelo</div>
+      <div class="pills" data-group="hairStyle">
+        <div class="pill" data-value="natural">Preto natural</div>
+        <div class="pill" data-value="highlights">Mechas nas pontas</div>
+        <div class="pill" data-value="full">Totalmente colorido</div>
+        <div class="pill" data-value="roots">Raiz descolorida + pontas coloridas</div>
+      </div>
+      <div class="sub-panel" id="panel-hairColor">
+        <div class="label">Cor</div>
+        <div class="swatches" data-group="hairColor">
+          <div class="swatch-btn" style="background:#e8dcc0" data-value="platinum blonde" title="Loiro platinado"></div>
+          <div class="swatch-btn" style="background:#c4c4cc" data-value="silver-grey" title="Prata"></div>
+          <div class="swatch-btn" style="background:#f2a8c9" data-value="pastel pink" title="Rosa pastel"></div>
+          <div class="swatch-btn" style="background:#3ec5ff" data-value="electric blue" title="Azul elétrico"></div>
+          <div class="swatch-btn" style="background:#8b5cf6" data-value="deep purple" title="Roxo"></div>
+          <div class="swatch-btn" style="background:#ff4d4d" data-value="fire red" title="Vermelho fogo"></div>
+          <div class="swatch-btn" style="background:#2de8c0" data-value="teal" title="Teal"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="opt-group">
+      <div class="label">Batom</div>
+      <div class="pills" data-group="lipstick">
+        <div class="pill" data-value="none">Sem batom</div>
+        <div class="pill" data-value="yes">Com batom</div>
+      </div>
+      <div class="sub-panel" id="panel-lipstickColor">
+        <div class="label">Cor</div>
+        <div class="swatches" data-group="lipstickColor">
+          <div class="swatch-btn" style="background:#c81e3a" data-value="deep red" title="Vermelho"></div>
+          <div class="swatch-btn" style="background:#5c1a2b" data-value="dark burgundy wine" title="Vinho"></div>
+          <div class="swatch-btn" style="background:#1a1a1a" data-value="matte black" title="Preto fosco"></div>
+          <div class="swatch-btn" style="background:#c98b7a" data-value="soft nude-pink" title="Nude"></div>
+          <div class="swatch-btn" style="background:#e0a8ab" data-value="glossy clear pink" title="Gloss"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="opt-group">
+      <div class="label">Óculos</div>
+      <div class="pills" data-group="glasses">
+        <div class="pill" data-value="none">Sem óculos</div>
+        <div class="pill" data-value="yes">Com óculos</div>
+      </div>
+      <div class="sub-panel" id="panel-glassesDetail">
+        <div class="label">Armação</div>
+        <div class="swatches" data-group="frameColor">
+          <div class="swatch-btn" style="background:#1a1a1a" data-value="black-framed" title="Preta"></div>
+          <div class="swatch-btn" style="background:#c9a227" data-value="thin gold-framed" title="Dourada"></div>
+          <div class="swatch-btn" style="background:#c4c4cc" data-value="silver-framed" title="Prateada"></div>
+          <div class="swatch-btn" style="background:#c81e3a" data-value="red-framed" title="Vermelha"></div>
+          <div class="swatch-btn rimless" data-value="rimless" title="Sem armação"></div>
+        </div>
+        <div class="label" style="margin-top:14px;">Lente</div>
+        <div class="swatches" data-group="lensColor">
+          <div class="swatch-btn rimless" data-value="clear" title="Transparente"></div>
+          <div class="swatch-btn" style="background:#e8a13d" data-value="amber-tinted" title="Âmbar"></div>
+          <div class="swatch-btn" style="background:#5ab8e8" data-value="pale blue-tinted" title="Azul"></div>
+          <div class="swatch-btn" style="background:#f2a8c9" data-value="pale pink-tinted" title="Rosa"></div>
+          <div class="swatch-btn" style="background:#2a2a2a" data-value="dark-tinted" title="Escura"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="opt-group">
+      <div class="label">Brincos</div>
+      <div class="pills" data-group="earrings">
+        <div class="pill" data-value="none">Sem brincos</div>
+        <div class="pill" data-value="small gold stud">Pequenos (studs)</div>
+        <div class="pill" data-value="hoop">Argolas</div>
+        <div class="pill" data-value="long dangling">Pendentes</div>
+      </div>
+    </div>
+
+    <div class="opt-group">
+      <div class="label">Piercing</div>
+      <div class="pills" data-group="piercing">
+        <div class="pill" data-value="none">Nenhum</div>
+        <div class="pill" data-value="a small silver septum">Septo</div>
+        <div class="pill" data-value="a small gold nose stud">Narina</div>
+        <div class="pill" data-value="a small eyebrow">Sobrancelha</div>
+        <div class="pill" data-value="a small labret lip">Labret</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="sec-pose">
+    <div class="section-label"><span class="n">02</span> Pose</div>
+    <div class="grid" id="pose-grid"></div>
+  </section>
+
+  <section id="sec-world">
+    <div class="section-label"><span class="n">03</span> Mundo / Coleção</div>
+    <div class="grid" id="world-grid"></div>
+  </section>
+
+  <section id="sec-output">
+    <div class="section-label"><span class="n">04</span> Prompt final — imagem 100% pixel art</div>
+    <div class="output">
+      <div class="output-head">
+        <span>prompt_final.txt</span>
+        <button class="copy-btn" id="copy1">copiar</button>
+      </div>
+      <div class="output-body empty" id="output1">preencha o personagem, a pose e o mundo acima para montar o prompt...</div>
+    </div>
+    <div class="note">Esse prompt gera a cena inteira já em pixel art numa única imagem — sem foto real, sem split, sem etapa 2.</div>
+  </section>
+
+</div>
+
+<script>
+const POSES = [
+  { tag:'P.01', name:'Encostada na parede', desc:'braços cruzados, cabeça levemente baixa', text:"leaning back against a wall, arms loosely crossed, head tilted slightly down, distant unreadable expression" },
+  { tag:'P.02', name:'Sentada no chão', desc:'joelhos dobrados, olhando pra câmera', text:"sitting on the ground with knees pulled up, arms resting on knees, looking directly at the camera" },
+  { tag:'P.03', name:'Andando, olhando pra trás', desc:'passo em movimento, olhar por cima do ombro', text:"mid-stride walking forward, glancing back over one shoulder" },
+  { tag:'P.04', name:'Agachada, tocando o chão', desc:'peso nas pontas dos pés, postura alerta', text:"crouched low, one hand touching the ground, weight balanced on the balls of the feet" },
+  { tag:'P.05', name:'De costas, olhando pra trás', desc:'corpo virado, rosto pra câmera', text:"standing with back mostly to camera, head turned to look back over the shoulder" },
+  { tag:'P.06', name:'Ajoelhada, examinando algo', desc:'mão estendida, expressão concentrada', text:"kneeling beside something unseen, one hand reaching out to touch it, focused expression" },
+  { tag:'P.07', name:'Sentada numa borda', desc:'pernas penduradas, mãos na beirada', text:"sitting on a ledge with legs hanging over the edge, hands gripping the edge on either side" },
+  { tag:'P.08', name:'Inclinada, olhar intenso', desc:'mãos nos joelhos, contato visual direto', text:"leaning forward with hands braced on the knees, direct intense eye contact with the camera" },
+  { tag:'P.09', name:'Mão tocando algo acima', desc:'braço erguido, cabeça virada', text:"one arm raised, hand pressed flat against an unseen surface above or beside her, head turned toward the camera" },
+  { tag:'P.10', name:'Parada, exausta', desc:'braços soltos, postura resignada', text:"standing still, arms hanging loosely at the sides, head slightly bowed, an exhausted or resigned posture" },
+];
+
+const WORLDS = [
+  { tag:'W.01', name:'Crimson — Arena em chamas', color:'#ff2e4d', desc:'fliperama abandonado, boss battle', text:"set inside a burning abandoned arcade turned boss-arena, rows of broken cabinet machines sparking and flickering, shattered screens casting red static glow, thick smoke drifting through the air, alarm-red emergency lighting, scattered debris and shattered glass on the floor. Apply a crimson and deep purple color grading throughout the entire scene, including her skin tone and clothing — intense high-contrast lighting with near-black shadows and punchy red highlights. Realistic photo style, gritty and dangerous atmosphere." },
+  { tag:'W.02', name:'Teal — Templo submerso', color:'#2de8c0', desc:'ruína afundada, dungeon de RPG', text:"set inside a flooded ancient temple ruin half-submerged in still dark water, moss-covered stone pillars, shafts of murky teal-green light filtering down from openings far above, ripples and reflections on the water surface, ancient carved symbols on the crumbling walls. Apply a cold teal and deep green color grading throughout the entire scene, including her skin tone and clothing — soft diffused underwater-adjacent lighting with deep shadows. Realistic photo style, reverent and mysterious atmosphere." },
+  { tag:'W.03', name:'Azure — Estação abandonada', color:'#33c1ff', desc:'corredor sci-fi, survival horror', text:"set inside a long abandoned space station corridor, flickering overhead fluorescent lights, sealed blast doors, warning signs and peeling wall panels, condensation and frost creeping across metal surfaces, distant steam venting from a broken pipe. Apply a cold clinical blue and steel-cyan color grading throughout the entire scene, including her skin tone and clothing — harsh sterile lighting with sharp shadows. Realistic photo style, tense survival-horror atmosphere." },
+  { tag:'W.04', name:'Amber — Vilarejo noturno', color:'#ffa63d', desc:'RPG overworld, lampiões acesos', text:"set in an old wooden village at night, a dirt road lined with hanging paper lanterns casting warm amber light, low thatched-roof buildings, distant mountains silhouetted against a dark sky, gentle mist hovering near the ground. Apply a warm amber and burnt-orange color grading throughout the entire scene, including her skin tone and clothing — warm flickering lantern-light with soft long shadows. Realistic photo style, quiet RPG-overworld atmosphere." },
+  { tag:'W.05', name:'Magenta — Mercado neon', color:'#ff3ec9', desc:'cidade cyberpunk, telhado noturno', text:"set on a crowded rooftop night market in a dense futuristic cyberpunk city, glowing neon signs in unreadable script hanging overhead, steam rising from food stalls, distant skyscrapers covered in holographic billboards, rain-slicked surfaces reflecting the lights. Apply a vivid magenta and electric-pink color grading throughout the entire scene, including her skin tone and clothing — saturated neon lighting with deep shadows. Realistic photo style, dense futuristic atmosphere." },
+];
+
+const state = {
+  hairLength: null, hairStyle: null, hairColor: null,
+  lipstick: null, lipstickColor: null,
+  glasses: null, frameColor: null, lensColor: null,
+  earrings: null, piercing: null,
+  pose: null, world: null
+};
+
+document.querySelectorAll('.pills').forEach(group => {
+  const key = group.dataset.group;
+  group.querySelectorAll('.pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      group.querySelectorAll('.pill').forEach(p => p.classList.remove('selected'));
+      pill.classList.add('selected');
+      state[key] = pill.dataset.value;
+
+      if(key === 'hairStyle'){
+        document.getElementById('panel-hairColor').classList.toggle('visible', pill.dataset.value !== 'natural');
+        if(pill.dataset.value === 'natural'){ state.hairColor = null; }
+      }
+      if(key === 'lipstick'){
+        document.getElementById('panel-lipstickColor').classList.toggle('visible', pill.dataset.value === 'yes');
+        if(pill.dataset.value === 'none'){ state.lipstickColor = null; }
+      }
+      if(key === 'glasses'){
+        document.getElementById('panel-glassesDetail').classList.toggle('visible', pill.dataset.value === 'yes');
+        if(pill.dataset.value === 'none'){ state.frameColor = null; state.lensColor = null; }
+      }
+      render();
+    });
+  });
+});
+
+document.querySelectorAll('.swatches').forEach(group => {
+  const key = group.dataset.group;
+  group.querySelectorAll('.swatch-btn').forEach(sw => {
+    sw.addEventListener('click', () => {
+      group.querySelectorAll('.swatch-btn').forEach(s => s.classList.remove('selected'));
+      sw.classList.add('selected');
+      state[key] = sw.dataset.value;
+      render();
+    });
+  });
+});
+
+function buildCard(item, kind, idx){
+  const card = document.createElement('div');
+  card.className = 'card' + (kind==='world' ? ' world' : '');
+  card.dataset.idx = idx;
+  if(kind === 'world'){
+    card.innerHTML = `<div class="swatch-bar" style="background:${item.color}"></div>
+      <span class="tag">${item.tag}</span><div class="name">${item.name}</div><div class="desc">${item.desc}</div>`;
+  } else {
+    card.innerHTML = `<span class="tag">${item.tag}</span><div class="name">${item.name}</div><div class="desc">${item.desc}</div>`;
+  }
+  card.addEventListener('click', () => {
+    const grid = card.parentElement;
+    [...grid.children].forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    if(kind === 'pose'){ state.pose = item; } else { state.world = item; }
+    render();
+  });
+  return card;
+}
+const poseGrid = document.getElementById('pose-grid');
+POSES.forEach((p,i) => poseGrid.appendChild(buildCard(p,'pose',i)));
+const worldGrid = document.getElementById('world-grid');
+WORLDS.forEach((w,i) => worldGrid.appendChild(buildCard(w,'world',i)));
+
+function buildCharacterText(){
+  if(!state.hairLength || !state.hairStyle) return null;
+
+  let hair;
+  if(state.hairStyle === 'natural'){
+    hair = `${state.hairLength}, jet-black, completely natural with no dye`;
+  } else if(state.hairStyle === 'highlights'){
+    if(!state.hairColor) return null;
+    hair = `${state.hairLength}, black hair with subtle ${state.hairColor} balayage highlights at the ends`;
+  } else if(state.hairStyle === 'full'){
+    if(!state.hairColor) return null;
+    hair = `${state.hairLength}, fully dyed in a vivid ${state.hairColor}`;
+  } else if(state.hairStyle === 'roots'){
+    if(!state.hairColor) return null;
+    hair = `${state.hairLength}, bleached-blonde roots growing out into vivid ${state.hairColor} dyed ends`;
+  }
+  if(!hair) return null;
+
+  const parts = [`a young East Asian woman with ${hair}`];
+
+  if(state.piercing && state.piercing !== 'none'){
+    parts.push(`${state.piercing} piercing`);
+  }
+  if(state.lipstick === 'yes'){
+    if(!state.lipstickColor) return null;
+    parts.push(`${state.lipstickColor} lipstick`);
+  }
+  if(state.glasses === 'yes'){
+    if(!state.frameColor || !state.lensColor) return null;
+    parts.push(`wearing ${state.frameColor} glasses with ${state.lensColor} lenses`);
+  }
+  if(state.earrings && state.earrings !== 'none'){
+    parts.push(`${state.earrings} earrings`);
+  }
+
+  return parts.join(', ');
+}
+
+function render(){
+  const out = document.getElementById('output1');
+  const charText = buildCharacterText();
+
+  if(!charText || !state.pose || !state.world){
+    out.classList.add('empty');
+    out.textContent = 'preencha o personagem, a pose e o mundo acima para montar o prompt...';
+    return;
+  }
+
+  out.classList.remove('empty');
+  out.textContent = `Render the ENTIRE image as retro 2D pixel art — no photographic or realistic rendering anywhere in the frame, the whole scene from edge to edge must be pixel art. Depict ${charText}. She is ${state.pose.text}, ${state.world.text}
+
+Render style: 16-bit era retro video game scene, large flat visible square pixels (low resolution pixelation, blocky and chunky, NOT smooth or high-res pixel art), a strictly limited color palette with visible color banding and dithering patterns instead of smooth gradients, hard jagged stair-stepped edges with no anti-aliasing, flat blocky shading with simple 2-3 tone highlights instead of realistic light falloff, slight visible grid/pixel-snap alignment across the whole scene including the character, clothing, and every background object. 1792x1024, landscape widescreen format.`;
+}
+
+function fallbackCopy(text){
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.left = '-9999px';
+  ta.style.top = '0';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  let ok = false;
+  try { ok = document.execCommand('copy'); } catch(e) { ok = false; }
+  document.body.removeChild(ta);
+  return ok;
+}
+
+function flashCopied(btn){
+  const original = btn.textContent;
+  btn.textContent = 'copiado!';
+  btn.classList.add('copied');
+  setTimeout(() => { btn.textContent = original; btn.classList.remove('copied'); }, 1500);
+}
+
+function setupCopy(btnId, outId){
+  document.getElementById(btnId).addEventListener('click', () => {
+    const btn = document.getElementById(btnId);
+    const text = document.getElementById(outId).textContent;
+
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(() => {
+        flashCopied(btn);
+      }).catch(() => {
+        if(fallbackCopy(text)) flashCopied(btn);
+      });
+    } else {
+      if(fallbackCopy(text)) flashCopied(btn);
+    }
+  });
+}
+setupCopy('copy1','output1');
+
+render();
+</script>
+</body>
+</html>
