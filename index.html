@@ -2,6 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>MEMORY FRAGMENT — Prompt Assembler</title>
 <style>
   :root{
@@ -24,6 +25,7 @@
     font-family: var(--sans);
     display: flex;
     min-height: 100vh;
+    overflow-x: hidden;
   }
 
   .sidebar{
@@ -150,9 +152,34 @@
 
   @media (max-width: 780px){
     body{ flex-direction: column; }
-    .sidebar{ width: 100%; height: auto; position: relative; border-right:none; border-bottom:1px solid var(--panel-line); }
-    .main{ padding: 30px 20px 100px; }
-    .grid{ grid-template-columns: 1fr 1fr; }
+    .sidebar{
+      width: 100%; height: auto; position: sticky; top: 0; z-index: 10;
+      border-right:none; border-bottom:1px solid var(--panel-line);
+      padding: 14px 16px; background: var(--bg);
+    }
+    .brand{ display:none; }
+    .nav{
+      margin-top: 0; flex-direction: row; gap: 4px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .nav::-webkit-scrollbar{ display:none; }
+    .nav a{ flex-shrink:0; white-space:nowrap; padding: 7px 10px; }
+    .main{ padding: 24px 16px 90px; max-width: 100%; }
+    h1{ font-size: 21px; }
+    .sub{ font-size: 13px; }
+    .section-label{ margin: 36px 0 14px; font-size: 11px; }
+    .grid{ grid-template-columns: 1fr 1fr; gap: 8px; }
+    .pill{ font-size: 12.5px; padding: 6px 12px; }
+    .swatch-btn{ width: 30px; height: 30px; }
+    .output-body{ font-size: 12px; padding: 14px 12px; }
+    .card{ padding: 12px; }
+  }
+
+  @media (max-width: 460px){
+    .grid{ grid-template-columns: 1fr; }
+    .main{ padding: 20px 14px 80px; }
+    h1{ font-size: 19px; }
   }
 </style>
 </head>
