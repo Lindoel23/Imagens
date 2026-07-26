@@ -192,6 +192,7 @@
     <a href="#sec-pose"><span class="dot"></span>02 Pose</a>
     <a href="#sec-world"><span class="dot"></span>03 Mundo</a>
     <a href="#sec-output"><span class="dot"></span>04 Prompt final</a>
+    <a href="#sec-music"><span class="dot"></span>05 Música</a>
   </div>
 </div>
 
@@ -311,6 +312,15 @@
         <div class="pill" data-value="a geometric line tattoo along the collarbone">Geométrica (clavícula)</div>
       </div>
     </div>
+
+    <div class="opt-group">
+      <div class="label">Tema de roupa</div>
+      <div class="grid" id="clothing-theme-grid"></div>
+    </div>
+    <div class="opt-group" id="clothing-variation-wrap" style="display:none;">
+      <div class="label">Variação de roupa</div>
+      <div class="grid" id="clothing-variation-grid"></div>
+    </div>
   </section>
 
   <section id="sec-pose">
@@ -320,7 +330,14 @@
 
   <section id="sec-world">
     <div class="section-label"><span class="n">03</span> Mundo / Coleção</div>
-    <div class="grid" id="world-grid"></div>
+    <div class="opt-group">
+      <div class="label">Coleção</div>
+      <div class="grid" id="collection-grid"></div>
+    </div>
+    <div class="opt-group" id="variation-wrap" style="display:none;">
+      <div class="label">Variação de cenário</div>
+      <div class="grid" id="variation-grid"></div>
+    </div>
   </section>
 
   <section id="sec-output">
@@ -333,6 +350,26 @@
       <div class="output-body empty" id="output1">preencha o personagem, a pose e o mundo acima para montar o prompt...</div>
     </div>
     <div class="note">Esse prompt gera a cena inteira já em pixel art numa única imagem — sem foto real, sem split, sem etapa 2.</div>
+  </section>
+
+  <section id="sec-music">
+    <div class="section-label"><span class="n">05</span> Música (prompt pro Suno)</div>
+    <div class="opt-group">
+      <div class="label">Coleção</div>
+      <div class="grid" id="music-collection-grid"></div>
+    </div>
+    <div class="opt-group" id="music-mood-wrap" style="display:none;">
+      <div class="label">Humor / estilo</div>
+      <div class="pills" id="music-mood-pills"></div>
+    </div>
+    <div class="output" style="margin-top:20px;">
+      <div class="output-head">
+        <span>prompt_musica.txt</span>
+        <button class="copy-btn" id="copy2">copiar</button>
+      </div>
+      <div class="output-body empty" id="output2">escolha a coleção e o humor acima para ver o prompt de música...</div>
+    </div>
+    <div class="note">Cole esse prompt direto no Suno (ou outro gerador de música).</div>
   </section>
 
 </div>
@@ -351,20 +388,134 @@ const POSES = [
   { tag:'P.10', name:'Parada, exausta', desc:'braços soltos, postura resignada', text:"standing still, arms hanging loosely at the sides, head slightly bowed, an exhausted or resigned posture" },
 ];
 
-const WORLDS = [
-  { tag:'W.01', name:'Crimson — Arena em chamas', color:'#ff2e4d', desc:'fliperama abandonado, boss battle', text:"set inside a burning abandoned arcade turned boss-arena, rows of broken cabinet machines sparking and flickering, shattered screens casting red static glow, thick smoke drifting through the air, alarm-red emergency lighting, scattered debris and shattered glass on the floor. Apply a crimson and deep purple color grading throughout the entire scene, including her skin tone and clothing — intense high-contrast lighting with near-black shadows and punchy red highlights. Realistic photo style, gritty and dangerous atmosphere." },
-  { tag:'W.02', name:'Teal — Templo submerso', color:'#2de8c0', desc:'ruína afundada, dungeon de RPG', text:"set inside a flooded ancient temple ruin half-submerged in still dark water, moss-covered stone pillars, shafts of murky teal-green light filtering down from openings far above, ripples and reflections on the water surface, ancient carved symbols on the crumbling walls. Apply a cold teal and deep green color grading throughout the entire scene, including her skin tone and clothing — soft diffused underwater-adjacent lighting with deep shadows. Realistic photo style, reverent and mysterious atmosphere." },
-  { tag:'W.03', name:'Azure — Estação abandonada', color:'#33c1ff', desc:'corredor sci-fi, survival horror', text:"set inside a long abandoned space station corridor, flickering overhead fluorescent lights, sealed blast doors, warning signs and peeling wall panels, condensation and frost creeping across metal surfaces, distant steam venting from a broken pipe. Apply a cold clinical blue and steel-cyan color grading throughout the entire scene, including her skin tone and clothing — harsh sterile lighting with sharp shadows. Realistic photo style, tense survival-horror atmosphere." },
-  { tag:'W.04', name:'Amber — Vilarejo noturno', color:'#ffa63d', desc:'RPG overworld, lampiões acesos', text:"set in an old wooden village at night, a dirt road lined with hanging paper lanterns casting warm amber light, low thatched-roof buildings, distant mountains silhouetted against a dark sky, gentle mist hovering near the ground. Apply a warm amber and burnt-orange color grading throughout the entire scene, including her skin tone and clothing — warm flickering lantern-light with soft long shadows. Realistic photo style, quiet RPG-overworld atmosphere." },
-  { tag:'W.05', name:'Magenta — Mercado neon', color:'#ff3ec9', desc:'cidade cyberpunk, telhado noturno', text:"set on a crowded rooftop night market in a dense futuristic cyberpunk city, glowing neon signs in unreadable script hanging overhead, steam rising from food stalls, distant skyscrapers covered in holographic billboards, rain-slicked surfaces reflecting the lights. Apply a vivid magenta and electric-pink color grading throughout the entire scene, including her skin tone and clothing — saturated neon lighting with deep shadows. Realistic photo style, dense futuristic atmosphere." },
+const COLLECTIONS = [
+  { id:'azure',   name:'Azure — Espaço',              color:'#33c1ff' },
+  { id:'magenta', name:'Magenta — Cyberpunk',         color:'#ff3ec9' },
+  { id:'teal',    name:'Teal — Templo / Natureza',    color:'#2de8c0' },
+  { id:'amber',   name:'Amber — Vilarejo / Estrada',  color:'#ffa63d' },
+  { id:'crimson', name:'Crimson — Boss / Luta',       color:'#ff2e4d' },
 ];
+
+const WORLD_VARIATIONS = {
+  azure: [
+    { tag:'W.01', name:'Estação abandonada', desc:'corredor sci-fi, survival horror', text:"set inside a long abandoned space station corridor, flickering overhead fluorescent lights, sealed blast doors, warning signs and peeling wall panels, condensation and frost creeping across metal surfaces, distant steam venting from a broken pipe. Apply a cold clinical blue and steel-cyan color grading throughout the entire scene, including her skin tone and clothing — harsh sterile lighting with sharp shadows. Realistic photo style, tense survival-horror atmosphere." },
+    { tag:'W.02', name:'Planeta alienígena', desc:'superfície deserta, nave caída', text:"set on the surface of a desolate alien planet, jagged reddish-grey rock formations stretching to the horizon, a distant crashed spaceship half-buried in the dust, an alien sky with a pale distant sun and strange rings overhead, low gravity dust drifting slowly in the air. Apply a cold clinical blue and steel-cyan color grading throughout the entire scene, including her skin tone and clothing — harsh sterile lighting with sharp shadows. Realistic photo style, desolate alien-world atmosphere." },
+    { tag:'W.03', name:'Ponte de comando', desc:'painéis, janela pro espaço', text:"set on the command bridge of a starship, rows of control panels and glowing switches, large windows looking out into deep space and distant stars, red alert lights pulsing along the walls, screens flickering with static. Apply a cold clinical blue and steel-cyan color grading throughout the entire scene, including her skin tone and clothing — harsh sterile lighting with sharp shadows. Realistic photo style, tense command-bridge atmosphere." },
+    { tag:'W.04', name:'Cápsula de escape', desc:'espaço apertado, vista do planeta', text:"set inside a cramped orbital escape pod, a small round window showing the curve of a planet far below, warning lights blinking on a control panel, tight metal walls pressing close. Apply a cold clinical blue and steel-cyan color grading throughout the entire scene, including her skin tone and clothing — harsh sterile lighting with sharp shadows. Realistic photo style, claustrophobic escape-pod atmosphere." },
+  ],
+  magenta: [
+    { tag:'W.01', name:'Mercado neon', desc:'cidade cyberpunk, telhado noturno', text:"set on a crowded rooftop night market in a dense futuristic cyberpunk city, glowing neon signs in unreadable script hanging overhead, steam rising from food stalls, distant skyscrapers covered in holographic billboards, rain-slicked surfaces reflecting the lights. Apply a vivid magenta and electric-pink color grading throughout the entire scene, including her skin tone and clothing — saturated neon lighting with deep shadows. Realistic photo style, dense futuristic atmosphere." },
+    { tag:'W.02', name:'Beco escuro', desc:'entre arranha-céus, vapor e neon', text:"set in a narrow dark alley between towering skyscrapers, neon light spilling down from signs far above, steam rising from a street grate, digital graffiti flickering on the walls. Apply a vivid magenta and electric-pink color grading throughout the entire scene, including her skin tone and clothing — saturated neon lighting with deep shadows. Realistic photo style, tense back-alley atmosphere." },
+    { tag:'W.03', name:'Torre corporativa', desc:'vidro, hologramas, vista da cidade', text:"set inside a sleek corporate tower interior, floor-to-ceiling glass windows overlooking a vast neon cityscape far below, holographic displays floating in the air, polished reflective floors. Apply a vivid magenta and electric-pink color grading throughout the entire scene, including her skin tone and clothing — saturated neon lighting with deep shadows. Realistic photo style, sleek corporate atmosphere." },
+    { tag:'W.04', name:'Rodovia elevada', desc:'carros voadores, perseguição', text:"set on an elevated highway with flying cars streaking past in motion-blurred light trails, an endless neon megacity stretching to the horizon below, traffic lights reflecting off wet pavement. Apply a vivid magenta and electric-pink color grading throughout the entire scene, including her skin tone and clothing — saturated neon lighting with deep shadows. Realistic photo style, high-speed chase atmosphere." },
+  ],
+  teal: [
+    { tag:'W.01', name:'Templo submerso', desc:'ruína afundada, dungeon de RPG', text:"set inside a flooded ancient temple ruin half-submerged in still dark water, moss-covered stone pillars, shafts of murky teal-green light filtering down from openings far above, ripples and reflections on the water surface, ancient carved symbols on the crumbling walls. Apply a cold teal and deep green color grading throughout the entire scene, including her skin tone and clothing — soft diffused underwater-adjacent lighting with deep shadows. Realistic photo style, reverent and mysterious atmosphere." },
+    { tag:'W.02', name:'Floresta com ruínas', desc:'árvores enormes, pedras antigas', text:"set in a dense forest with ancient moss-covered ruins scattered among towering trees, sunlight filtering through a thick canopy of leaves, vines wrapping around broken stone pillars. Apply a cold teal and deep green color grading throughout the entire scene, including her skin tone and clothing — soft dappled forest lighting with deep shadows. Realistic photo style, quiet forest-ruins atmosphere." },
+    { tag:'W.03', name:'Santuário de montanha', desc:'escadaria na névoa, sino antigo', text:"set on a stone stairway climbing through thick mountain mist, an ancient temple bell hanging at the top, prayer flags fluttering, fog drifting between weathered stone steps. Apply a cold teal and deep green color grading throughout the entire scene, including her skin tone and clothing — soft misty diffused lighting with deep shadows. Realistic photo style, serene mountain-sanctuary atmosphere." },
+    { tag:'W.04', name:'Templo da cachoeira', desc:'caverna atrás do véu d\u2019água', text:"set in a hidden cave behind a large waterfall, a curtain of falling water glowing at the cave entrance, ancient carved stone walls inside, teal-green light filtering through the water. Apply a cold teal and deep green color grading throughout the entire scene, including her skin tone and clothing — soft diffused underwater-adjacent lighting with deep shadows. Realistic photo style, hidden waterfall-temple atmosphere." },
+  ],
+  amber: [
+    { tag:'W.01', name:'Vilarejo noturno', desc:'RPG overworld, lampiões acesos', text:"set in an old wooden village at night, a dirt road lined with hanging paper lanterns casting warm amber light, low thatched-roof buildings, distant mountains silhouetted against a dark sky, gentle mist hovering near the ground. Apply a warm amber and burnt-orange color grading throughout the entire scene, including her skin tone and clothing — warm flickering lantern-light with soft long shadows. Realistic photo style, quiet RPG-overworld atmosphere." },
+    { tag:'W.02', name:'Estrada ao entardecer', desc:'colinas, poste solitário, viagem', text:"set on an open dirt road stretching through rolling hills at dusk, a single lone lamp post glowing beside the path, the sun setting low on the horizon, tall grass swaying gently. Apply a warm amber and burnt-orange color grading throughout the entire scene, including her skin tone and clothing — warm low golden-hour lighting with soft long shadows. Realistic photo style, quiet open-road atmosphere." },
+    { tag:'W.03', name:'Pousada de montanha', desc:'lareira, viajantes de passagem', text:"set inside a rustic mountain-pass inn, a crackling fireplace lighting the room, worn wooden tables, travelers' packs piled near the door, snow visible through a frosted window. Apply a warm amber and burnt-orange color grading throughout the entire scene, including her skin tone and clothing — warm flickering firelight with soft long shadows. Realistic photo style, cozy wayside-inn atmosphere." },
+    { tag:'W.04', name:'Vila portuária', desc:'barcos, cais de madeira, lampiões', text:"set on a wooden harbor dock at night, fishing boats gently rocking on the water, lantern light reflecting off the waves, coils of rope and old crates scattered along the pier. Apply a warm amber and burnt-orange color grading throughout the entire scene, including her skin tone and clothing — warm flickering lantern-light with soft long shadows. Realistic photo style, quiet harbor-village atmosphere." },
+  ],
+  crimson: [
+    { tag:'W.01', name:'Arena em chamas', desc:'fliperama abandonado, boss battle', text:"set inside a burning abandoned arcade turned boss-arena, rows of broken cabinet machines sparking and flickering, shattered screens casting red static glow, thick smoke drifting through the air, alarm-red emergency lighting, scattered debris and shattered glass on the floor. Apply a crimson and deep purple color grading throughout the entire scene, including her skin tone and clothing — intense high-contrast lighting with near-black shadows and punchy red highlights. Realistic photo style, gritty and dangerous atmosphere." },
+    { tag:'W.02', name:'Coliseu antigo', desc:'arquibancadas de pedra, tochas', text:"set in the center of an ancient stone coliseum, tall cracked stands rising on all sides, torches burning along the walls, sand-covered ground marked with old battle scars. Apply a crimson and deep purple color grading throughout the entire scene, including her skin tone and clothing — intense high-contrast lighting with near-black shadows and punchy red highlights. Realistic photo style, epic coliseum-battle atmosphere." },
+    { tag:'W.03', name:'Covil vulcânico', desc:'lava ao fundo, rochas em brasa', text:"set on a rocky ledge deep inside a volcanic cavern, streams of glowing lava flowing in the background, embers drifting through the hot air, jagged black rock formations all around. Apply a crimson and deep purple color grading throughout the entire scene, including her skin tone and clothing — intense high-contrast lighting with near-black shadows and punchy red highlights. Realistic photo style, volcanic-lair atmosphere." },
+    { tag:'W.04', name:'Trono em ruínas', desc:'vitrais quebrados, castelo caído', text:"set in a collapsed castle throne room, shattered stained-glass windows letting in shafts of red light, a torn banner hanging above a broken throne, rubble scattered across the floor. Apply a crimson and deep purple color grading throughout the entire scene, including her skin tone and clothing — intense high-contrast lighting with near-black shadows and punchy red highlights. Realistic photo style, fallen-throne-room atmosphere." },
+  ],
+};
+
+const CLOTHING_THEMES = [
+  { id:'futurista', name:'Futurista / Sci-fi',       color:'#4dd8ff' },
+  { id:'camponês',  name:'Medieval Camponês',        color:'#b98d4f' },
+  { id:'armadura',  name:'Medieval Armadura',        color:'#9aa0a6' },
+  { id:'posapoc',   name:'Pós-apocalíptico',         color:'#c96a2e' },
+  { id:'casual',    name:'Casual Moderno',           color:'#7c8bd0' },
+];
+
+const CLOTHING_VARIATIONS = {
+  futurista: [
+    { tag:'C.01', name:'Traje de piloto espacial', desc:'jumpsuit justo, detalhes reflexivos', text:"wearing a fitted space-pilot jumpsuit with reflective panel details" },
+    { tag:'C.02', name:'Jaqueta cyberpunk holográfica', desc:'painel LED no peito', text:"wearing a holographic cyberpunk jacket with a glowing LED panel across the chest" },
+    { tag:'C.03', name:'Armadura de exo-esqueleto', desc:'leve, sobre um bodysuit', text:"wearing lightweight exo-skeleton armor plating over a bodysuit" },
+    { tag:'C.04', name:'Capa metálica tecnológica', desc:'capuz de tecido metálico', text:"wearing a metallic-fabric cloak with a high-tech hood" },
+    { tag:'C.05', name:'Uniforme corporativo futurista', desc:'gola alta, ombreiras estruturadas', text:"wearing a structured futuristic corporate uniform with a high collar and sharp shoulder panels" },
+  ],
+  'camponês': [
+    { tag:'C.01', name:'Túnica de linho simples', desc:'cinto de corda', text:"wearing a simple linen tunic tied with a rope belt" },
+    { tag:'C.02', name:'Vestido rústico em camadas', desc:'com xale tecido', text:"wearing a layered rustic dress with a woven shawl" },
+    { tag:'C.03', name:'Capa de viagem puída', desc:'capuz profundo', text:"wearing a worn traveler's cloak with a deep hood" },
+    { tag:'C.04', name:'Roupa de trabalho de campo', desc:'avental, mangas enroladas', text:"wearing rolled-up field work clothes with a canvas apron" },
+    { tag:'C.05', name:'Traje simples de mercador', desc:'bolsa a tiracolo', text:"wearing a simple merchant's outfit with a satchel slung across the body" },
+  ],
+  armadura: [
+    { tag:'C.01', name:'Armadura de placas completa', desc:'reluzente', text:"wearing a full suit of gleaming plate armor" },
+    { tag:'C.02', name:'Cota de malha com sobrevesta', desc:'estilo tabard', text:"wearing chainmail armor with a cloth tabard over it" },
+    { tag:'C.03', name:'Armadura leve de couro batido', desc:'estilo arqueira/ladina', text:"wearing light hardened-leather armor in a rogue/archer style" },
+    { tag:'C.04', name:'Armadura nobre ornamentada', desc:'com capa fluida', text:"wearing ornate noble knight's armor with a flowing cape" },
+    { tag:'C.05', name:'Armadura escura agressiva', desc:'estilo vilão/boss', text:"wearing dark, aggressive villain-style armor with jagged plating" },
+  ],
+  posapoc: [
+    { tag:'C.01', name:'Roupa remendada com metal', desc:'placas improvisadas', text:"wearing patched-up clothing reinforced with improvised scrap metal plates" },
+    { tag:'C.02', name:'Jaqueta de couro com máscara', desc:'máscara de gás no pescoço', text:"wearing a worn leather jacket with a gas mask hanging around the neck" },
+    { tag:'C.03', name:'Traje de sobrevivente do deserto', desc:'véu, camadas soltas', text:"wearing desert-survivor wraps with a loose veil and layered fabric" },
+    { tag:'C.04', name:'Colete tático remontado', desc:'peças variadas', text:"wearing a reassembled tactical vest made of mismatched salvaged gear" },
+    { tag:'C.05', name:'Trapos escuros de andarilho', desc:'capuz profundo', text:"wearing dark ragged robes and a deep hood, like a wandering wasteland scavenger" },
+  ],
+  casual: [
+    { tag:'C.01', name:'Moletom oversized + jeans', desc:'jeans rasgado', text:"wearing an oversized hoodie with ripped denim jeans" },
+    { tag:'C.02', name:'Jaqueta bomber + camiseta', desc:'camiseta gráfica', text:"wearing a bomber jacket over a graphic t-shirt" },
+    { tag:'C.03', name:'Vestido midi + jaqueta jeans', desc:'simples e casual', text:"wearing a simple midi dress with a denim jacket" },
+    { tag:'C.04', name:'Moletom cropped + cargo', desc:'calça cargo', text:"wearing a cropped sweatshirt with cargo pants" },
+    { tag:'C.05', name:'Camisa amarrada na cintura', desc:'com shorts', text:"wearing an oversized shirt tied at the waist with shorts" },
+  ],
+};
+
+const MUSIC = {
+  azure: [
+    { mood:'Ação', text:"Atmospheric Jungle, 165 BPM, driving breakbeats, urgent sub bass stabs, tense arpeggiated synths, alarm-like pulses, chiptune-style laser blips, sound like an escape through a damaged spaceship corridor, indie pixel-game space combat energy, adrenaline and urgency." },
+    { mood:'Triste', text:"Atmospheric Jungle, 128 BPM, slow sparse breaks, deep melancholic sub bass, distant echoing pads, lonely chiptune melody drifting in reverb, sound like floating alone far from any station, indie pixel-game space nostalgia, isolation and quiet sadness." },
+    { mood:'Relaxante', text:"Atmospheric Jungle, 120 BPM, soft brushed breaks, warm floating sub bass, slow shimmering pads, gentle chiptune arpeggios, distant twinkling star-like textures, sound like drifting peacefully through a calm nebula, indie pixel-game space ambience, weightless and calm." },
+    { mood:'Mistério', text:"Atmospheric Jungle, 135 BPM, sparse irregular breaks, deep hollow sub bass, cold metallic pads, faint chiptune blips fading in and out, distant unexplained signal tone, sound like drifting through a derelict ship, indie pixel-game space mystery, eerie and tense." },
+  ],
+  magenta: [
+    { mood:'Ação', text:"Atmospheric Jungle, 168 BPM, fast rolling breaks, aggressive glossy sub bass, sharp neon synth stabs, chiptune arpeggios racing, sound like a rooftop chase through a neon-lit megacity, indie pixel-game cyberpunk energy, adrenaline and speed." },
+    { mood:'Triste', text:"Atmospheric Jungle, 132 BPM, slow smooth breaks, silky melancholic sub bass, rain-soaked synth pads, soft vocoded vocal fragments, sound like standing alone in a neon alley in the rain, indie pixel-game cyberpunk nostalgia, lonely and reflective." },
+    { mood:'Relaxante', text:"Atmospheric Jungle, 122 BPM, soft chopped breaks, warm glossy sub bass, gentle pastel synth pads, calm chiptune melody, sound like watching the city lights from a quiet rooftop at dawn, indie pixel-game cyberpunk calm, peaceful and dreamy." },
+    { mood:'Mistério', text:"Atmospheric Jungle, 140 BPM, glitchy irregular breaks, tense glossy sub bass, cold synth stabs, flickering chiptune blips, sound like hacking into a locked system deep in the city, indie pixel-game cyberpunk suspense, tense and curious." },
+  ],
+  teal: [
+    { mood:'Ação', text:"Atmospheric Jungle, 162 BPM, driving breakbeats, deep earthy sub bass, urgent pads, chiptune arpeggios echoing off stone, sound like escaping a collapsing ancient ruin, indie pixel-game temple action, adrenaline and urgency." },
+    { mood:'Triste', text:"Atmospheric Jungle, 126 BPM, slow sparse breaks, deep mournful sub bass, soft echoing pads, gentle chiptune melody like a forgotten forest shrine, indie pixel-game nature nostalgia, melancholic and quiet." },
+    { mood:'Relaxante', text:"Atmospheric Jungle, 118 BPM, soft brushed breaks, warm gentle sub bass, calm nature-toned pads, peaceful chiptune melody, distant birdsong-like textures, sound like resting in a quiet overgrown garden, indie pixel-game nature calm, serene and warm." },
+    { mood:'Mistério', text:"Atmospheric Jungle, 136 BPM, sparse syncopated breaks, deep hollow sub bass, cold stone-toned pads, faint chiptune blips echoing, sound like uncovering a hidden temple passage, indie pixel-game temple mystery, curious and tense." },
+  ],
+  amber: [
+    { mood:'Ação', text:"Atmospheric Jungle, 158 BPM, driving breakbeats, warm reese bass, urgent pads, chiptune arpeggios, sound like running through a village under attack, indie pixel-game journey action, adrenaline and urgency." },
+    { mood:'Triste', text:"Atmospheric Jungle, 124 BPM, slow sparse breaks, warm melancholic sub bass, soft amber pads, gentle chiptune melody, sound like leaving home for the last time, indie pixel-game journey nostalgia, bittersweet and quiet." },
+    { mood:'Relaxante', text:"Atmospheric Jungle, 116 BPM, soft chopped breaks, warm gentle sub bass, calm amber pads, peaceful chiptune melody, sound like resting by a campfire after a long day's travel, indie pixel-game journey calm, cozy and warm." },
+    { mood:'Mistério', text:"Atmospheric Jungle, 134 BPM, sparse irregular breaks, warm hollow sub bass, dim amber pads, faint chiptune blips, sound like wandering into an abandoned village at night, indie pixel-game journey mystery, curious and uneasy." },
+  ],
+  crimson: [
+    { mood:'Ação', text:"Atmospheric Jungle, 172 BPM, aggressive fast breakbeats, punchy reese bass, intense pads, chiptune arpeggios screaming, sound like the final phase of an epic boss battle, indie pixel-game boss action, intense and euphoric." },
+    { mood:'Triste', text:"Atmospheric Jungle, 128 BPM, slow heavy breaks, deep mournful sub bass, somber pads, melancholic chiptune melody, sound like standing over a fallen hero after the battle, indie pixel-game epic nostalgia, mournful and heavy." },
+    { mood:'Relaxante', text:"Atmospheric Jungle, 120 BPM, soft sparse breaks, deep calm sub bass, tense-but-quiet pads, slow chiptune melody, sound like the quiet moment right before a boss battle begins, indie pixel-game calm-before-storm, tense stillness and anticipation." },
+    { mood:'Mistério', text:"Atmospheric Jungle, 140 BPM, sparse driving breaks, deep ominous sub bass, dark pads, faint chiptune blips, sound like approaching the boss's lair, indie pixel-game boss mystery, ominous and building tension." },
+  ],
+};
 
 const state = {
   hairLength: null, hairStyle: null, hairColor: null,
   lipstick: null, lipstickColor: null,
   glasses: null, frameColor: null, lensColor: null,
   earrings: null, piercing: null, tattoo: null,
-  pose: null, world: null
+  pose: null, collection: null, world: null,
+  clothingTheme: null, clothing: null,
+  musicCollection: null, musicMood: null
 };
 
 document.querySelectorAll('.pills').forEach(group => {
@@ -427,29 +578,46 @@ function hexToRgba(hex, alpha){
   return `rgba(${r},${g},${b},${alpha})`;
 }
 
-function buildCard(item, kind, idx){
+function buildCard(item, kind, idx, accentColor){
   const card = document.createElement('div');
-  card.className = 'card' + (kind==='world' ? ' world' : '');
+  card.className = 'card' + (kind==='collection' || kind==='variation' ? ' world' : '');
   card.dataset.idx = idx;
-  if(kind === 'world'){
+  const color = accentColor || item.color;
+  if(kind === 'collection'){
     card.innerHTML = `<div class="swatch-bar" style="background:${item.color}"></div>
-      <span class="tag">${item.tag}</span><div class="name">${item.name}</div><div class="desc">${item.desc}</div>`;
+      <div class="name">${item.name}</div>`;
     card.style.setProperty('--card-color', item.color);
     card.style.setProperty('--card-color-dim', hexToRgba(item.color, 0.14));
+  } else if(kind === 'variation'){
+    card.innerHTML = `<div class="swatch-bar" style="background:${color}"></div>
+      <span class="tag">${item.tag}</span><div class="name">${item.name}</div><div class="desc">${item.desc}</div>`;
+    card.style.setProperty('--card-color', color);
+    card.style.setProperty('--card-color-dim', hexToRgba(color, 0.14));
   } else {
     card.innerHTML = `<span class="tag">${item.tag}</span><div class="name">${item.name}</div><div class="desc">${item.desc}</div>`;
   }
+
   card.addEventListener('click', () => {
     const grid = card.parentElement;
     [...grid.children].forEach(c => c.classList.remove('selected'));
     card.classList.add('selected');
+
     if(kind === 'pose'){
       state.pose = item;
-    } else {
-      state.world = item;
-      // re-theme the whole page to match the selected collection's color
+    } else if(kind === 'collection'){
+      state.collection = item;
+      state.world = null; // reset variation choice when switching collections
       document.documentElement.style.setProperty('--accent', item.color);
       document.documentElement.style.setProperty('--accent-dim', hexToRgba(item.color, 0.12));
+
+      const variationGrid = document.getElementById('variation-grid');
+      variationGrid.innerHTML = '';
+      WORLD_VARIATIONS[item.id].forEach((v, vi) => {
+        variationGrid.appendChild(buildCard(v, 'variation', vi, item.color));
+      });
+      document.getElementById('variation-wrap').style.display = 'block';
+    } else if(kind === 'variation'){
+      state.world = item;
     }
     render();
   });
@@ -457,8 +625,48 @@ function buildCard(item, kind, idx){
 }
 const poseGrid = document.getElementById('pose-grid');
 POSES.forEach((p,i) => poseGrid.appendChild(buildCard(p,'pose',i)));
-const worldGrid = document.getElementById('world-grid');
-WORLDS.forEach((w,i) => worldGrid.appendChild(buildCard(w,'world',i)));
+const collectionGrid = document.getElementById('collection-grid');
+COLLECTIONS.forEach((c,i) => collectionGrid.appendChild(buildCard(c,'collection',i)));
+
+// ---------- CLOTHING THEME / VARIATION (same two-step pattern as Mundo) ----------
+const clothingThemeGrid = document.getElementById('clothing-theme-grid');
+CLOTHING_THEMES.forEach((theme, i) => {
+  const card = document.createElement('div');
+  card.className = 'card world';
+  card.dataset.idx = i;
+  card.innerHTML = `<div class="swatch-bar" style="background:${theme.color}"></div><div class="name">${theme.name}</div>`;
+  card.style.setProperty('--card-color', theme.color);
+  card.style.setProperty('--card-color-dim', hexToRgba(theme.color, 0.14));
+
+  card.addEventListener('click', () => {
+    [...clothingThemeGrid.children].forEach(el => el.classList.remove('selected'));
+    card.classList.add('selected');
+    state.clothingTheme = theme;
+    state.clothing = null;
+
+    const variationGrid = document.getElementById('clothing-variation-grid');
+    variationGrid.innerHTML = '';
+    CLOTHING_VARIATIONS[theme.id].forEach((v, vi) => {
+      const vcard = document.createElement('div');
+      vcard.className = 'card world';
+      vcard.dataset.idx = vi;
+      vcard.innerHTML = `<div class="swatch-bar" style="background:${theme.color}"></div>
+        <span class="tag">${v.tag}</span><div class="name">${v.name}</div><div class="desc">${v.desc}</div>`;
+      vcard.style.setProperty('--card-color', theme.color);
+      vcard.style.setProperty('--card-color-dim', hexToRgba(theme.color, 0.14));
+      vcard.addEventListener('click', () => {
+        [...variationGrid.children].forEach(el => el.classList.remove('selected'));
+        vcard.classList.add('selected');
+        state.clothing = v;
+        render();
+      });
+      variationGrid.appendChild(vcard);
+    });
+    document.getElementById('clothing-variation-wrap').style.display = 'block';
+    render();
+  });
+  clothingThemeGrid.appendChild(card);
+});
 
 function buildCharacterText(){
   if(!state.hairLength || !state.hairStyle) return null;
@@ -485,6 +693,7 @@ function buildCharacterText(){
   if(!state.earrings) return null;
   if(!state.piercing) return null;
   if(!state.tattoo) return null;
+  if(!state.clothing) return null;
 
   const parts = [`a young East Asian woman with ${hair}`];
 
@@ -523,6 +732,8 @@ function buildCharacterText(){
     parts.push(`${state.tattoo.join(', and ')}, no other tattoos`);
   }
 
+  parts.push(`${state.clothing.text}`);
+
   parts.push(`no necklaces, no rings, no additional jewelry or accessories beyond what is explicitly described here`);
 
   return parts.join(', ');
@@ -540,6 +751,8 @@ function render(){
 
   out.classList.remove('empty');
   out.textContent = `Render the ENTIRE image as retro 2D pixel art — no photographic or realistic rendering anywhere in the frame, the whole scene from edge to edge must be pixel art. Depict ${charText}. She is ${state.pose.text}, ${state.world.text}
+
+Important: do not default the environment's architecture, props, signage, or any text/writing to Japanese, East Asian, or any specific real-world culture just because of the character's ethnicity — keep the setting exactly as described above, with any signage or text kept in plain English or as abstract unreadable symbols, never Japanese kanji or other East Asian script, unless explicitly stated in the scene description.
 
 Render style: 16-bit era retro video game scene, large flat visible square pixels (low resolution pixelation, blocky and chunky, NOT smooth or high-res pixel art), a strictly limited color palette with visible color banding and dithering patterns instead of smooth gradients, hard jagged stair-stepped edges with no anti-aliasing, flat blocky shading with simple 2-3 tone highlights instead of realistic light falloff, slight visible grid/pixel-snap alignment across the whole scene including the character, clothing, and every background object, highly detailed pixel art linework, rich shading and defined individual strands, sharp crisp pixel edges, not flat or simplified. Hair must be rendered in flat discrete color bands — 3 to 4 solid color steps per hair cluster (highlight, mid-tone, shadow, deep shadow), with hard visible edges between each band, like hand-pixelled sprite art from 16-bit era JRPGs — absolutely no smooth gradient blending within the hair, no painterly soft transitions, each strand cluster must read as clearly separated flat pixel shapes. 1792x1024, landscape widescreen format.`;
 }
@@ -583,6 +796,57 @@ function setupCopy(btnId, outId){
   });
 }
 setupCopy('copy1','output1');
+setupCopy('copy2','output2');
+
+// ---------- MUSIC SECTION ----------
+function renderMusicOutput(){
+  const out = document.getElementById('output2');
+  if(!state.musicCollection || !state.musicMood){
+    out.classList.add('empty');
+    out.textContent = 'escolha a coleção e o humor acima para ver o prompt de música...';
+    return;
+  }
+  out.classList.remove('empty');
+  out.textContent = state.musicMood.text;
+}
+
+const musicCollectionGrid = document.getElementById('music-collection-grid');
+COLLECTIONS.forEach((c, i) => {
+  const card = document.createElement('div');
+  card.className = 'card world';
+  card.dataset.idx = i;
+  card.innerHTML = `<div class="swatch-bar" style="background:${c.color}"></div><div class="name">${c.name}</div>`;
+  card.style.setProperty('--card-color', c.color);
+  card.style.setProperty('--card-color-dim', hexToRgba(c.color, 0.14));
+
+  card.addEventListener('click', () => {
+    [...musicCollectionGrid.children].forEach(el => el.classList.remove('selected'));
+    card.classList.add('selected');
+    state.musicCollection = c;
+    state.musicMood = null;
+
+    document.documentElement.style.setProperty('--accent', c.color);
+    document.documentElement.style.setProperty('--accent-dim', hexToRgba(c.color, 0.12));
+
+    const moodPills = document.getElementById('music-mood-pills');
+    moodPills.innerHTML = '';
+    MUSIC[c.id].forEach(track => {
+      const pill = document.createElement('div');
+      pill.className = 'pill';
+      pill.textContent = track.mood;
+      pill.addEventListener('click', () => {
+        moodPills.querySelectorAll('.pill').forEach(p => p.classList.remove('selected'));
+        pill.classList.add('selected');
+        state.musicMood = track;
+        renderMusicOutput();
+      });
+      moodPills.appendChild(pill);
+    });
+    document.getElementById('music-mood-wrap').style.display = 'block';
+    renderMusicOutput();
+  });
+  musicCollectionGrid.appendChild(card);
+});
 
 render();
 </script>
