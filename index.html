@@ -189,10 +189,12 @@
   <div class="brand">memory fragment<b>Prompt Assembler</b></div>
   <div class="nav">
     <a href="#sec-character"><span class="dot"></span>01 Personagem</a>
-    <a href="#sec-pose"><span class="dot"></span>02 Pose</a>
-    <a href="#sec-world"><span class="dot"></span>03 Mundo</a>
-    <a href="#sec-output"><span class="dot"></span>04 Prompt final</a>
-    <a href="#sec-music"><span class="dot"></span>05 Música</a>
+    <a href="#sec-camera"><span class="dot"></span>02 Câmera</a>
+    <a href="#sec-pose"><span class="dot"></span>03 Pose</a>
+    <a href="#sec-world"><span class="dot"></span>04 Mundo</a>
+    <a href="#sec-output"><span class="dot"></span>05 Prompt final</a>
+    <a href="#sec-companion"><span class="dot"></span>06 Personagem extra</a>
+    <a href="#sec-music"><span class="dot"></span>07 Música</a>
   </div>
 </div>
 
@@ -314,6 +316,11 @@
     </div>
 
     <div class="opt-group">
+      <div class="label">Expressão facial</div>
+      <div class="pills" id="expression-pills"></div>
+    </div>
+
+    <div class="opt-group">
       <div class="label">Tema de roupa</div>
       <div class="grid" id="clothing-theme-grid"></div>
     </div>
@@ -323,13 +330,18 @@
     </div>
   </section>
 
+  <section id="sec-camera">
+    <div class="section-label"><span class="n">02</span> Ângulo de câmera</div>
+    <div class="grid" id="camera-grid"></div>
+  </section>
+
   <section id="sec-pose">
-    <div class="section-label"><span class="n">02</span> Pose</div>
+    <div class="section-label"><span class="n">03</span> Pose</div>
     <div class="grid" id="pose-grid"></div>
   </section>
 
   <section id="sec-world">
-    <div class="section-label"><span class="n">03</span> Mundo / Coleção</div>
+    <div class="section-label"><span class="n">04</span> Mundo / Coleção</div>
     <div class="opt-group">
       <div class="label">Coleção</div>
       <div class="grid" id="collection-grid"></div>
@@ -341,7 +353,7 @@
   </section>
 
   <section id="sec-output">
-    <div class="section-label"><span class="n">04</span> Prompt final — imagem 100% pixel art</div>
+    <div class="section-label"><span class="n">05</span> Prompt final — imagem 100% pixel art</div>
     <div class="output">
       <div class="output-head">
         <span>prompt_final.txt</span>
@@ -352,8 +364,33 @@
     <div class="note">Esse prompt gera a cena inteira já em pixel art numa única imagem — sem foto real, sem split, sem etapa 2.</div>
   </section>
 
+  <section id="sec-companion">
+    <div class="section-label"><span class="n">06</span> Personagem extra — adicionar alguém na cena (usa 2 imagens de referência)</div>
+    <div class="sub" style="margin-bottom:16px;">Esse prompt é feito pra ser usado com <b>duas imagens de referência</b>: a <b>Imagem 1</b> é a cena principal que já saiu (protagonista, cenário e estilo pixel art já prontos). A <b>Imagem 2</b> é a foto/referência do personagem extra que você já tem — roupas e aparência dele(a) vêm dessa imagem, então não precisa descrever isso aqui. Escolha só a <b>pose</b> e a <b>expressão</b> dele(a) abaixo (mesmas listas do personagem principal) e o prompt já monta sozinho.</div>
+    <div class="opt-group">
+      <div class="label">Pose do personagem extra</div>
+      <div class="pills" id="companion-pose-pills"></div>
+    </div>
+    <div class="opt-group">
+      <div class="label">Expressão do personagem extra</div>
+      <div class="pills" id="companion-expression-pills"></div>
+    </div>
+    <div class="opt-group">
+      <div class="label">Descrição customizada (opcional — some ao final do prompt)</div>
+      <textarea id="companion-custom" rows="3" placeholder="ex: segurando uma tocha, com uma cicatriz no rosto, etc." style="width:100%; background: var(--panel); border:1px solid var(--panel-line); border-radius:6px; color:var(--ink); font-family:var(--sans); font-size:13px; padding:10px 12px; resize:vertical;"></textarea>
+    </div>
+    <div class="output" style="margin-top:20px;">
+      <div class="output-head">
+        <span>prompt_personagem_extra.txt</span>
+        <button class="copy-btn" id="copy3">copiar</button>
+      </div>
+      <div class="output-body empty" id="output3">escolha a pose e a expressão do personagem extra acima para montar o prompt...</div>
+    </div>
+    <div class="note">Cole a <b>Imagem 1</b> (gerada pelo prompt principal) e a <b>Imagem 2</b> (referência do personagem extra) junto com esse texto no seu gerador (image-to-image / edição multi-imagem). Ele preserva 100% a protagonista e a arte da Imagem 1, e traz a aparência do novo personagem fielmente da Imagem 2.</div>
+  </section>
+
   <section id="sec-music">
-    <div class="section-label"><span class="n">05</span> Música (prompt pro Suno)</div>
+    <div class="section-label"><span class="n">07</span> Música (prompt pro Suno)</div>
     <div class="opt-group">
       <div class="label">Coleção</div>
       <div class="grid" id="music-collection-grid"></div>
@@ -386,6 +423,29 @@ const POSES = [
   { tag:'P.08', name:'Inclinada, olhar intenso', desc:'mãos nos joelhos, contato visual direto', text:"leaning forward with hands braced on the knees, direct intense eye contact with the camera" },
   { tag:'P.09', name:'Mão tocando algo acima', desc:'braço erguido, cabeça virada', text:"one arm raised, hand pressed flat against an unseen surface above or beside her, head turned toward the camera" },
   { tag:'P.10', name:'Parada, exausta', desc:'braços soltos, postura resignada', text:"standing still, arms hanging loosely at the sides, head slightly bowed, an exhausted or resigned posture" },
+  { tag:'P.11', name:'Pulando/em salto', desc:'corpo suspenso no ar, movimento dinâmico', text:"caught mid-jump with the body suspended in the air, dynamic action pose, hair and clothing flowing with the motion" },
+  { tag:'P.12', name:'Apoiada numa arma/bastão', desc:'peso num objeto, postura relaxada', text:"leaning casually on a staff or weapon planted in the ground, weight shifted onto it, relaxed confident posture" },
+  { tag:'P.13', name:'Girando, capa/cabelo em movimento', desc:'corpo em rotação, tecido esvoaçante', text:"caught mid-spin with the body turning, hair and clothing swirling dramatically with the motion" },
+  { tag:'P.14', name:'Deitada olhando pra cima', desc:'de costas no chão, mão perto do rosto', text:"lying on her back looking straight up toward the camera, one hand resting near her face, relaxed expression" },
+  { tag:'P.15', name:'Empunhando algo à frente', desc:'braço estendido, postura de combate', text:"standing in a combat-ready stance with one arm extended forward as if wielding something, sharp focused expression" },
+  { tag:'P.16', name:'Sentada de pernas cruzadas', desc:'postura meditativa, mãos no colo', text:"sitting cross-legged in a meditative posture, hands resting calmly in her lap, eyes calm and steady toward the camera" },
+  { tag:'P.17', name:'Correndo em direção à câmera', desc:'movimento intenso, urgência', text:"running directly toward the camera at full speed, an urgent intense expression, motion blur suggested in the pose" },
+  { tag:'P.18', name:'Encostada olhando de lado', desc:'postura casual, uma perna dobrada', text:"leaning casually against a surface with one leg bent and foot propped behind her, looking off to the side with a relaxed expression" },
+  { tag:'P.19', name:'Protegendo o rosto do vento/luz', desc:'braço erguido perto do rosto', text:"one arm raised to shield her face from wind, light, or debris, hair blown to one side, squinting slightly" },
+  { tag:'P.20', name:'De joelhos, derrotada/vitoriosa', desc:'cabeça baixa ou erguida, mãos no chão', text:"kneeling on the ground with one or both hands braced against it, head either bowed in defeat or raised in triumph, an emotionally charged posture" },
+];
+
+const CAMERA_ANGLES = [
+  { tag:'CAM.01', name:'Contra-plongée (de baixo)', desc:'câmera no chão olhando pra cima', text:"a dramatic low-angle shot — the camera is placed low near the ground and tilted sharply upward toward her, so she towers over the frame looking tall, powerful, and imposing" },
+  { tag:'CAM.02', name:'Plongée (de cima, inclinada)', desc:'câmera alta, olhando pra baixo em diagonal — NÃO é vertical', text:"a high-angle shot — the camera is elevated above her and tilted downward at roughly a 45-degree diagonal angle, clearly angled rather than straight down, making her figure appear smaller and more vulnerable while the horizon and background remain partly visible in the frame" },
+  { tag:'CAM.03', name:'Vista de pássaro (topo total, 90°)', desc:'câmera 100% vertical, direto de cima, sem inclinação', text:"a true bird's-eye top-down shot — the camera is positioned directly above her, pointing straight down at a full 90-degree angle with absolutely no diagonal tilt, so the viewer looks straight down at the crown of her head, her shoulders, and the ground around her exactly as if from a drone hovering directly overhead; this is a completely flat overhead view, not an angled or diagonal high shot" },
+  { tag:'CAM.04', name:'Nível dos olhos', desc:'câmera na altura do rosto, direta', text:"a straight-on eye-level shot, camera positioned exactly at her eye height for a direct, neutral, intimate framing" },
+  { tag:'CAM.05', name:'Câmera holandesa (dutch tilt)', desc:'horizonte inclinado, tensão visual', text:"a tilted dutch-angle shot with the horizon line skewed diagonally, creating a sense of tension and unease" },
+  { tag:'CAM.06', name:'Grande plano fechado', desc:'close extremo no rosto', text:"an extreme close-up shot tightly framing her face, filling most of the frame with fine detail on her expression" },
+  { tag:'CAM.07', name:'Plano aberto, à distância', desc:'câmera bem afastada, corpo pequeno', text:"a wide establishing shot with the camera far away, her figure small within a large expansive view of the surrounding environment" },
+  { tag:'CAM.08', name:'Por trás do ombro', desc:'câmera atrás dela, olhando pro cenário', text:"an over-the-shoulder shot from behind her, camera positioned just behind and slightly above her shoulder looking out toward the scene ahead" },
+  { tag:'CAM.09', name:'Nível do chão', desc:'câmera bem baixa, quase no piso', text:"a worm's-eye ground-level shot with the camera almost touching the floor, looking sharply upward past her legs and body" },
+  { tag:'CAM.10', name:'Diagonal alta, três-quartos', desc:'câmera elevada e de lado, ângulo 3/4', text:"an elevated three-quarter diagonal shot, camera raised and positioned slightly to one side, giving a cinematic angled view of her and the space around her" },
 ];
 
 const COLLECTIONS = [
@@ -414,6 +474,12 @@ const WORLD_VARIATIONS = {
     { tag:'W.02', name:'Floresta com ruínas', desc:'árvores enormes, pedras antigas', text:"set in a dense forest with ancient moss-covered ruins scattered among towering trees, sunlight filtering through a thick canopy of leaves, vines wrapping around broken stone pillars. Apply a cold teal and deep green color grading throughout the entire scene, including her skin tone and clothing — soft dappled forest lighting with deep shadows. Realistic photo style, quiet forest-ruins atmosphere." },
     { tag:'W.03', name:'Santuário de montanha', desc:'escadaria na névoa, sino antigo', text:"set on a stone stairway climbing through thick mountain mist, an ancient temple bell hanging at the top, prayer flags fluttering, fog drifting between weathered stone steps. Apply a cold teal and deep green color grading throughout the entire scene, including her skin tone and clothing — soft misty diffused lighting with deep shadows. Realistic photo style, serene mountain-sanctuary atmosphere." },
     { tag:'W.04', name:'Templo da cachoeira', desc:'caverna atrás do véu d\u2019água', text:"set in a hidden cave behind a large waterfall, a curtain of falling water glowing at the cave entrance, ancient carved stone walls inside, teal-green light filtering through the water. Apply a cold teal and deep green color grading throughout the entire scene, including her skin tone and clothing — soft diffused underwater-adjacent lighting with deep shadows. Realistic photo style, hidden waterfall-temple atmosphere." },
+    { tag:'W.05', name:'Ruínas na selva densa', desc:'templo tomado por vinhas e raízes', text:"set among the crumbling ruins of a jungle temple completely overtaken by thick vines and massive tree roots, dense emerald foliage pressing in from every side, shafts of green-tinted sunlight breaking through the canopy, crumbling stone faces half-swallowed by the jungle. Apply a cold teal and deep green color grading throughout the entire scene, including her skin tone and clothing — soft dappled jungle lighting with deep shadows. Realistic photo style, overgrown jungle-temple atmosphere." },
+    { tag:'W.06', name:'Jardim de templo abandonado', desc:'pátio de pedra, lanternas cobertas de musgo', text:"set in the courtyard of an abandoned temple garden, cracked stone pathways overtaken by moss and wildflowers, old stone lanterns covered in creeping vines, a still reflecting pool at the center surrounded by overgrown hedges. Apply a cold teal and deep green color grading throughout the entire scene, including her skin tone and clothing — soft diffused overcast lighting with deep shadows. Realistic photo style, quiet abandoned-garden atmosphere." },
+    { tag:'W.07', name:'Bosque sagrado', desc:'árvores antigas, altar de pedra ao centro', text:"set in a sacred ancient grove of enormous gnarled trees, a weathered stone altar sitting at the center surrounded by offerings of moss and wildflowers, thick roots breaking through the forest floor, soft green light filtering down through the dense leaves above. Apply a cold teal and deep green color grading throughout the entire scene, including her skin tone and clothing — soft dappled forest lighting with deep shadows. Realistic photo style, reverent sacred-grove atmosphere." },
+    { tag:'W.08', name:'Templo entre bambuzais', desc:'trilha estreita, colunas de bambu altíssimas', text:"set on a narrow stone path winding through a dense bamboo forest, towering stalks of bamboo rising like columns on every side, a weathered temple gate half-hidden at the end of the path, soft green light filtering between the stalks. Apply a cold teal and deep green color grading throughout the entire scene, including her skin tone and clothing — soft filtered lighting with deep shadows. Realistic photo style, tranquil bamboo-forest atmosphere." },
+    { tag:'W.09', name:'Câmara subterrânea coberta de musgo', desc:'raízes penduradas, luz verde vinda de cima', text:"set inside a deep underground temple chamber, thick roots hanging down from cracks in the ceiling far above, walls covered in thick moss and dripping vines, a single shaft of green-tinted light cutting through the darkness from an opening high above. Apply a cold teal and deep green color grading throughout the entire scene, including her skin tone and clothing — soft diffused low lighting with deep shadows. Realistic photo style, mysterious underground-temple atmosphere." },
+    { tag:'W.10', name:'Clareira da floresta antiga', desc:'névoa baixa, árvores gigantescas ao redor', text:"set in a wide clearing deep within an ancient forest, colossal moss-covered trees encircling the open space, low mist drifting across the forest floor, shafts of soft green light breaking through the far-off canopy edges. Apply a cold teal and deep green color grading throughout the entire scene, including her skin tone and clothing — soft misty diffused lighting with deep shadows. Realistic photo style, quiet ancient-forest-clearing atmosphere." },
   ],
   amber: [
     { tag:'W.01', name:'Deserto com destroços', desc:'veículos enferrujados, tempestade de poeira', text:"set in a vast sun-scorched desert wasteland, rusted skeletal remains of vehicles half-buried in sand, dust storms swirling in the distance, a cracked dry riverbed stretching to the horizon. Apply a warm amber and burnt-orange color grading throughout the entire scene, including her skin tone and clothing — harsh warm sunlight with long dust-hazed shadows. Realistic photo style, desolate desert-wasteland atmosphere." },
@@ -475,6 +541,19 @@ const CLOTHING_VARIATIONS = {
   ],
 };
 
+const EXPRESSIONS = [
+  { name:'Neutra', text:"a calm, neutral expression with steady, unreadable eyes" },
+  { name:'Sorrindo', text:"a warm, genuine smile with soft eyes" },
+  { name:'Séria/Determinada', text:"a serious, determined expression with a sharp focused gaze" },
+  { name:'Brava/Hostil', text:"an angry, hostile scowl with narrowed eyes" },
+  { name:'Triste/Melancólica', text:"a sad, melancholic expression with downcast eyes" },
+  { name:'Surpresa', text:"a surprised expression with widened eyes and slightly parted lips" },
+  { name:'Assustada', text:"a fearful, startled expression with wide eyes" },
+  { name:'Confiante/Maroto', text:"a confident, sly smirk with a slightly raised eyebrow" },
+  { name:'Cansada/Sonolenta', text:"a tired, sleepy expression with half-closed eyes" },
+  { name:'Chorando', text:"a tearful expression with watery eyes and a trembling lip" },
+];
+
 const MUSIC = {
   azure: [
     { mood:'Ação', text:"Atmospheric Jungle, 165 BPM, driving breakbeats, urgent sub bass stabs, tense arpeggiated synths, alarm-like pulses, chiptune-style laser blips, sound like an escape through a damaged spaceship corridor, indie pixel-game space combat energy, adrenaline and urgency." },
@@ -513,8 +592,10 @@ const state = {
   lipstick: null, lipstickColor: null,
   glasses: null, frameColor: null, lensColor: null,
   earrings: null, piercing: null, tattoo: null,
-  pose: null, collection: null, world: null,
+  expression: null,
+  pose: null, camera: null, collection: null, world: null,
   clothingTheme: null, clothing: null,
+  companionPose: null, companionExpression: null,
   musicCollection: null, musicMood: null
 };
 
@@ -604,6 +685,8 @@ function buildCard(item, kind, idx, accentColor){
 
     if(kind === 'pose'){
       state.pose = item;
+    } else if(kind === 'camera'){
+      state.camera = item;
     } else if(kind === 'collection'){
       state.collection = item;
       state.world = null; // reset variation choice when switching collections
@@ -625,8 +708,55 @@ function buildCard(item, kind, idx, accentColor){
 }
 const poseGrid = document.getElementById('pose-grid');
 POSES.forEach((p,i) => poseGrid.appendChild(buildCard(p,'pose',i)));
+const cameraGrid = document.getElementById('camera-grid');
+CAMERA_ANGLES.forEach((c,i) => cameraGrid.appendChild(buildCard(c,'camera',i)));
 const collectionGrid = document.getElementById('collection-grid');
 COLLECTIONS.forEach((c,i) => collectionGrid.appendChild(buildCard(c,'collection',i)));
+document.getElementById('companion-custom').addEventListener('input', renderCompanionOutput);
+
+// ---------- EXPRESSÃO (protagonista) — pills geradas via JS a partir de EXPRESSIONS ----------
+const expressionPills = document.getElementById('expression-pills');
+EXPRESSIONS.forEach(exp => {
+  const pill = document.createElement('div');
+  pill.className = 'pill';
+  pill.textContent = exp.name;
+  pill.addEventListener('click', () => {
+    expressionPills.querySelectorAll('.pill').forEach(p => p.classList.remove('selected'));
+    pill.classList.add('selected');
+    state.expression = exp.text;
+    render();
+  });
+  expressionPills.appendChild(pill);
+});
+
+// ---------- POSE e EXPRESSÃO do personagem extra — reaproveitam POSES e EXPRESSIONS ----------
+const companionPosePills = document.getElementById('companion-pose-pills');
+POSES.forEach(p => {
+  const pill = document.createElement('div');
+  pill.className = 'pill';
+  pill.textContent = p.name;
+  pill.addEventListener('click', () => {
+    companionPosePills.querySelectorAll('.pill').forEach(el => el.classList.remove('selected'));
+    pill.classList.add('selected');
+    state.companionPose = p;
+    renderCompanionOutput();
+  });
+  companionPosePills.appendChild(pill);
+});
+
+const companionExpressionPills = document.getElementById('companion-expression-pills');
+EXPRESSIONS.forEach(exp => {
+  const pill = document.createElement('div');
+  pill.className = 'pill';
+  pill.textContent = exp.name;
+  pill.addEventListener('click', () => {
+    companionExpressionPills.querySelectorAll('.pill').forEach(el => el.classList.remove('selected'));
+    pill.classList.add('selected');
+    state.companionExpression = exp;
+    renderCompanionOutput();
+  });
+  companionExpressionPills.appendChild(pill);
+});
 
 // ---------- CLOTHING THEME / VARIATION (same two-step pattern as Mundo) ----------
 const clothingThemeGrid = document.getElementById('clothing-theme-grid');
@@ -694,6 +824,7 @@ function buildCharacterText(){
   if(!state.piercing) return null;
   if(!state.tattoo) return null;
   if(!state.clothing) return null;
+  if(!state.expression) return null;
 
   const parts = [`a young East Asian woman with ${hair}`];
 
@@ -734,6 +865,8 @@ function buildCharacterText(){
 
   parts.push(`${state.clothing.text}`);
 
+  parts.push(`with ${state.expression}`);
+
   parts.push(`no necklaces, no rings, no additional jewelry or accessories beyond what is explicitly described here`);
 
   return parts.join(', ');
@@ -743,18 +876,50 @@ function render(){
   const out = document.getElementById('output1');
   const charText = buildCharacterText();
 
-  if(!charText || !state.pose || !state.world){
+  if(!charText || !state.pose || !state.camera || !state.world){
     out.classList.add('empty');
-    out.textContent = 'preencha o personagem, a pose e o mundo acima para montar o prompt...';
+    out.textContent = 'preencha o personagem, o ângulo de câmera, a pose e o mundo acima para montar o prompt...';
     return;
   }
 
   out.classList.remove('empty');
-  out.textContent = `Render the ENTIRE image as retro 2D pixel art — no photographic or realistic rendering anywhere in the frame, the whole scene from edge to edge must be pixel art. Depict ${charText}. She is ${state.pose.text}, ${state.world.text}
+  out.textContent = `Render the ENTIRE image as retro 2D pixel art from edge to edge — every single element in the frame, including the character, her hair, her clothing, the background, and every prop, must be built from large, clearly visible square pixels. The final image must read unmistakably as a screenshot from a 16-bit era video game. It must NEVER look like a smooth digital illustration, a painting, concept art, or anything photorealistic — if any part of the image looks smooth, soft, or high-resolution, it is wrong.
+
+Depict ${charText}. She is ${state.pose.text}. The scene is ${state.world.text} Camera angle: ${state.camera.text}.
 
 Important: do not default the environment's architecture, props, signage, or any text/writing to Japanese, East Asian, or any specific real-world culture just because of the character's ethnicity — keep the setting exactly as described above, with any signage or text kept in plain English or as abstract unreadable symbols, never Japanese kanji or other East Asian script, unless explicitly stated in the scene description.
 
-Render style: 16-bit era retro video game scene, large flat visible square pixels (low resolution pixelation, blocky and chunky, NOT smooth or high-res pixel art), a strictly limited color palette with visible color banding and dithering patterns instead of smooth gradients, hard jagged stair-stepped edges with no anti-aliasing, flat blocky shading with simple 2-3 tone highlights instead of realistic light falloff, slight visible grid/pixel-snap alignment across the whole scene including the character, clothing, and every background object, highly detailed pixel art linework, rich shading and defined individual strands, sharp crisp pixel edges, not flat or simplified. Hair must be rendered in flat discrete color bands — 3 to 4 solid color steps per hair cluster (highlight, mid-tone, shadow, deep shadow), with hard visible edges between each band, like hand-pixelled sprite art from 16-bit era JRPGs — absolutely no smooth gradient blending within the hair, no painterly soft transitions, each strand cluster must read as clearly separated flat pixel shapes. 1792x1024, landscape widescreen format.`;
+Render style: strict 16-bit era retro video game pixel art — large, chunky, clearly visible square pixels (low-resolution pixelation, blocky and jagged, absolutely NOT smooth, NOT high-resolution, and NOT anti-aliased anywhere in the image). Use a strictly limited color palette with visible color banding and dithering patterns instead of smooth gradients. Every single edge in the image — on the character's face and body, her hair, her clothing, and every background object — must be hard, jagged, and stair-stepped, snapped to a visible pixel grid, with zero soft blending or smooth transitions anywhere in the frame. Shading must be flat and blocky, built from simple 2-3 tone steps instead of realistic light falloff or soft gradients. Hair must be rendered in flat discrete color bands — 3 to 4 solid color steps per hair cluster (highlight, mid-tone, shadow, deep shadow), with hard visible edges between each band, like hand-pixelled sprite art from classic 16-bit JRPGs — no smooth gradient blending within the hair, no painterly soft transitions, each strand cluster reading as a clearly separated flat pixel shape. The whole image, from the character to the last background pixel, must look like unmistakably chunky retro pixel art — never a detailed illustration or digital painting merely styled to resemble pixel art.
+
+1792x1024, landscape widescreen format.`;
+}
+
+function renderCompanionOutput(){
+  const out = document.getElementById('output3');
+  if(!state.companionPose || !state.companionExpression){
+    out.classList.add('empty');
+    out.textContent = 'escolha a pose e a expressão do personagem extra acima para montar o prompt...';
+    return;
+  }
+
+  out.classList.remove('empty');
+  const customEl = document.getElementById('companion-custom');
+  const custom = customEl ? customEl.value.trim() : '';
+  const customPart = custom ? ` Additional details for the second character: ${custom}.` : '';
+
+  out.textContent = `Use two reference images together. Image 1 is the already-generated main scene — keep the protagonist's face, hairstyle, outfit, colors, expression, and overall identity exactly as she appears there, with nothing about her look altered or redesigned.
+
+Image 2 is the reference for the second character — replicate their clothing, physical appearance, and design exactly as shown in that image, without changing, restyling, or redesigning them in any way; only translate their look into the pixel art render style described below.
+
+Place the second character together with the protagonist inside the same scene from Image 1, composing both of them into a single natural, harmonious shot. The protagonist may shift slightly from her original position — stepping a little to one side, turning her body or head, or adjusting her stance — just enough to open up believable space for the second character beside her or near her; her face, hairstyle, outfit, and identity must stay exactly as in Image 1, only her positioning and body angle may adjust slightly for the sake of composition. Give the second character this pose: ${state.companionPose.text}. Give the second character this facial expression: ${state.companionExpression.text}.${customPart}
+
+You may slightly extend or adjust the environment from Image 1 if needed — widening the visible floor, wall, or background just enough for two characters to stand together believably — but keep the same location, architecture, props, color grading, and lighting exactly as established in Image 1; do not invent a different setting.
+
+Pay close attention to perspective and scale: both characters must share the exact same camera angle, horizon line, vanishing point, and ground plane already established in Image 1, with correct relative sizing between them based on their real proportions to each other. Neither character should look pasted in, floating, mismatched in scale, or physically inconsistent with the scene's established perspective — they must appear to genuinely occupy the same physical space together.
+
+Render the second character in the exact same 16-bit era retro pixel art style as Image 1 — large, chunky, clearly visible square pixels, absolutely NOT smooth or high-resolution: identical strictly limited color palette with matching dithering and color banding, hard jagged stair-stepped edges with no anti-aliasing, flat blocky shading with 2-3 tone highlights, and the same flat discrete color-banding technique for hair and clothing shading, translating Image 2's appearance faithfully into that exact chunky pixel art style — never as a smooth illustration or digital painting. Both characters must look like they were rendered together in the same single frame, with fully consistent resolution, palette, pixel density, and lighting.
+
+Do not introduce any photographic, realistic, 3D, or smooth-shaded rendering anywhere in the image — the entire scene, including the second character, must remain retro pixel art matching Image 1 exactly. 1792x1024, landscape widescreen format, maintaining the same camera angle and perspective as Image 1, expanded only as much as needed to fit both characters together coherently.`;
 }
 
 function fallbackCopy(text){
@@ -797,6 +962,7 @@ function setupCopy(btnId, outId){
 }
 setupCopy('copy1','output1');
 setupCopy('copy2','output2');
+setupCopy('copy3','output3');
 
 // ---------- MUSIC SECTION ----------
 function renderMusicOutput(){
@@ -849,6 +1015,7 @@ COLLECTIONS.forEach((c, i) => {
 });
 
 render();
+renderCompanionOutput();
 </script>
 </body>
 </html>
