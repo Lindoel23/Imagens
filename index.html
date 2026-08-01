@@ -412,6 +412,13 @@
       <div class="pill" data-value="pixel">Pixel Art 2D</div>
       <div class="pill" data-value="metade">Metade real / metade pixel</div>
     </div>
+    <div class="opt-group" id="pixel-depth-wrap" style="display:none;">
+      <div class="label">Intensidade do pixel art (se o 16-bit sair "bonito demais", tente 8-bit)</div>
+      <div class="pills" id="pixel-depth-pills">
+        <div class="pill" data-value="16">16-bit (SNES/Genesis)</div>
+        <div class="pill selected" data-value="8">8-bit (NES/Game Boy — mais forçado)</div>
+      </div>
+    </div>
   </section>
 
   <section id="sec-output">
@@ -728,6 +735,7 @@ const state = {
   camera: null, pose: null, expression: null,
   clothingTheme: null, clothing: null,
   collection: null, world: null,
+  pixelDepth: '8', // '16' | '8'
   style: null,
   // companion
   companionPose: null, companionExpression: null,
@@ -1003,6 +1011,18 @@ document.querySelectorAll('#style-pills .pill').forEach(pill => {
     document.querySelectorAll('#style-pills .pill').forEach(p => p.classList.remove('selected'));
     pill.classList.add('selected');
     state.style = pill.dataset.value;
+    const showDepth = (state.style === 'pixel' || state.style === 'metade');
+    document.getElementById('pixel-depth-wrap').style.display = showDepth ? '' : 'none';
+    render();
+  });
+});
+
+// ---------- PIXEL DEPTH PILLS (8-bit / 16-bit) ----------
+document.querySelectorAll('#pixel-depth-pills .pill').forEach(pill => {
+  pill.addEventListener('click', () => {
+    document.querySelectorAll('#pixel-depth-pills .pill').forEach(p => p.classList.remove('selected'));
+    pill.classList.add('selected');
+    state.pixelDepth = pill.dataset.value;
     render();
   });
 });
@@ -1105,13 +1125,41 @@ function render(){
     ? `Important: do not default the environment's architecture, props, signage, or any text/writing to Japanese, East Asian, or any specific real-world culture just because of the character's ethnicity — keep the setting exactly as described above, with any signage or text kept in plain English or as abstract unreadable symbols, never Japanese kanji or other East Asian script, unless explicitly stated in the scene description.`
     : `Important: do not default the environment's architecture, props, signage, or any text/writing to any specific real-world culture based on the character's ethnicity or appearance — keep the setting exactly as described, with any signage kept in plain English or abstract unreadable symbols only.`;
 
+  function pixelStyleBlock(depth, label){
+    const bit = depth === '8' ? '8' : '16';
+    const eraLabel = bit === '8' ? 'NES / Game Boy-era 8-bit' : 'SNES / Sega Genesis-era 16-bit';
+    const paletteCap = bit === '8' ? 'no more than 16 to 24 total colors in the entire image' : 'no more than 32 to 48 total colors in the entire image';
+    const pixelScale = bit === '8'
+      ? 'very large, chunky, unmistakably visible square pixel blocks — sprite scale roughly comparable to a Game Boy or NES character sprite'
+      : 'large, clearly visible square pixel blocks — sprite scale roughly comparable to an SNES or Genesis character sprite';
+    return `${label ? label + ' ' : ''}CRITICAL RENDER STYLE — THIS INSTRUCTION OVERRIDES ANY LIGHTING, COLOR-GRADING, OR REALISM LANGUAGE WRITTEN ELSEWHERE IN THIS PROMPT:
+Render ${label ? 'this half of the image' : 'the ENTIRE image'} — character, skin, hair, clothing, AND the full background/environment/props/atmospheric effects, with zero exceptions — as an authentic ${eraLabel} retro video game screenshot. Nothing in the frame may look photographic, cinematic, painterly, or like modern digital concept art.
+Any color grading, lighting mood, or atmosphere described elsewhere in this prompt must be translated into FLAT, POSTERIZED pixel-art color blocks, never into photographic or soft cinematic lighting.
+Hard requirements, all mandatory:
+- The whole image must look as if it was originally drawn at a low native resolution (roughly 160 to 320 pixels wide) and then scaled up using nearest-neighbor / point-sampling only — never smoothed, blurred, denoised, or upscaled with interpolation.
+- ${pixelScale}, uniformly sized and aligned to one consistent grid across the entire canvas, including the background and scenery, not only the character.
+- Flat, solid, posterized colors, ${paletteCap}. No smooth gradients, no soft airbrushed shading, no photographic blending anywhere in the frame.
+- Hard, jagged, stair-stepped pixel edges everywhere — zero anti-aliasing and zero soft/blurred outlines, on both the character and the environment.
+- All shading done only through flat discrete color bands or dithering patterns (2 to 4 solid steps: highlight, mid-tone, shadow, deep shadow) — never a continuous gradient.
+- Hair rendered in flat discrete color bands with hard visible edges between each band, no smooth blending within the hair.
+- Background, scenery, props, fog, smoke, light rays, water, and any other environmental element must use the exact same chunky pixel grid and flat color banding as the character — nothing in the frame may look higher-resolution, smoother, or more "realistic" than anything else.
+- If any part of the image starts to resemble a smooth digital painting, anime illustration, or high-detail concept art, that is wrong: the entire image must read like an actual screenshot pulled from a real ${eraLabel} game running on original hardware.`;
+  }
+
   let styleBlock = '';
+  let closingReinforcement = '';
   if(state.style === 'realista'){
     styleBlock = `Render style: realistic photo, cinematic lighting, high detail, natural textures.`;
   } else if(state.style === 'pixel'){
-    styleBlock = `Render the ENTIRE image as retro 2D pixel art — no photographic or realistic rendering anywhere in the frame. Render style: 16-bit era retro video game scene, large flat visible square pixels, a strictly limited color palette with visible color banding and dithering instead of smooth gradients, hard jagged stair-stepped edges with no anti-aliasing, flat blocky shading, highly detailed pixel art linework. Hair must be rendered in flat discrete color bands — 3 to 4 solid color steps per hair cluster (highlight, mid-tone, shadow, deep shadow), with hard visible edges between each band, no smooth gradient blending within the hair.`;
+    styleBlock = pixelStyleBlock(state.pixelDepth, '');
+    const bit = state.pixelDepth === '8' ? '8' : '16';
+    closingReinforcement = `\n\nFinal reminder: this is a ${bit}-bit pixel art game screenshot, not a realistic or painterly image — flat colors, visible pixel grid, hard edges, everywhere in the frame, including the background.`;
   } else if(state.style === 'metade'){
-    styleBlock = `Generate a single image split exactly down the vertical center line. The left half must be rendered as a realistic, photographic-style image. The right half must be rendered as retro 16-bit era 2D pixel art. Both halves must depict the exact same continuous scene, same pose, same camera angle, same character, same lighting — as if it is one single photograph where only the rendering style changes at the center line, with zero discontinuity in pose, framing, or composition between the two halves. On the pixel art half: flat discrete pixel blocks, limited color palette with visible banding and dithering, hard jagged edges with no anti-aliasing, hair rendered in 3-4 flat discrete color bands with hard edges between them. The vertical split must run precisely along the center line of the face — same eye height, nose position, mouth alignment, and shoulder line continuing seamlessly from left to right.`;
+    styleBlock = `Generate a single image split exactly down the vertical center line. The left half must be rendered as a realistic, photographic-style image, following the lighting and color-grading notes above normally. The right half must be rendered as retro 2D pixel art following the rules below, completely ignoring any photographic/cinematic lighting language for that half. Both halves must depict the exact same continuous scene, same pose, same camera angle, same character — as if it is one single photograph where only the rendering technique changes at the center line, with zero discontinuity in pose, framing, or composition between the two halves. The vertical split must run precisely along the center line of the face — same eye height, nose position, mouth alignment, and shoulder line continuing seamlessly from left to right.
+
+${pixelStyleBlock(state.pixelDepth, 'RIGHT HALF ONLY —')}`;
+    const bit = state.pixelDepth === '8' ? '8' : '16';
+    closingReinforcement = `\n\nFinal reminder: the right half must look like an actual ${bit}-bit pixel art game screenshot, not a stylized illustration — flat colors, visible pixel grid, hard edges, applied to its background too, not only the character.`;
   }
 
   out.classList.remove('empty');
@@ -1121,7 +1169,7 @@ ${cultureNote}
 
 ${styleBlock}
 
-1792x1024, landscape widescreen format.`;
+1792x1024, landscape widescreen format.${closingReinforcement}`;
 }
 
 // ---------- COMPANION (personagem extra) ----------
