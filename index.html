@@ -435,7 +435,7 @@
 
   <section id="sec-companion">
     <div class="section-label"><span class="n">09</span> Personagem extra — adicionar alguém na cena (usa 2 imagens de referência)</div>
-    <div class="sub" style="margin-bottom:16px;">Esse prompt é feito pra ser usado com <b>duas imagens de referência</b>: a <b>Imagem 1</b> é a cena principal que já saiu (protagonista, cenário e estilo já prontos). A <b>Imagem 2</b> é a foto/referência do personagem extra que você já tem — roupas e aparência dele(a) vêm dessa imagem, então não precisa descrever isso aqui. Escolha só a <b>pose</b> e a <b>expressão</b> dele(a) abaixo (mesmas listas do personagem principal) e o prompt já monta sozinho.</div>
+    <div class="sub" style="margin-bottom:16px;">Esse prompt é feito pra ser usado com <b>duas imagens de referência</b>: a <b>Imagem 1</b> é a cena principal que já saiu (protagonista, cenário e estilo já prontos). A <b>Imagem 2</b> é a foto/referência do personagem extra que você já tem — roupas e aparência dele(a) vêm dessa imagem, então não precisa descrever isso aqui. Escolha a <b>pose</b>, a <b>expressão</b>, se ele(a) vai <b>interagir</b> com o protagonista e a <b>distância</b> entre eles, e o prompt já monta sozinho. O personagem extra agora tem o mesmo peso da protagonista na cena — ele pode ficar em qualquer parte do cenário (perto, longe, atrás, do lado), e o protagonista também pode mudar de posição livremente para acomodar isso.</div>
     <div class="opt-group">
       <div class="label">Pose do personagem extra</div>
       <div class="pills" id="companion-pose-pills"></div>
@@ -443,6 +443,22 @@
     <div class="opt-group">
       <div class="label">Expressão do personagem extra</div>
       <div class="pills" id="companion-expression-pills"></div>
+    </div>
+    <div class="opt-group">
+      <div class="label">Interação com o protagonista</div>
+      <div class="pills" id="companion-interaction-pills">
+        <div class="pill" data-value="conversando">Conversando</div>
+        <div class="pill" data-value="interagindo">Interagindo (sem fala — olhar, gesto, contato)</div>
+        <div class="pill" data-value="nenhuma">Sem interação — cada um faz o seu, em qualquer ponto da cena</div>
+      </div>
+    </div>
+    <div class="opt-group" id="companion-distance-wrap" style="display:none;">
+      <div class="label">Distância do protagonista</div>
+      <div class="pills" id="companion-distance-pills">
+        <div class="pill" data-value="perto">Perto — lado a lado ou a poucos passos</div>
+        <div class="pill" data-value="media">Distância média — no mesmo plano, mas separados</div>
+        <div class="pill" data-value="longe">Longe — ao fundo ou em outro ponto do cenário, bem menor por perspectiva</div>
+      </div>
     </div>
     <div class="opt-group">
       <div class="label">Descrição customizada (opcional — some ao final do prompt)</div>
@@ -455,7 +471,7 @@
       </div>
       <div class="output-body empty" id="output3">escolha a pose e a expressão do personagem extra acima para montar o prompt...</div>
     </div>
-    <div class="note">Cole a <b>Imagem 1</b> (gerada pelo prompt principal) e a <b>Imagem 2</b> (referência do personagem extra) junto com esse texto no seu gerador (image-to-image / edição multi-imagem). Ele preserva 100% a protagonista e a arte da Imagem 1, e traz a aparência do novo personagem fielmente da Imagem 2.</div>
+    <div class="note">Cole a <b>Imagem 1</b> (gerada pelo prompt principal) e a <b>Imagem 2</b> (referência do personagem extra) junto com esse texto no seu gerador (image-to-image / edição multi-imagem). Ele preserva 100% a arte da Imagem 1, ajusta a escala dele conforme a distância/profundidade escolhida, e agora <b>não pede mais pro gerador "adivinhar" o estilo olhando a imagem</b> — ele usa como referência nomeada exatamente o estilo que você escolheu lá na seção 07 (Realista / Pixel Art / Metade). Se ainda não escolheu um estilo lá, escolha antes de copiar este prompt.</div>
   </section>
 
   <section id="sec-music">
@@ -499,26 +515,26 @@ const CAMERA_ANGLES = [
 ];
 
 const POSES = [
-  { tag:'P.01', name:'Encostada na parede', desc:'braços cruzados, cabeça levemente baixa', text:"leaning back against a wall, arms loosely crossed, head tilted slightly down, distant unreadable expression" },
-  { tag:'P.02', name:'Sentada no chão', desc:'joelhos dobrados, olhando pra câmera', text:"sitting on the ground with knees pulled up, arms resting on knees, looking directly at the camera" },
-  { tag:'P.03', name:'Andando, olhando pra trás', desc:'passo em movimento, olhar por cima do ombro', text:"mid-stride walking forward, glancing back over one shoulder" },
-  { tag:'P.04', name:'Agachada, tocando o chão', desc:'peso nas pontas dos pés, postura alerta', text:"crouched low, one hand touching the ground, weight balanced on the balls of the feet" },
-  { tag:'P.05', name:'De costas, olhando pra trás', desc:'corpo virado, rosto pra câmera', text:"standing with back mostly to camera, head turned to look back over the shoulder" },
-  { tag:'P.06', name:'Ajoelhada, examinando algo', desc:'mão estendida, expressão concentrada', text:"kneeling beside something unseen, one hand reaching out to touch it, focused expression" },
-  { tag:'P.07', name:'Sentada numa borda', desc:'pernas penduradas, mãos na beirada', text:"sitting on a ledge with legs hanging over the edge, hands gripping the edge on either side" },
-  { tag:'P.08', name:'Inclinada, olhar intenso', desc:'mãos nos joelhos, contato visual direto', text:"leaning forward with hands braced on the knees, direct intense eye contact with the camera" },
-  { tag:'P.09', name:'Mão tocando algo acima', desc:'braço erguido, cabeça virada', text:"one arm raised, hand pressed flat against an unseen surface above or beside her, head turned toward the camera" },
-  { tag:'P.10', name:'Parada, exausta', desc:'braços soltos, postura resignada', text:"standing still, arms hanging loosely at the sides, head slightly bowed, an exhausted or resigned posture" },
-  { tag:'P.11', name:'Pulando/em salto', desc:'corpo suspenso no ar, movimento dinâmico', text:"caught mid-jump with the body suspended in the air, dynamic action pose, hair and clothing flowing with the motion" },
-  { tag:'P.12', name:'Apoiada numa arma/bastão', desc:'peso num objeto, postura relaxada', text:"leaning casually on a staff or weapon planted in the ground, weight shifted onto it, relaxed confident posture" },
-  { tag:'P.13', name:'Girando, capa/cabelo em movimento', desc:'corpo em rotação, tecido esvoaçante', text:"caught mid-spin with the body turning, hair and clothing swirling dramatically with the motion" },
-  { tag:'P.14', name:'Deitada olhando pra cima', desc:'de costas no chão, mão perto do rosto', text:"lying on her back looking straight up toward the camera, one hand resting near her face, relaxed expression" },
-  { tag:'P.15', name:'Empunhando algo à frente', desc:'braço estendido, postura de combate', text:"standing in a combat-ready stance with one arm extended forward as if wielding something, sharp focused expression" },
-  { tag:'P.16', name:'Sentada de pernas cruzadas', desc:'postura meditativa, mãos no colo', text:"sitting cross-legged in a meditative posture, hands resting calmly in her lap, eyes calm and steady toward the camera" },
-  { tag:'P.17', name:'Correndo em direção à câmera', desc:'movimento intenso, urgência', text:"running directly toward the camera at full speed, an urgent intense expression, motion blur suggested in the pose" },
-  { tag:'P.18', name:'Encostada olhando de lado', desc:'postura casual, uma perna dobrada', text:"leaning casually against a surface with one leg bent and foot propped behind her, looking off to the side with a relaxed expression" },
-  { tag:'P.19', name:'Protegendo o rosto do vento/luz', desc:'braço erguido perto do rosto', text:"one arm raised to shield her face from wind, light, or debris, hair blown to one side, squinting slightly" },
-  { tag:'P.20', name:'De joelhos, derrotada/vitoriosa', desc:'cabeça baixa ou erguida, mãos no chão', text:"kneeling on the ground with one or both hands braced against it, head either bowed in defeat or raised in triumph, an emotionally charged posture" },
+  { tag:'P.01', name:'Encostada na parede', desc:'braços cruzados, cabeça levemente baixa', text:"leaning back against a wall with her weight settled into one hip, one shoulder blade pressed to the wall while the other pulls slightly away, one knee bent with that foot propped flat against the wall, arms loosely crossed, head tilted slightly down, distant unreadable expression — the whole body relaxed and asymmetrical, not squared off or stiff" },
+  { tag:'P.02', name:'Sentada no chão', desc:'joelhos dobrados, olhando pra câmera', text:"sitting on the ground with knees pulled up unevenly, weight tipped onto one hip, spine gently curved rather than held ramrod straight, arms resting loosely on the knees, looking directly at the camera" },
+  { tag:'P.03', name:'Andando, olhando pra trás', desc:'passo em movimento, olhar por cima do ombro', text:"mid-stride walking forward with natural hip and shoulder counter-rotation, arms swinging asymmetrically with the stride, torso leaning slightly into the movement, glancing back over one shoulder" },
+  { tag:'P.04', name:'Agachada, tocando o chão', desc:'peso nas pontas dos pés, postura alerta', text:"crouched low with weight balanced unevenly on the balls of the feet, one knee dropped closer to the ground than the other, spine curved forward and shoulders slightly hunched, one hand touching the ground while the other rests on a bent knee, alert posture" },
+  { tag:'P.05', name:'De costas, olhando pra trás', desc:'corpo virado, rosto pra câmera', text:"standing with back mostly to camera, hips shifted to one side so the spine curves in a soft S-shape, head turned to look back over the shoulder, one foot angled outward, weight clearly settled onto one leg rather than both" },
+  { tag:'P.06', name:'Ajoelhada, examinando algo', desc:'mão estendida, expressão concentrada', text:"kneeling on one knee with the other leg bent and the foot planted, torso leaning forward off the hips, one hand reaching out to touch something unseen while the other braces on the raised knee, shoulders and head following the direction of the reaching hand, focused expression" },
+  { tag:'P.07', name:'Sentada numa borda', desc:'pernas penduradas, mãos na beirada', text:"sitting on a ledge with legs hanging loosely and swinging slightly out of sync with each other, torso leaned back on braced arms or slouched slightly forward, shoulders relaxed and uneven, hands gripping the edge on either side" },
+  { tag:'P.08', name:'Inclinada, olhar intenso', desc:'mãos nos joelhos, contato visual direto', text:"leaning far forward from the hips with hands braced firmly on bent knees, back curved and shoulders raised toward the ears, weight pressing down through the arms, direct intense eye contact with the camera" },
+  { tag:'P.09', name:'Mão tocando algo acima', desc:'braço erguido, cabeça virada', text:"reaching up with one arm fully extended and the shoulder rotated upward, the opposite hip kicked out to counterbalance the stretch so the spine forms a long diagonal line from the raised hand down to the grounded foot, weight shifted onto one leg with the other knee softly bent, torso clearly twisted rather than facing forward, head turned toward the camera" },
+  { tag:'P.10', name:'Parada, exausta', desc:'braços soltos, postura resignada', text:"standing with her weight sagging onto one leg, shoulders rolled forward and drooping, spine slouched rather than upright, arms hanging loosely and slightly swaying, head bowed — an exhausted, resigned posture with visible fatigue through every joint" },
+  { tag:'P.11', name:'Pulando/em salto', desc:'corpo suspenso no ar, movimento dinâmico', text:"caught mid-jump with the body suspended in the air, knees bent unevenly, arms thrown out asymmetrically for balance, torso twisted mid-motion, dynamic action pose, hair and clothing flowing with the motion" },
+  { tag:'P.12', name:'Apoiada numa arma/bastão', desc:'peso num objeto, postura relaxada', text:"leaning casually with most of her weight settled onto a staff or weapon planted in the ground, hip kicked out to one side, the opposite knee bent and foot crossed loosely in front, shoulders uneven, relaxed confident posture" },
+  { tag:'P.13', name:'Girando, capa/cabelo em movimento', desc:'corpo em rotação, tecido esvoaçante', text:"caught mid-spin with the torso twisting opposite to the hips, one arm flung outward and the other pulled close to the body, one leg lifting off the ground for momentum, hair and clothing swirling dramatically with the motion" },
+  { tag:'P.14', name:'Deitada olhando pra cima', desc:'de costas no chão, mão perto do rosto', text:"lying on her back with the spine gently arched, one knee bent up while the other leg lies flat, looking straight up toward the camera, one hand resting near her face and the other draped loosely at her side, relaxed asymmetrical posture" },
+  { tag:'P.15', name:'Empunhando algo à frente', desc:'braço estendido, postura de combate', text:"standing in a combat-ready stance with feet staggered front-to-back, weight low and forward, one arm extended forward as if wielding something while the other pulls back for balance, torso angled sideways rather than facing forward, sharp focused expression" },
+  { tag:'P.16', name:'Sentada de pernas cruzadas', desc:'postura meditativa, mãos no colo', text:"sitting cross-legged with the spine relaxed rather than perfectly straight, shoulders soft and slightly uneven, hands resting calmly in her lap with fingers loosely interlaced, eyes calm and steady toward the camera" },
+  { tag:'P.17', name:'Correndo em direção à câmera', desc:'movimento intenso, urgência', text:"running directly toward the camera at full speed, knees driving high and asymmetrically, arms pumping opposite to the leg stride, torso leaning hard into the run, an urgent intense expression, motion blur suggested in the pose" },
+  { tag:'P.18', name:'Encostada olhando de lado', desc:'postura casual, uma perna dobrada', text:"leaning casually against a surface with most of her weight on one hip, one leg bent with the foot propped behind her against the surface, shoulders uneven, arms loosely crossed or hanging, looking off to the side with a relaxed expression" },
+  { tag:'P.19', name:'Protegendo o rosto do vento/luz', desc:'braço erguido perto do rosto', text:"body angled away from the wind or light source with the torso visibly twisted, one arm raised to shield her face, the other hand gripping clothing or hair being blown back, weight shifted onto the back foot, hair blown to one side, squinting slightly" },
+  { tag:'P.20', name:'De joelhos, derrotada/vitoriosa', desc:'cabeça baixa ou erguida, mãos no chão', text:"kneeling on the ground with the torso either collapsed forward or thrown back, one or both hands braced against the ground at an angle, head either bowed low in defeat or tipped back in triumph, shoulders and spine clearly reacting to the emotional weight of the moment — an emotionally charged, asymmetrical posture" },
 ];
 
 const EXPRESSIONS = [
@@ -548,7 +564,7 @@ const CLOTHING_REFERENCE = {
   tag:'C.REF',
   name:'Roupa exata da imagem de referência',
   desc:'mantém o outfit original anexado',
-  text:"wearing the exact same outfit shown in the attached reference image — keep the garment types, colors, materials, cut, patterns, and footwear fully consistent with the reference image"
+  text:"wearing the exact same outfit shown in the attached reference image — keep the garment types, colors, materials, cut, patterns, and footwear fully consistent with the reference image. This refers ONLY to the design of the garments, NOT to how they are rendered, shaded, or textured in the reference photo — the render technique is defined separately below and must be applied to the clothing exactly like everything else in the scene"
 };
 
 const CLOTHING_VARIATIONS = {
@@ -739,6 +755,7 @@ const state = {
   style: null,
   // companion
   companionPose: null, companionExpression: null,
+  companionInteraction: null, companionDistance: null,
   // music
   musicCollection: null, musicMood: null,
 };
@@ -1014,6 +1031,7 @@ document.querySelectorAll('#style-pills .pill').forEach(pill => {
     const showDepth = (state.style === 'pixel' || state.style === 'metade');
     document.getElementById('pixel-depth-wrap').style.display = showDepth ? '' : 'none';
     render();
+    renderCompanionOutput();
   });
 });
 
@@ -1024,6 +1042,7 @@ document.querySelectorAll('#pixel-depth-pills .pill').forEach(pill => {
     pill.classList.add('selected');
     state.pixelDepth = pill.dataset.value;
     render();
+    renderCompanionOutput();
   });
 });
 
@@ -1082,7 +1101,7 @@ function buildCharacterClause(){
     return parts.join(', ');
   } else {
     if(state.copyMode === 'image'){
-      return `the exact same woman shown in the attached reference image — keep her facial features, hairstyle, and identity fully consistent with the reference image`;
+      return `the exact same woman shown in the attached reference image — keep her facial features, face shape, hairstyle, and identity fully consistent with the reference image. This refers ONLY to her facial identity and hairstyle, NOT to the art style, rendering technique, level of detail, shading, or image quality of the reference photo — the render technique for the final image is defined separately below and must be followed exactly, completely overriding whatever style the reference photo itself happens to be in`;
     }
     const descText = document.getElementById('charDescription').value.trim();
     if(!descText) return null;
@@ -1090,7 +1109,49 @@ function buildCharacterClause(){
   }
 }
 
-// ---------- RENDER FINAL PROMPT ----------
+// ---------- SHARED STYLE HELPERS (usado no prompt principal E no do personagem extra) ----------
+function pixelStyleBlock(depth, label){
+  const bit = depth === '8' ? '8' : '16';
+  const eraLabel = bit === '8' ? 'NES / Game Boy-era 8-bit' : 'SNES / Sega Genesis-era 16-bit';
+  const paletteCap = bit === '8' ? 'no more than 16 to 24 total colors in the entire image' : 'no more than 32 to 48 total colors in the entire image';
+  const pixelScale = bit === '8'
+    ? 'very large, chunky, unmistakably visible square pixel blocks — sprite scale roughly comparable to a Game Boy or NES character sprite'
+    : 'large, clearly visible square pixel blocks — sprite scale roughly comparable to an SNES or Genesis character sprite';
+  return `${label ? label + ' ' : ''}CRITICAL RENDER STYLE — THIS INSTRUCTION OVERRIDES ANY LIGHTING, COLOR-GRADING, OR REALISM LANGUAGE WRITTEN ELSEWHERE IN THIS PROMPT:
+Render ${label ? 'this half of the image' : 'the ENTIRE image'} — character, skin, hair, clothing, AND the full background/environment/props/atmospheric effects, with zero exceptions — as an authentic ${eraLabel} retro video game screenshot. Nothing in the frame may look photographic, cinematic, painterly, or like modern digital concept art.
+Any color grading, lighting mood, or atmosphere described elsewhere in this prompt must be translated into FLAT, POSTERIZED pixel-art color blocks, never into photographic or soft cinematic lighting.
+Hard requirements, all mandatory:
+- The whole image must look as if it was originally drawn at a low native resolution (roughly 160 to 320 pixels wide) and then scaled up using nearest-neighbor / point-sampling only — never smoothed, blurred, denoised, or upscaled with interpolation.
+- ${pixelScale}, uniformly sized and aligned to one consistent grid across the entire canvas, including the background and scenery, not only the character.
+- Flat, solid, posterized colors, ${paletteCap}. No smooth gradients, no soft airbrushed shading, no photographic blending anywhere in the frame.
+- Hard, jagged, stair-stepped pixel edges everywhere — zero anti-aliasing and zero soft/blurred outlines, on both the character and the environment.
+- All shading done only through flat discrete color bands or dithering patterns (2 to 4 solid steps: highlight, mid-tone, shadow, deep shadow) — never a continuous gradient.
+- Hair rendered in flat discrete color bands with hard visible edges between each band, no smooth blending within the hair.
+- Background, scenery, props, fog, smoke, light rays, water, and any other environmental element must use the exact same chunky pixel grid and flat color banding as the character — nothing in the frame may look higher-resolution, smoother, or more "realistic" than anything else.
+- If any part of the image starts to resemble a smooth digital painting, anime illustration, or high-detail concept art, that is wrong: the entire image must read like an actual screenshot pulled from a real ${eraLabel} game running on original hardware.`;
+}
+
+// Retorna um bloco de estilo NOMEADO (não "olhe pra imagem e copie o estilo") pra usar no prompt do personagem extra,
+// reaproveitando o estilo já escolhido na seção 07.
+function namedStyleReferenceBlock(){
+  if(state.style === 'pixel'){
+    return pixelStyleBlock(state.pixelDepth, '');
+  }
+  if(state.style === 'metade'){
+    return `The main scene (Image 1) is a split-style image: left half realistic photographic rendering, right half retro 2D pixel art. Apply that exact same split logic and technique to the second character depending on which half of the frame they end up in — if placed on the pixel-art half, render them with: ${pixelStyleBlock(state.pixelDepth, '').split('\n').slice(1).join(' ')}`;
+  }
+  if(state.style === 'realista'){
+    return `Named render style reference: realistic photo, cinematic lighting, high detail, natural textures — the same as defined for the main scene. Render the second character with photographic realism to match, not as an illustration, painting, or stylized render.`;
+  }
+  return `No render style was selected for the main scene yet — for best consistency, go back to section 07 and pick a render style before generating the second character, then re-copy this prompt.`;
+}
+
+// Nota sobre direção do olhar: a expressão descreve o rosto/emoção, NÃO pra onde ela olha — quem decide isso é a pose.
+function gazeNote(subject){
+  return `Gaze direction note: the expression describes ${subject === 'protagonist' ? "her" : "their"} facial emotion only — it does NOT mean ${subject === 'protagonist' ? "she" : "they"} must be looking at the camera. ${subject === 'protagonist' ? "Her" : "Their"} eyes should follow whatever the pose and action naturally imply — for example, if the pose has ${subject === 'protagonist' ? "her" : "them"} reaching toward, touching, or examining something, ${subject === 'protagonist' ? "she" : "they"} should be looking at that object or action, not at the camera. Only have ${subject === 'protagonist' ? "her" : "them"} look toward the camera or make eye contact with the viewer if the chosen pose explicitly describes doing so.`;
+}
+
+
 function render(){
   const out = document.getElementById('output1');
 
@@ -1125,26 +1186,6 @@ function render(){
     ? `Important: do not default the environment's architecture, props, signage, or any text/writing to Japanese, East Asian, or any specific real-world culture just because of the character's ethnicity — keep the setting exactly as described above, with any signage or text kept in plain English or as abstract unreadable symbols, never Japanese kanji or other East Asian script, unless explicitly stated in the scene description.`
     : `Important: do not default the environment's architecture, props, signage, or any text/writing to any specific real-world culture based on the character's ethnicity or appearance — keep the setting exactly as described, with any signage kept in plain English or abstract unreadable symbols only.`;
 
-  function pixelStyleBlock(depth, label){
-    const bit = depth === '8' ? '8' : '16';
-    const eraLabel = bit === '8' ? 'NES / Game Boy-era 8-bit' : 'SNES / Sega Genesis-era 16-bit';
-    const paletteCap = bit === '8' ? 'no more than 16 to 24 total colors in the entire image' : 'no more than 32 to 48 total colors in the entire image';
-    const pixelScale = bit === '8'
-      ? 'very large, chunky, unmistakably visible square pixel blocks — sprite scale roughly comparable to a Game Boy or NES character sprite'
-      : 'large, clearly visible square pixel blocks — sprite scale roughly comparable to an SNES or Genesis character sprite';
-    return `${label ? label + ' ' : ''}CRITICAL RENDER STYLE — THIS INSTRUCTION OVERRIDES ANY LIGHTING, COLOR-GRADING, OR REALISM LANGUAGE WRITTEN ELSEWHERE IN THIS PROMPT:
-Render ${label ? 'this half of the image' : 'the ENTIRE image'} — character, skin, hair, clothing, AND the full background/environment/props/atmospheric effects, with zero exceptions — as an authentic ${eraLabel} retro video game screenshot. Nothing in the frame may look photographic, cinematic, painterly, or like modern digital concept art.
-Any color grading, lighting mood, or atmosphere described elsewhere in this prompt must be translated into FLAT, POSTERIZED pixel-art color blocks, never into photographic or soft cinematic lighting.
-Hard requirements, all mandatory:
-- The whole image must look as if it was originally drawn at a low native resolution (roughly 160 to 320 pixels wide) and then scaled up using nearest-neighbor / point-sampling only — never smoothed, blurred, denoised, or upscaled with interpolation.
-- ${pixelScale}, uniformly sized and aligned to one consistent grid across the entire canvas, including the background and scenery, not only the character.
-- Flat, solid, posterized colors, ${paletteCap}. No smooth gradients, no soft airbrushed shading, no photographic blending anywhere in the frame.
-- Hard, jagged, stair-stepped pixel edges everywhere — zero anti-aliasing and zero soft/blurred outlines, on both the character and the environment.
-- All shading done only through flat discrete color bands or dithering patterns (2 to 4 solid steps: highlight, mid-tone, shadow, deep shadow) — never a continuous gradient.
-- Hair rendered in flat discrete color bands with hard visible edges between each band, no smooth blending within the hair.
-- Background, scenery, props, fog, smoke, light rays, water, and any other environmental element must use the exact same chunky pixel grid and flat color banding as the character — nothing in the frame may look higher-resolution, smoother, or more "realistic" than anything else.
-- If any part of the image starts to resemble a smooth digital painting, anime illustration, or high-detail concept art, that is wrong: the entire image must read like an actual screenshot pulled from a real ${eraLabel} game running on original hardware.`;
-  }
 
   let styleBlock = '';
   let closingReinforcement = '';
@@ -1162,14 +1203,25 @@ ${pixelStyleBlock(state.pixelDepth, 'RIGHT HALF ONLY —')}`;
     closingReinforcement = `\n\nFinal reminder: the right half must look like an actual ${bit}-bit pixel art game screenshot, not a stylized illustration — flat colors, visible pixel grid, hard edges, applied to its background too, not only the character.`;
   }
 
+  const usingImageReference = (state.charMode === 'copy' && state.copyMode === 'image');
+  const referenceStyleNote = (usingImageReference && state.style !== 'realista')
+    ? `\n\nREFERENCE IMAGE VS RENDER STYLE — READ CAREFULLY: the attached reference photo is used ONLY to copy the woman's facial identity, hairstyle, and outfit design (shapes, colors, materials, patterns, footwear). It is NOT a style reference and must have ZERO influence on how the final image is rendered. Whatever art style the reference photo itself is in — realistic photo, digital painting, anime illustration, high-detail render, or anything else — completely ignore and override that, and render the ENTIRE final image (her, her clothes, and the whole background) strictly following the render style instructions below instead. Do not let the reference photo's level of detail, shading softness, or rendering quality leak into the output in any way.`
+    : '';
+  const referenceStyleClosing = (usingImageReference && state.style !== 'realista')
+    ? ` The attached reference photo's own rendering style must not appear anywhere in the output — only its facial identity, hairstyle, and outfit design were used.`
+    : '';
+
   out.classList.remove('empty');
   out.textContent = `Generate an image depicting ${characterClause}. She is ${state.pose.text}, with ${state.expression.text}, ${lipstickClause}, ${accessoriesClause}${state.clothing.text}, ${state.world.text} Camera angle: ${state.camera.text}.
 
+${gazeNote('protagonist')}
+
 ${cultureNote}
+${referenceStyleNote}
 
 ${styleBlock}
 
-1792x1024, landscape widescreen format.${closingReinforcement}`;
+1792x1024, landscape widescreen format.${closingReinforcement}${referenceStyleClosing}`;
 }
 
 // ---------- COMPANION (personagem extra) ----------
@@ -1200,13 +1252,32 @@ EXPRESSIONS.forEach(exp => {
   });
   companionExpressionPills.appendChild(pill);
 });
+
+// ---------- COMPANION INTERACTION / DISTANCE ----------
+document.querySelectorAll('#companion-interaction-pills .pill').forEach(pill => {
+  pill.addEventListener('click', () => {
+    document.querySelectorAll('#companion-interaction-pills .pill').forEach(p => p.classList.remove('selected'));
+    pill.classList.add('selected');
+    state.companionInteraction = pill.dataset.value;
+    document.getElementById('companion-distance-wrap').style.display = '';
+    renderCompanionOutput();
+  });
+});
+document.querySelectorAll('#companion-distance-pills .pill').forEach(pill => {
+  pill.addEventListener('click', () => {
+    document.querySelectorAll('#companion-distance-pills .pill').forEach(p => p.classList.remove('selected'));
+    pill.classList.add('selected');
+    state.companionDistance = pill.dataset.value;
+    renderCompanionOutput();
+  });
+});
 document.getElementById('companion-custom').addEventListener('input', renderCompanionOutput);
 
 function renderCompanionOutput(){
   const out = document.getElementById('output3');
-  if(!state.companionPose || !state.companionExpression){
+  if(!state.companionPose || !state.companionExpression || !state.companionInteraction || !state.companionDistance){
     out.classList.add('empty');
-    out.textContent = 'escolha a pose e a expressão do personagem extra acima para montar o prompt...';
+    out.textContent = 'escolha a pose, a expressão, a interação e a distância do personagem extra acima para montar o prompt...';
     return;
   }
 
@@ -1215,19 +1286,55 @@ function renderCompanionOutput(){
   const custom = customEl ? customEl.value.trim() : '';
   const customPart = custom ? ` Additional details for the second character: ${custom}.` : '';
 
-  out.textContent = `Use two reference images together. Image 1 is the already-generated main scene — keep the protagonist's face, hairstyle, outfit, colors, expression, and overall identity exactly as she appears there, with nothing about her look altered or redesigned.
+  let interactionClause = '';
+  if(state.companionInteraction === 'conversando'){
+    interactionClause = `The second character is actively conversing with the protagonist — both oriented toward each other, making eye contact or clearly engaged in a natural dialogue exchange, body language showing they are talking together.`;
+  } else if(state.companionInteraction === 'interagindo'){
+    interactionClause = `The second character is interacting with the protagonist without necessarily speaking — through eye contact, a gesture, a touch, or a shared action — both clearly aware of and responding to each other's presence.`;
+  } else {
+    interactionClause = `The second character is NOT interacting with the protagonist at all — they are doing their own separate thing, unaware of or unconcerned with her. Because there is no interaction between them, the second character does not need to be placed near the protagonist: position them wherever is most logical within the environment already established in Image 1 (deeper in the background, off to one side, in the foreground, near a different part of the architecture or scenery), wherever best fits what they are doing.`;
+  }
 
-Image 2 is the reference for the second character — replicate their clothing, physical appearance, and design exactly as shown in that image, without changing, restyling, or redesigning them in any way; only translate their look into the same render style used for Image 1.
+  let distanceClause = '';
+  if(state.companionDistance === 'perto'){
+    distanceClause = `Distance: keep the second character close to the protagonist — side by side or within a few natural steps of her, occupying roughly the same depth plane in the scene, with a similar apparent size to the protagonist since they are both a similar distance from the camera.`;
+  } else if(state.companionDistance === 'media'){
+    distanceClause = `Distance: place the second character at a moderate distance from the protagonist — clearly separated, not side by side, but still within the same general area of the scene or a plane slightly in front of or behind her, with a small, natural difference in apparent size based on that slight depth change.`;
+  } else {
+    distanceClause = `Distance: place the second character farther away from the protagonist within the same continuous environment already established in Image 1 — deeper in the background or in a distinct part of the scene. Because they are farther from the camera, they MUST be rendered noticeably smaller than the protagonist, following the exact same perspective, vanishing point, and scale-with-depth already visible in Image 1 — use any object already positioned in the background of Image 1 (architecture, altar, stairs, props, trees) as the scale reference for how much smaller something at that depth should appear. Their size must be the natural result of correct perspective at that depth, never an artificial or inconsistent shrink.`;
+  }
 
-Place the second character together with the protagonist inside the same scene from Image 1, composing both of them into a single natural, harmonious shot. The protagonist may shift slightly from her original position — stepping a little to one side, turning her body or head, or adjusting her stance — just enough to open up believable space for the second character beside her or near her; her face, hairstyle, outfit, and identity must stay exactly as in Image 1, only her positioning and body angle may adjust slightly for the sake of composition. Give the second character this pose: ${state.companionPose.text}. Give the second character this facial expression: ${state.companionExpression.text}.${customPart}
+  const bit = state.pixelDepth === '8' ? '8' : '16';
+  let companionClosingReminder = '';
+  if(state.style === 'pixel' || state.style === 'metade'){
+    companionClosingReminder = ` The second character must NOT look sharper, smoother, cleaner, more detailed, or higher-resolution than the protagonist or the environment — if it looks like a polished illustration next to a pixel-art scene, that is wrong. It must be built from the exact same ${bit}-bit chunky pixel grid, flat color bands, and hard jagged edges as everything else in the frame, with zero anti-aliasing and zero soft shading, regardless of how detailed or smooth Image 2's original photo/art happens to be.`;
+  } else if(state.style === 'realista'){
+    companionClosingReminder = ` The second character must match the same photographic realism, lighting, and level of detail as the protagonist and environment — not look like an illustration, painting, or different rendering quality pasted into a photo.`;
+  }
 
-You may slightly extend or adjust the environment from Image 1 if needed — widening the visible floor, wall, or background just enough for two characters to stand together believably — but keep the same location, architecture, props, color grading, and lighting exactly as established in Image 1; do not invent a different setting.
+  out.textContent = `Use two reference images together. Image 1 is the already-generated main scene — it defines the protagonist's identity (face, hairstyle, outfit, colors) AND the exact render style, palette, and technique of the whole piece. Image 2 is only a design reference for the second character's clothing, physical appearance, and design (shapes, colors, materials, patterns, proportions, facial features) — it must NOT influence the render style of the final image in any way. This applies no matter what Image 2 itself looks like: even if Image 2 is a realistic photo, a detailed anime illustration, a digital painting, or any other polished/high-detail art, none of that rendering quality may carry over — only the design shown in it does.
 
-Pay close attention to perspective and scale: both characters must share the exact same camera angle, horizon line, vanishing point, and ground plane already established in Image 1, with correct relative sizing between them based on their real proportions to each other. Neither character should look pasted in, floating, mismatched in scale, or physically inconsistent with the scene's established perspective — they must appear to genuinely occupy the same physical space together.
+PROTAGONIST: keep her face, hairstyle, outfit, colors, and identity exactly as she appears in Image 1 — that must never change. However, her position, pose, body orientation, and where she stands in the frame CAN be changed freely as needed to accommodate the second character and the interaction described below; she is not locked to her original spot, she may move to a different part of the scene, turn around, change her stance, or reposition entirely if that serves the composition better.
 
-Render the second character in the exact same render style as Image 1, matching its color palette, lighting, level of detail, and technique exactly — translating Image 2's appearance faithfully into that same style, never mixing styles between the two characters. Both characters must look like they were rendered together in the same single frame, with fully consistent resolution, palette, and lighting.
+SECOND CHARACTER: replicate their clothing, physical appearance, and design exactly as shown in Image 2 — proportions, outfit details, colors, and features must match Image 2 faithfully. Give them this pose: ${state.companionPose.text}. Give them this facial expression: ${state.companionExpression.text}.${customPart}
 
-Do not introduce any rendering style for the second character that differs from Image 1 — the entire scene, including the second character, must remain visually consistent with Image 1 exactly. 1792x1024, landscape widescreen format, maintaining the same camera angle and perspective as Image 1, expanded only as much as needed to fit both characters together coherently.`;
+${gazeNote('companion')}
+
+INTERACTION: ${interactionClause}
+
+${distanceClause}
+
+PLACEMENT FREEDOM: the second character is just as important to the composition as the protagonist. They are not a background add-on — feel free to place them anywhere in the environment already established in Image 1 (foreground, background, to a side, near a different part of the architecture or scenery) and to slightly extend, add to, or rearrange props/set-dressing/background elements around them if needed, as long as the core location, architecture, and identity of the setting from Image 1 stays recognizable and consistent — do not invent a completely different setting.
+
+PERSPECTIVE AND SCALE — CRITICAL: both characters must share the exact same camera angle, horizon line, and vanishing point already established in Image 1. Apparent size must always match depth: anything placed farther from the camera must appear smaller in direct proportion to its distance, exactly like other background elements already present in Image 1 (distant objects, architecture, or props). Neither character should look pasted in, floating, mismatched in scale, or physically inconsistent with the scene's established perspective — they must appear to genuinely occupy the same physical space, at whatever depth they are placed.
+
+RENDER STYLE — ABSOLUTE MATCH REQUIRED, NO EXCEPTIONS: look closely at Image 1 and reproduce its exact rendering technique for the second character — the same color palette, the same level of detail, the same edge treatment (soft or hard), the same shading approach, the same overall resolution and rendering quality already visible in Image 1. This must be a precise visual match, not an approximation or your own interpretation of "similar" style — do not improve it, sharpen it, add extra detail, or polish it beyond what is already established in Image 1, and do not carry over any trace of Image 2's original art style, line quality, shading technique, or level of polish, no matter how good or detailed Image 2 looks. Only the second character's design (clothing, proportions, features) comes from Image 2 — never their rendering technique. To remove any ambiguity, here is the exact style also written out as an explicit specification — use it together with what you see in Image 1, not instead of it:
+
+${namedStyleReferenceBlock()}
+
+Both characters and the whole environment must look like they were rendered together in a single, unified frame, with fully consistent resolution, palette, linework, and lighting throughout — no part of the image may look like it was pasted in from a different art style or a different level of polish.
+
+1792x1024, landscape widescreen format, maintaining the same overall camera perspective as Image 1, expanded or adjusted only as much as needed to fit both characters together coherently at their intended distance.${companionClosingReminder}`;
 }
 
 // ---------- COPY BUTTONS ----------
