@@ -181,9 +181,9 @@
     <a href="#sec-clothing"><span class="dot"></span>05 Roupa</a>
     <a href="#sec-world"><span class="dot"></span>06 Cenário</a>
     <a href="#sec-style"><span class="dot"></span>07 Estilo</a>
-    <a href="#sec-output"><span class="dot"></span>08 Prompt final</a>
-    <a href="#sec-companion"><span class="dot"></span>09 Personagem extra</a>
-    <a href="#sec-music"><span class="dot"></span>10 Música</a>
+    <a href="#sec-filter"><span class="dot"></span>08 Filtro de cor</a>
+    <a href="#sec-output"><span class="dot"></span>09 Prompt final</a>
+    <a href="#sec-companion"><span class="dot"></span>10 Personagem extra</a>
   </div>
 </div>
 
@@ -305,18 +305,6 @@
     <div class="char-mode-panel" id="charmode-copy">
 
       <div class="opt-group">
-        <div class="label">Prompt de leitura (rode isso primeiro, com a imagem do personagem anexada, em qualquer IA que leia imagem)</div>
-        <div class="output" style="margin-top:8px;">
-          <div class="output-head">
-            <span>prompt_leitura.txt</span>
-            <button class="copy-btn" id="copyReader">copiar</button>
-          </div>
-          <div class="output-body" id="readerPrompt"></div>
-        </div>
-        <div class="note">Cole o resultado que a IA devolver na caixa de texto abaixo. Isso evita citar o nome do personagem/franquia no prompt final.</div>
-      </div>
-
-      <div class="opt-group">
         <div class="label">Modo</div>
         <div class="mode-toggle">
           <div class="mode-btn selected" data-copymode="text">Descrição de texto</div>
@@ -324,7 +312,7 @@
         </div>
 
         <div class="mode-panel visible" id="copymode-text">
-          <textarea id="charDescription" placeholder="Cole aqui a descrição gerada pelo prompt de leitura acima (ou escreva a sua própria descrição de aparência)..."></textarea>
+          <textarea id="charDescription" placeholder="Escreva a descrição de aparência do personagem aqui..."></textarea>
         </div>
         <div class="mode-panel" id="copymode-image">
           <div class="note">Nesse modo, você vai anexar a imagem de referência do personagem diretamente no gerador junto com o prompt final — não precisa preencher a descrição de texto. O prompt final vai instruir a IA a manter o rosto/identidade da imagem anexada.</div>
@@ -421,8 +409,22 @@
     </div>
   </section>
 
+  <section id="sec-filter">
+    <div class="section-label"><span class="n">08</span> Filtro de cor</div>
+    <div class="pills" id="filter-pills">
+      <div class="pill selected" data-value="nenhum">Nenhum</div>
+    </div>
+    <div class="swatches" id="filter-swatches" style="margin-top:14px;">
+      <div class="swatch-btn" style="background:#2de8c0" data-value="teal" title="Teal / Verde"></div>
+      <div class="swatch-btn" style="background:#ff2e4d" data-value="red" title="Vermelho / Roxo"></div>
+      <div class="swatch-btn" style="background:#2bc4ff" data-value="cyan" title="Ciano / Azul frio"></div>
+      <div class="swatch-btn" style="background:#ffa63d" data-value="amber" title="Amarelo / Laranja sódio"></div>
+      <div class="swatch-btn" style="background:#ff3ec9" data-value="magenta" title="Magenta / Rosa neon"></div>
+    </div>
+  </section>
+
   <section id="sec-output">
-    <div class="section-label"><span class="n">08</span> Prompt final</div>
+    <div class="section-label"><span class="n">09</span> Prompt final</div>
     <div class="output">
       <div class="output-head">
         <span>prompt_final.txt</span>
@@ -430,11 +432,10 @@
       </div>
       <div class="output-body empty" id="output1">preencha o personagem, câmera, pose, expressão, roupa, cenário e estilo acima...</div>
     </div>
-    <div class="note warn">Personagens de franquias reais: usar a descrição de texto (em vez do nome) reduz a chance de reprodução literal de material protegido, mas não elimina o risco por completo — a semelhança visual ainda pode ser reconhecível.</div>
   </section>
 
   <section id="sec-companion">
-    <div class="section-label"><span class="n">09</span> Personagem extra — adicionar alguém na cena (usa 2 imagens de referência)</div>
+    <div class="section-label"><span class="n">10</span> Personagem extra — adicionar alguém na cena (usa 2 imagens de referência)</div>
     <div class="sub" style="margin-bottom:16px;">Esse prompt é feito pra ser usado com <b>duas imagens de referência</b>: a <b>Imagem 1</b> é a cena principal que já saiu (protagonista, cenário e estilo já prontos). A <b>Imagem 2</b> é a foto/referência do personagem extra que você já tem — roupas e aparência dele(a) vêm dessa imagem, então não precisa descrever isso aqui. Escolha a <b>pose</b>, a <b>expressão</b>, se ele(a) vai <b>interagir</b> com o protagonista e a <b>distância</b> entre eles, e o prompt já monta sozinho. O personagem extra agora tem o mesmo peso da protagonista na cena — ele pode ficar em qualquer parte do cenário (perto, longe, atrás, do lado), e o protagonista também pode mudar de posição livremente para acomodar isso.</div>
     <div class="opt-group">
       <div class="label">Pose do personagem extra</div>
@@ -461,6 +462,22 @@
       </div>
     </div>
     <div class="opt-group">
+      <div class="label">Lado da cena (evita o gerador sempre jogar pro mesmo lado)</div>
+      <div class="pills" id="companion-side-pills">
+        <div class="pill selected" data-value="livre">Sem preferência — deixe o mais natural pra composição</div>
+        <div class="pill" data-value="esquerda">Esquerda</div>
+        <div class="pill" data-value="direita">Direita</div>
+        <div class="pill" data-value="centro">Centro / fundo central</div>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="label">Já existe algum outro personagem extra na cena (Imagem 1)?</div>
+      <div class="pills" id="companion-existing-pills">
+        <div class="pill selected" data-value="nao">Não — Imagem 1 só tem a protagonista</div>
+        <div class="pill" data-value="sim">Sim — já tem 1 ou mais personagens extras que preciso manter</div>
+      </div>
+    </div>
+    <div class="opt-group">
       <div class="label">Descrição customizada (opcional — some ao final do prompt)</div>
       <textarea id="companion-custom" rows="3" placeholder="ex: segurando uma tocha, com uma cicatriz no rosto, etc."></textarea>
     </div>
@@ -474,33 +491,11 @@
     <div class="note">Cole a <b>Imagem 1</b> (gerada pelo prompt principal) e a <b>Imagem 2</b> (referência do personagem extra) junto com esse texto no seu gerador (image-to-image / edição multi-imagem). Ele preserva 100% a arte da Imagem 1, ajusta a escala dele conforme a distância/profundidade escolhida, e agora <b>não pede mais pro gerador "adivinhar" o estilo olhando a imagem</b> — ele usa como referência nomeada exatamente o estilo que você escolheu lá na seção 07 (Realista / Pixel Art / Metade). Se ainda não escolheu um estilo lá, escolha antes de copiar este prompt.</div>
   </section>
 
-  <section id="sec-music">
-    <div class="section-label"><span class="n">10</span> Música (prompt pro Suno)</div>
-    <div class="opt-group">
-      <div class="label">Coleção</div>
-      <div class="grid" id="music-collection-grid"></div>
-    </div>
-    <div class="opt-group" id="music-mood-wrap" style="display:none;">
-      <div class="label">Humor / estilo</div>
-      <div class="pills" id="music-mood-pills"></div>
-    </div>
-    <div class="output" style="margin-top:20px;">
-      <div class="output-head">
-        <span>prompt_musica.txt</span>
-        <button class="copy-btn" id="copy2">copiar</button>
-      </div>
-      <div class="output-body empty" id="output2">escolha a coleção e o humor acima para ver o prompt de música...</div>
-    </div>
-    <div class="note">Cole esse prompt direto no Suno (ou outro gerador de música). Cenário "Moderno — Cidade Real" não tem trilha própria (é ambientação real, sem jogo associado).</div>
-  </section>
-
 </div>
 
 <script>
 
 // ---------- DATA ----------
-const READER_PROMPT = `Analyze the attached character image and write a detailed visual description of her physical appearance and outfit, as if creating a design reference sheet for a completely original character. Do NOT mention her name, the franchise, the game, the movie, or any copyrighted property — describe only what is visually present. Include: hair (color, length, texture, style), eye color, skin tone, facial structure, body build, exact outfit details (garment types, colors, materials, cut, patterns), footwear, any accessories or jewelry, and any distinguishing features (scars, markings, unique props she's holding or wearing). Write it as one dense descriptive paragraph, no preamble, no name, no franchise reference.`;
-
 const CAMERA_ANGLES = [
   { tag:'CAM.01', name:'Contra-plongée (de baixo)', desc:'câmera no chão olhando pra cima', text:"a dramatic low-angle shot — the camera is placed low near the ground and tilted sharply upward toward her, so she towers over the frame looking tall, powerful, and imposing" },
   { tag:'CAM.02', name:'Vista de cima, reta e afastada', desc:'câmera bem alta, 90° reto, longe — sem inclinação, sem diagonal', text:"a distant, perfectly vertical top-down shot — the camera is positioned high above her and points straight down at a full 90-degree angle with absolutely zero diagonal tilt, framed from far away so her full figure and a wide area of the ground around her are visible, like a high-altitude drone or satellite shot looking straight down; this must read as a completely flat, straight overhead view seen from a distance — never an angled, tilted, or close-up shot" },
@@ -622,6 +617,9 @@ const COLLECTIONS = [
   { id:'amber',   name:'Amber — Pós-apocalíptico',    color:'#ffa63d' },
   { id:'crimson', name:'Crimson — Boss / Luta',       color:'#ff2e4d' },
   { id:'moderno', name:'Moderno — Cidade Real',       color:'#8fae8b' },
+  { id:'liminal', name:'Liminal — Espaços Urbanos',   color:'#5ab8e8' },
+  { id:'noir',    name:'Noir — Fundo Preto',          color:'#e9e7e2' },
+  { id:'neutro',  name:'Neutro / Recorte',            color:'#a1a1a5' },
 ];
 
 const WORLD_VARIATIONS = {
@@ -697,43 +695,41 @@ const WORLD_VARIATIONS = {
     { tag:'W.09', name:'Feira de rua', desc:'barracas, produtos frescos, movimento', text:"set at an open-air street market, colorful stalls with fresh produce and goods, awnings overhead, a lively crowd blurred in motion around her. Apply a natural, true-to-life color grading — bright natural daylight, no artificial color cast." },
     { tag:'W.10', name:'Jardim botânico urbano', desc:'estufa de vidro, plantas exuberantes', text:"set inside a modern urban botanical garden greenhouse, lush exotic plants and hanging vines, a glass-paneled ceiling letting in soft filtered light, a gravel path underfoot. Apply a natural, true-to-life color grading — soft filtered greenhouse daylight, no artificial color cast, gentle humidity haze." },
   ],
+  liminal: [
+    { tag:'W.01', name:'Banheiro público', desc:'luzes piscando, liminal space', text:"set alone in an abandoned, dimly lit public restroom hallway with rows of sinks and mirrors, flickering fluorescent lights, worn tile walls, empty and eerie liminal space atmosphere." },
+    { tag:'W.02', name:'Estacionamento subterrâneo', desc:'vazio, luzes sódio', text:"set walking alone through an empty underground parking garage at night, concrete pillars, dim sodium-orange overhead lights mixed with a single blue neon strip, long empty perspective stretching into darkness." },
+    { tag:'W.03', name:'Konbini de madrugada', desc:'loja de conveniência vazia', text:"set inside a nearly empty Japanese convenience store at 3am, harsh fluorescent lighting, glowing drink coolers and snack shelves in the background, quiet and isolated atmosphere." },
+    { tag:'W.04', name:'Telhado com skyline', desc:'noite, vista da cidade', text:"set on the ledge of a rooftop at night with a sprawling city skyline and distant lights behind, vast open sky and cityscape dominating the composition." },
+    { tag:'W.05', name:'Vagão de metrô vazio', desc:'noturno, luzes refletidas', text:"set alone in an empty subway train car late at night, fluorescent overhead lighting, reflection of the dark tunnel visible in the window beside, isolated and melancholic urban atmosphere." },
+    { tag:'W.06', name:'Escada rolante vazia', desc:'luz fria, arquitetura simétrica', text:"set standing alone on a long empty escalator, cold fluorescent lighting reflecting off polished floors and glass railings, symmetrical architectural lines stretching into the distance." },
+    { tag:'W.07', name:'Elevador de vidro', desc:'vista da cidade à noite', text:"set alone inside a glass elevator at night, city lights blurring past outside as the elevator moves, dim interior lighting reflecting off the glass, isolated and quiet atmosphere." },
+    { tag:'W.08', name:'Estacionamento no telhado', desc:'poças, luzes da cidade', text:"set in an empty rooftop parking garage at night, city skyline visible over the concrete barrier, dim overhead lights and scattered puddles reflecting neon signs from nearby buildings." },
+    { tag:'W.09', name:'Lavanderia self-service', desc:'luz fluorescente, máquinas ligadas', text:"set inside an empty laundromat late at night, harsh fluorescent lighting, rows of glowing dryer windows spinning in the background, worn linoleum floor, quiet and lonely late-night atmosphere." },
+    { tag:'W.10', name:'Fliperama abandonado', desc:'luz de neon, máquinas antigas', text:"set in a dimly lit, mostly empty arcade, glowing screens casting colored light across the room, faded carpet and rows of retro machines stretching into the background, nostalgic and slightly eerie atmosphere." }
+  ],
+  noir: [
+    { tag:'W.01', name:'Estúdio Fundo Preto — Perfil', desc:'luz de recorte dramática', text:"set against a pure black background, dramatic single-source rim lighting outlining the edge of the figure, moody and introspective atmosphere." },
+    { tag:'W.02', name:'Estúdio Fundo Preto — Sombra superior', desc:'sombra sob os olhos', text:"set against a pure black background, subtle top-down lighting creating shadow under the cheekbones, cold and distant atmosphere." },
+    { tag:'W.03', name:'Estúdio Fundo Preto — Luz lateral', desc:'contraste alto, olhar direto', text:"set against a pure black background, single hard side light casting long shadows across the figure, dramatic high-contrast lighting." },
+    { tag:'W.04', name:'Estúdio Fundo Preto — Meia sombra', desc:'rosto parcialmente oculto', text:"set against a pure black background, half the figure wrapped in deep shadow, cold rim light from one side only, detached and mysterious atmosphere." },
+    { tag:'W.05', name:'Estúdio Fundo Preto — Underlighting', desc:'iluminação por baixo', text:"set against a pure black background, dramatic underlighting coming from below, casting upward shadows, intense and theatrical atmosphere." }
+  ],
+  neutro: [
+    { tag:'W.01', name:'Fundo sólido preto', desc:'sem textura, puro preto', text:"set against a perfectly plain, solid pure black background, even studio lighting with no background elements, simple character focus." },
+    { tag:'W.02', name:'Fundo sólido branco', desc:'sem textura, puro branco', text:"set against a perfectly plain, solid pure white background, bright even studio lighting with no background elements, clean character focus." },
+  ]
 };
 
-const MUSIC = {
-  azure: [
-    { mood:'Ação', text:"Atmospheric Jungle, 165 BPM, driving breakbeats, urgent sub bass stabs, tense arpeggiated synths, alarm-like pulses, quirky hand-played chiptune laser blips with a slightly imperfect, charmingly lo-fi bedroom-production warmth, sound like an escape through a damaged spaceship corridor, distinctly indie pixel-game space combat energy, adrenaline and urgency." },
-    { mood:'Triste', text:"Atmospheric Jungle, 128 BPM, slow sparse breaks, deep melancholic sub bass, distant echoing pads, a lonely hand-played chiptune melody with a slightly wobbly, homemade charm, drifting in reverb, sound like floating alone far from any station, distinctly indie pixel-game space nostalgia, isolation and quiet sadness." },
-    { mood:'Relaxante', text:"Atmospheric Jungle, 120 BPM, soft brushed breaks, warm floating sub bass, slow shimmering pads, gentle lo-fi chiptune arpeggios with a warm bedroom-production texture, distant twinkling star-like textures, sound like drifting peacefully through a calm nebula, distinctly indie pixel-game space ambience, weightless and calm." },
-    { mood:'Mistério', text:"Atmospheric Jungle, 135 BPM, sparse irregular breaks, deep hollow sub bass, cold metallic pads, faint quirky chiptune blips fading in and out like a hand-built sound test, distant unexplained signal tone, sound like drifting through a derelict ship, distinctly indie pixel-game space mystery, eerie and tense." },
-  ],
-  magenta: [
-    { mood:'Ação', text:"Atmospheric Jungle, 168 BPM, fast rolling breaks, aggressive glossy sub bass, sharp neon synth stabs, quirky hand-played chiptune arpeggios racing with a scrappy indie-game energy, sound like a rooftop chase through a neon-lit megacity, distinctly indie pixel-game cyberpunk energy, adrenaline and speed." },
-    { mood:'Triste', text:"Atmospheric Jungle, 132 BPM, slow smooth breaks, silky melancholic sub bass, rain-soaked synth pads, soft lo-fi vocoded vocal fragments with a homemade warmth, sound like standing alone in a neon alley in the rain, distinctly indie pixel-game cyberpunk nostalgia, lonely and reflective." },
-    { mood:'Relaxante', text:"Atmospheric Jungle, 122 BPM, soft chopped breaks, warm glossy sub bass, gentle pastel synth pads, a calm hand-played chiptune melody with a cozy bedroom-production charm, sound like watching the city lights from a quiet rooftop at dawn, distinctly indie pixel-game cyberpunk calm, peaceful and dreamy." },
-    { mood:'Mistério', text:"Atmospheric Jungle, 140 BPM, glitchy irregular breaks, tense glossy sub bass, cold synth stabs, flickering quirky chiptune blips with a scrappy, hand-built texture, sound like hacking into a locked system deep in the city, distinctly indie pixel-game cyberpunk suspense, tense and curious." },
-  ],
-  teal: [
-    { mood:'Ação', text:"Atmospheric Jungle, 162 BPM, driving breakbeats, deep earthy sub bass, urgent pads, quirky hand-played chiptune arpeggios echoing off stone with a scrappy indie charm, sound like escaping a collapsing ancient ruin, distinctly indie pixel-game temple action, adrenaline and urgency." },
-    { mood:'Triste', text:"Atmospheric Jungle, 126 BPM, slow sparse breaks, deep mournful sub bass, soft echoing pads, a gentle lo-fi chiptune melody with a warm, homemade quality, like a forgotten forest shrine, distinctly indie pixel-game nature nostalgia, melancholic and quiet." },
-    { mood:'Relaxante', text:"Atmospheric Jungle, 118 BPM, soft brushed breaks, warm gentle sub bass, calm nature-toned pads, a peaceful hand-played chiptune melody with a cozy bedroom-production warmth, distant birdsong-like textures, sound like resting in a quiet overgrown garden, distinctly indie pixel-game nature calm, serene and warm." },
-    { mood:'Mistério', text:"Atmospheric Jungle, 136 BPM, sparse syncopated breaks, deep hollow sub bass, cold stone-toned pads, faint quirky chiptune blips echoing like a hand-built sound test, sound like uncovering a hidden temple passage, distinctly indie pixel-game temple mystery, curious and tense." },
-  ],
-  amber: [
-    { mood:'Ação', text:"Atmospheric Jungle, 160 BPM, driving breakbeats, gritty reese bass, urgent dust-choked pads, quirky hand-played chiptune arpeggios with a scrappy, homemade indie-game energy, sound like fleeing raiders through a wasteland ruin, distinctly indie pixel-game wasteland action, adrenaline and urgency." },
-    { mood:'Triste', text:"Atmospheric Jungle, 124 BPM, slow sparse breaks, dry melancholic sub bass, hollow wind-swept pads, a gentle lo-fi chiptune melody with a warm, homemade charm, sound like walking alone through a dead city, distinctly indie pixel-game wasteland nostalgia, bittersweet and quiet." },
-    { mood:'Relaxante', text:"Atmospheric Jungle, 116 BPM, soft chopped breaks, warm gentle sub bass, calm dusty amber pads, a peaceful hand-played chiptune melody with a cozy bedroom-production warmth, sound like resting by a campfire in the ruins after a long day, distinctly indie pixel-game wasteland calm, cozy and warm despite the decay." },
-    { mood:'Mistério', text:"Atmospheric Jungle, 134 BPM, sparse irregular breaks, warm hollow sub bass, dim rust-toned pads, faint quirky chiptune blips with a scrappy, hand-built texture, sound like scavenging through an abandoned building at night, distinctly indie pixel-game wasteland mystery, curious and uneasy." },
-  ],
-  crimson: [
-    { mood:'Ação', text:"Atmospheric Jungle, 172 BPM, aggressive fast breakbeats, punchy reese bass, intense pads, quirky hand-played chiptune arpeggios screaming with a scrappy indie-game intensity, sound like the final phase of an epic boss battle, distinctly indie pixel-game boss action, intense and euphoric." },
-    { mood:'Triste', text:"Atmospheric Jungle, 128 BPM, slow heavy breaks, deep mournful sub bass, somber pads, a melancholic hand-played chiptune melody with a homemade warmth, sound like standing over a fallen hero after the battle, distinctly indie pixel-game epic nostalgia, mournful and heavy." },
-    { mood:'Relaxante', text:"Atmospheric Jungle, 120 BPM, soft sparse breaks, deep calm sub bass, tense-but-quiet pads, a slow hand-played chiptune melody with a cozy, homemade quality, sound like the quiet moment right before a boss battle begins, distinctly indie pixel-game calm-before-storm, tense stillness and anticipation." },
-    { mood:'Mistério', text:"Atmospheric Jungle, 140 BPM, sparse driving breaks, deep ominous sub bass, dark pads, faint quirky chiptune blips with a scrappy, hand-built texture, sound like approaching the boss's lair, distinctly indie pixel-game boss mystery, ominous and building tension." },
-  ],
+
+const FILTER_INSTRUCTIONS = {
+  teal: "Apply moody teal, green, or deep blue neon color grading typical of drum and bass / jungle music visuals. This color grading must affect the ENTIRE image uniformly, including her skin tone, face, and clothing, not just the background lighting or ambient glow — her face and skin must be visibly tinted by the same teal/green light as the environment, no neutral or naturally-lit skin. Add heavy film grain and slight motion blur, early-2000s digital camera / camcorder texture, desaturate skin tones slightly, add strobe light glow and lens flare, dark nostalgic rave aesthetic, gritty underground atmosphere.",
+  red: "Apply moody deep red and purple neon color grading typical of drum and bass / jungle rave visuals. This color grading must affect the ENTIRE image uniformly, including her skin tone, face, and clothing, not just the background lighting or ambient glow — her face and skin must be visibly tinted by the same red/purple light as the environment, no neutral or naturally-lit skin. Add heavy film grain and slight motion blur, early-2000s digital camera / camcorder texture, desaturate skin tones slightly, add strobe light glow and lens flare, dark intense rave aesthetic, gritty underground atmosphere.",
+  cyan: "Apply cold cyan and steel blue color grading like security camera or liminal space footage. This color grading must affect the ENTIRE image uniformly, including her skin tone, face, and clothing, not just the background lighting or ambient glow — her face and skin must be visibly tinted by the same cyan/blue light as the environment, no neutral or naturally-lit skin. Add heavy film grain and slight motion blur, early-2000s digital camera / CCTV texture, desaturate skin tones heavily, add flickering fluorescent light flicker and lens flare, sterile and eerie atmosphere, gritty underground feel.",
+  amber: "Apply warm sodium-orange and amber color grading like streetlights or old parking garage lighting. This color grading must affect the ENTIRE image uniformly, including her skin tone, face, and clothing, not just the background lighting or ambient glow — her face and skin must be visibly tinted by the same amber/orange light as the environment, no neutral or naturally-lit skin. Add heavy film grain and slight motion blur, early-2000s digital camera / camcorder texture, desaturate skin tones slightly with a warm tint, add hazy light glow and lens flare, gritty nocturnal urban atmosphere.",
+  magenta: "Apply vibrant magenta and hot pink neon color grading typical of cyberpunk and vaporwave-adjacent jungle visuals. This color grading must affect the ENTIRE image uniformly, including her skin tone, face, and clothing, not just the background lighting or ambient glow — her face and skin must be visibly tinted by the same magenta/pink light as the environment, no neutral or naturally-lit skin. Add heavy film grain and slight motion blur, early-2000s digital camera / camcorder texture, desaturate skin tones slightly, add strobe light glow and chromatic lens flare, dreamlike neon-soaked atmosphere, gritty underground feel."
 };
 
 // ---------- READER PROMPT ----------
-document.getElementById('readerPrompt').textContent = READER_PROMPT;
 
 // ---------- STATE ----------
 const state = {
@@ -753,9 +749,11 @@ const state = {
   collection: null, world: null,
   pixelDepth: '8', // '16' | '8'
   style: null,
+  colorFilter: 'nenhum', // 'nenhum', 'teal', 'red', 'cyan', 'amber', 'magenta'
   // companion
   companionPose: null, companionExpression: null,
   companionInteraction: null, companionDistance: null,
+  companionSide: 'livre', companionExisting: 'nao',
   // music
   musicCollection: null, musicMood: null,
 };
@@ -1046,6 +1044,28 @@ document.querySelectorAll('#pixel-depth-pills .pill').forEach(pill => {
   });
 });
 
+// ---------- FILTER PILLS & SWATCHES ----------
+document.querySelectorAll('#filter-pills .pill').forEach(pill => {
+  pill.addEventListener('click', () => {
+    document.querySelectorAll('#filter-swatches .swatch-btn').forEach(s => s.classList.remove('selected'));
+    document.querySelectorAll('#filter-pills .pill').forEach(p => p.classList.remove('selected'));
+    pill.classList.add('selected');
+    state.colorFilter = 'nenhum';
+    render();
+    renderCompanionOutput();
+  });
+});
+document.querySelectorAll('#filter-swatches .swatch-btn').forEach(sw => {
+  sw.addEventListener('click', () => {
+    document.querySelectorAll('#filter-pills .pill').forEach(p => p.classList.remove('selected'));
+    document.querySelectorAll('#filter-swatches .swatch-btn').forEach(s => s.classList.remove('selected'));
+    sw.classList.add('selected');
+    state.colorFilter = sw.dataset.value;
+    render();
+    renderCompanionOutput();
+  });
+});
+
 // ---------- BUILD CHARACTER CLAUSE ----------
 function buildCharacterClause(){
   if(state.charMode === 'new'){
@@ -1117,18 +1137,15 @@ function pixelStyleBlock(depth, label){
   const pixelScale = bit === '8'
     ? 'very large, chunky, unmistakably visible square pixel blocks — sprite scale roughly comparable to a Game Boy or NES character sprite'
     : 'large, clearly visible square pixel blocks — sprite scale roughly comparable to an SNES or Genesis character sprite';
-  return `${label ? label + ' ' : ''}CRITICAL RENDER STYLE — THIS INSTRUCTION OVERRIDES ANY LIGHTING, COLOR-GRADING, OR REALISM LANGUAGE WRITTEN ELSEWHERE IN THIS PROMPT:
-Render ${label ? 'this half of the image' : 'the ENTIRE image'} — character, skin, hair, clothing, AND the full background/environment/props/atmospheric effects, with zero exceptions — as an authentic ${eraLabel} retro video game screenshot. Nothing in the frame may look photographic, cinematic, painterly, or like modern digital concept art.
-Any color grading, lighting mood, or atmosphere described elsewhere in this prompt must be translated into FLAT, POSTERIZED pixel-art color blocks, never into photographic or soft cinematic lighting.
-Hard requirements, all mandatory:
-- The whole image must look as if it was originally drawn at a low native resolution (roughly 160 to 320 pixels wide) and then scaled up using nearest-neighbor / point-sampling only — never smoothed, blurred, denoised, or upscaled with interpolation.
-- ${pixelScale}, uniformly sized and aligned to one consistent grid across the entire canvas, including the background and scenery, not only the character.
-- Flat, solid, posterized colors, ${paletteCap}. No smooth gradients, no soft airbrushed shading, no photographic blending anywhere in the frame.
-- Hard, jagged, stair-stepped pixel edges everywhere — zero anti-aliasing and zero soft/blurred outlines, on both the character and the environment.
-- All shading done only through flat discrete color bands or dithering patterns (2 to 4 solid steps: highlight, mid-tone, shadow, deep shadow) — never a continuous gradient.
-- Hair rendered in flat discrete color bands with hard visible edges between each band, no smooth blending within the hair.
-- Background, scenery, props, fog, smoke, light rays, water, and any other environmental element must use the exact same chunky pixel grid and flat color banding as the character — nothing in the frame may look higher-resolution, smoother, or more "realistic" than anything else.
-- If any part of the image starts to resemble a smooth digital painting, anime illustration, or high-detail concept art, that is wrong: the entire image must read like an actual screenshot pulled from a real ${eraLabel} game running on original hardware.`;
+  return `${label ? label + ' ' : ''}Render ${label ? 'this half of the image' : 'the image'} (character, clothing, and environment) as an authentic ${eraLabel} retro video game screenshot.
+Translate any color grading or lighting mood into flat, posterized pixel-art color blocks, rather than photographic lighting.
+Style requirements:
+- Low native resolution (roughly 160 to 320 pixels wide) scaled up using nearest-neighbor/point-sampling (no smoothing, blurring, or interpolation).
+- ${pixelScale}, aligned to one consistent grid across the entire canvas, including the background.
+- Flat, posterized colors, ${paletteCap}. Avoid smooth gradients or airbrushed shading.
+- Hard, stair-stepped pixel edges (no anti-aliasing) on both character and environment.
+- Shading done through flat color bands or dithering (2 to 4 solid steps).
+- Background elements (props, fog, water) must use the same chunky pixel grid and color banding as the character.`;
 }
 
 // Retorna um bloco de estilo NOMEADO (não "olhe pra imagem e copie o estilo") pra usar no prompt do personagem extra,
@@ -1196,30 +1213,47 @@ function render(){
     const bit = state.pixelDepth === '8' ? '8' : '16';
     closingReinforcement = `\n\nFinal reminder: this is a ${bit}-bit pixel art game screenshot, not a realistic or painterly image — flat colors, visible pixel grid, hard edges, everywhere in the frame, including the background.`;
   } else if(state.style === 'metade'){
-    styleBlock = `Generate a single image split exactly down the vertical center line. The left half must be rendered as a realistic, photographic-style image, following the lighting and color-grading notes above normally. The right half must be rendered as retro 2D pixel art following the rules below, completely ignoring any photographic/cinematic lighting language for that half. Both halves must depict the exact same continuous scene, same pose, same camera angle, same character — as if it is one single photograph where only the rendering technique changes at the center line, with zero discontinuity in pose, framing, or composition between the two halves. The vertical split must run precisely along the center line of the face — same eye height, nose position, mouth alignment, and shoulder line continuing seamlessly from left to right.
+    styleBlock = `Generate a single image split exactly down the vertical center line. 
+LEFT HALF: Render as a realistic, photographic-style image, following the lighting and color-grading notes below normally. 
+RIGHT HALF: Render as retro 2D pixel art following the rules below, ignoring photographic/cinematic lighting for that half. 
+The background architecture, props, and setting must align perfectly across the center line, continuing seamlessly from the left half into the right half. There must be zero discontinuity in background perspective, pose, framing, or composition between the two halves. The vertical split must run precisely along the center line of the face (same eye height, nose position, mouth alignment, and shoulder line continuing seamlessly).
 
 ${pixelStyleBlock(state.pixelDepth, 'RIGHT HALF ONLY —')}`;
     const bit = state.pixelDepth === '8' ? '8' : '16';
-    closingReinforcement = `\n\nFinal reminder: the right half must look like an actual ${bit}-bit pixel art game screenshot, not a stylized illustration — flat colors, visible pixel grid, hard edges, applied to its background too, not only the character.`;
+    closingReinforcement = `\nFinal reminder: the right half must look like an actual ${bit}-bit pixel art game screenshot, not a stylized illustration. The background environment must continue perfectly and seamlessly across the split line. Do not draw a different room or background on the right side.`;
   }
 
   const usingImageReference = (state.charMode === 'copy' && state.copyMode === 'image');
   const referenceStyleNote = (usingImageReference && state.style !== 'realista')
-    ? `\n\nREFERENCE IMAGE VS RENDER STYLE — READ CAREFULLY: the attached reference photo is used ONLY to copy the woman's facial identity, hairstyle, and outfit design (shapes, colors, materials, patterns, footwear). It is NOT a style reference and must have ZERO influence on how the final image is rendered. Whatever art style the reference photo itself is in — realistic photo, digital painting, anime illustration, high-detail render, or anything else — completely ignore and override that, and render the ENTIRE final image (her, her clothes, and the whole background) strictly following the render style instructions below instead. Do not let the reference photo's level of detail, shading softness, or rendering quality leak into the output in any way.`
+    ? `\nREFERENCE IMAGE VS RENDER STYLE: The attached reference photo is used ONLY for the woman's facial identity, hairstyle, and outfit design. It is NOT a style reference. Override its rendering style and follow the [ RENDER STYLE ] block instead.`
     : '';
   const referenceStyleClosing = (usingImageReference && state.style !== 'realista')
-    ? ` The attached reference photo's own rendering style must not appear anywhere in the output — only its facial identity, hairstyle, and outfit design were used.`
+    ? ` The reference photo's own rendering style must not appear in the output.`
+    : '';
+
+  const filterBlock = state.colorFilter !== 'nenhum' 
+    ? `\nColor Grading and Texture: ${FILTER_INSTRUCTIONS[state.colorFilter]}` 
     : '';
 
   out.classList.remove('empty');
-  out.textContent = `Generate an image depicting ${characterClause}. She is ${state.pose.text}, with ${state.expression.text}, ${lipstickClause}, ${accessoriesClause}${state.clothing.text}, ${state.world.text} Camera angle: ${state.camera.text}.
-
+  out.textContent = `[ CHARACTER & OUTFIT ]
+${characterClause}. 
+${state.pose.text}
+${state.expression.text}
+${lipstickClause}
+${accessoriesClause}${state.clothing.text}
 ${gazeNote('protagonist')}
 
+[ ENVIRONMENT ]
+${state.world.text}
 ${cultureNote}
-${referenceStyleNote}
 
-${styleBlock}
+[ CAMERA & COMPOSITION ]
+Camera angle: ${state.camera.text}. (Focus strictly on the camera framing; if the body pose description conflicts with the framing, prioritize the camera framing).
+
+[ RENDER STYLE & COLOR GRADING ]
+${styleBlock}${filterBlock}
+${referenceStyleNote}
 
 1792x1024, landscape widescreen format.${closingReinforcement}${referenceStyleClosing}`;
 }
@@ -1273,6 +1307,23 @@ document.querySelectorAll('#companion-distance-pills .pill').forEach(pill => {
 });
 document.getElementById('companion-custom').addEventListener('input', renderCompanionOutput);
 
+document.querySelectorAll('#companion-side-pills .pill').forEach(pill => {
+  pill.addEventListener('click', () => {
+    document.querySelectorAll('#companion-side-pills .pill').forEach(p => p.classList.remove('selected'));
+    pill.classList.add('selected');
+    state.companionSide = pill.dataset.value;
+    renderCompanionOutput();
+  });
+});
+document.querySelectorAll('#companion-existing-pills .pill').forEach(pill => {
+  pill.addEventListener('click', () => {
+    document.querySelectorAll('#companion-existing-pills .pill').forEach(p => p.classList.remove('selected'));
+    pill.classList.add('selected');
+    state.companionExisting = pill.dataset.value;
+    renderCompanionOutput();
+  });
+});
+
 function renderCompanionOutput(){
   const out = document.getElementById('output3');
   if(!state.companionPose || !state.companionExpression || !state.companionInteraction || !state.companionDistance){
@@ -1304,6 +1355,21 @@ function renderCompanionOutput(){
     distanceClause = `Distance: place the second character farther away from the protagonist within the same continuous environment already established in Image 1 — deeper in the background or in a distinct part of the scene. Because they are farther from the camera, they MUST be rendered noticeably smaller than the protagonist, following the exact same perspective, vanishing point, and scale-with-depth already visible in Image 1 — use any object already positioned in the background of Image 1 (architecture, altar, stairs, props, trees) as the scale reference for how much smaller something at that depth should appear. Their size must be the natural result of correct perspective at that depth, never an artificial or inconsistent shrink.`;
   }
 
+  let sideClause = '';
+  if(state.companionSide === 'esquerda'){
+    sideClause = `Side of the frame: position the new character on the LEFT side of the frame (adjusting the protagonist's position if needed to make room).`;
+  } else if(state.companionSide === 'direita'){
+    sideClause = `Side of the frame: position the new character on the RIGHT side of the frame (adjusting the protagonist's position if needed to make room).`;
+  } else if(state.companionSide === 'centro'){
+    sideClause = `Side of the frame: position the new character toward the center or center-background of the frame, between/behind the other characters rather than off to either edge.`;
+  } else {
+    sideClause = `Side of the frame: do not default to always placing the new character on the same side (e.g. always the right) purely out of habit — choose whichever side, or the center, best fits the scene's composition, the environment, and the interaction/distance described above. Left, right, and center are all equally valid depending on what makes sense for this specific scene.`;
+  }
+
+  const preservationClause = state.companionExisting === 'sim'
+    ? `PRESERVE EVERYONE ALREADY IN THE SCENE — CRITICAL: Image 1 already contains the protagonist AND one or more previously added extra characters. None of them may be removed, replaced, redesigned, recolored, repositioned against their will, or altered in any way by this edit. This prompt only ADDS ONE MORE new character (described below) into the scene, on top of everyone who is already there. If the new character's requested placement, distance, or interaction would visually conflict with someone already present, adjust the new character's exact spot slightly to avoid overlap — but never remove, hide, or replace an existing character to make room.`
+    : `Do not remove, replace, or alter anything already present in Image 1 — the protagonist, the environment, and every prop already there must remain exactly as they are. This prompt only ADDS the new second character described below into the existing scene.`;
+
   const bit = state.pixelDepth === '8' ? '8' : '16';
   let companionClosingReminder = '';
   if(state.style === 'pixel' || state.style === 'metade'){
@@ -1312,29 +1378,40 @@ function renderCompanionOutput(){
     companionClosingReminder = ` The second character must match the same photographic realism, lighting, and level of detail as the protagonist and environment — not look like an illustration, painting, or different rendering quality pasted into a photo.`;
   }
 
-  out.textContent = `Use two reference images together. Image 1 is the already-generated main scene — it defines the protagonist's identity (face, hairstyle, outfit, colors) AND the exact render style, palette, and technique of the whole piece. Image 2 is only a design reference for the second character's clothing, physical appearance, and design (shapes, colors, materials, patterns, proportions, facial features) — it must NOT influence the render style of the final image in any way. This applies no matter what Image 2 itself looks like: even if Image 2 is a realistic photo, a detailed anime illustration, a digital painting, or any other polished/high-detail art, none of that rendering quality may carry over — only the design shown in it does.
+  const filterBlock = state.colorFilter !== 'nenhum' 
+    ? `\nColor Grading and Texture: ${FILTER_INSTRUCTIONS[state.colorFilter]}` 
+    : '';
 
-PROTAGONIST: keep her face, hairstyle, outfit, colors, and identity exactly as she appears in Image 1 — that must never change. However, her position, pose, body orientation, and where she stands in the frame CAN be changed freely as needed to accommodate the second character and the interaction described below; she is not locked to her original spot, she may move to a different part of the scene, turn around, change her stance, or reposition entirely if that serves the composition better.
+  out.textContent = `[ REFERENCES SETUP ]
+Use two reference images together. 
+Image 1: The already-generated main scene. Defines the protagonist's identity (face, hairstyle, outfit, colors)${state.companionExisting === 'sim' ? ', the identity of any other previously added character(s),' : ''} and the exact render style, palette, and technique of the whole piece. 
+Image 2: Design reference for the new second character's clothing and physical appearance ONLY. It must not influence the final render style.
 
-SECOND CHARACTER: replicate their clothing, physical appearance, and design exactly as shown in Image 2 — proportions, outfit details, colors, and features must match Image 2 faithfully. Give them this pose: ${state.companionPose.text}. Give them this facial expression: ${state.companionExpression.text}.${customPart}
+${preservationClause}
 
+[ PROTAGONIST ]
+Identity: Keep her face, hairstyle, outfit, and colors exactly as shown in Image 1.
+Positioning: Her position and pose can be adjusted freely to accommodate the new character and interaction.
+
+[ NEW SECOND CHARACTER (from Image 2) ]
+Identity & Clothing: Replicate proportions, outfit, colors, and facial features faithfully from Image 2.
+Pose: ${state.companionPose.text}. 
+Expression: ${state.companionExpression.text}.${customPart}
 ${gazeNote('companion')}
 
-INTERACTION: ${interactionClause}
-
+[ COMPOSITION & INTERACTION ]
+Interaction: ${interactionClause}
 ${distanceClause}
+${sideClause}
+Placement Freedom: The new character is not just a background add-on. Place them anywhere in the environment established in Image 1, slightly extending or rearranging props around them if needed, while keeping the core setting recognizable.
+Perspective and Scale: Every character must share the same camera angle, horizon line, and vanishing point established in Image 1. Match depth and apparent size precisely.
 
-PLACEMENT FREEDOM: the second character is just as important to the composition as the protagonist. They are not a background add-on — feel free to place them anywhere in the environment already established in Image 1 (foreground, background, to a side, near a different part of the architecture or scenery) and to slightly extend, add to, or rearrange props/set-dressing/background elements around them if needed, as long as the core location, architecture, and identity of the setting from Image 1 stays recognizable and consistent — do not invent a completely different setting.
+[ RENDER STYLE & MATCHING ]
+Image 1 Match: Reproduce Image 1's exact rendering technique for the new character (same color palette, detail level, and shading). Override any style from Image 2.
+${namedStyleReferenceBlock()}${filterBlock}
+Cohesion: Both characters and the environment must look like they were rendered together in a single, unified frame, with consistent resolution, linework, and lighting.
 
-PERSPECTIVE AND SCALE — CRITICAL: both characters must share the exact same camera angle, horizon line, and vanishing point already established in Image 1. Apparent size must always match depth: anything placed farther from the camera must appear smaller in direct proportion to its distance, exactly like other background elements already present in Image 1 (distant objects, architecture, or props). Neither character should look pasted in, floating, mismatched in scale, or physically inconsistent with the scene's established perspective — they must appear to genuinely occupy the same physical space, at whatever depth they are placed.
-
-RENDER STYLE — ABSOLUTE MATCH REQUIRED, NO EXCEPTIONS: look closely at Image 1 and reproduce its exact rendering technique for the second character — the same color palette, the same level of detail, the same edge treatment (soft or hard), the same shading approach, the same overall resolution and rendering quality already visible in Image 1. This must be a precise visual match, not an approximation or your own interpretation of "similar" style — do not improve it, sharpen it, add extra detail, or polish it beyond what is already established in Image 1, and do not carry over any trace of Image 2's original art style, line quality, shading technique, or level of polish, no matter how good or detailed Image 2 looks. Only the second character's design (clothing, proportions, features) comes from Image 2 — never their rendering technique. To remove any ambiguity, here is the exact style also written out as an explicit specification — use it together with what you see in Image 1, not instead of it:
-
-${namedStyleReferenceBlock()}
-
-Both characters and the whole environment must look like they were rendered together in a single, unified frame, with fully consistent resolution, palette, linework, and lighting throughout — no part of the image may look like it was pasted in from a different art style or a different level of polish.
-
-1792x1024, landscape widescreen format, maintaining the same overall camera perspective as Image 1, expanded or adjusted only as much as needed to fit both characters together coherently at their intended distance.${companionClosingReminder}`;
+1792x1024, landscape widescreen format. Maintain the camera perspective from Image 1, adjusted only to fit both characters.${companionClosingReminder}`;
 }
 
 // ---------- COPY BUTTONS ----------
@@ -1363,58 +1440,8 @@ function setupCopy(btnId, outId){
     }
   });
 }
-setupCopy('copyReader','readerPrompt');
 setupCopy('copy1','output1');
-setupCopy('copy2','output2');
 setupCopy('copy3','output3');
-
-// ---------- MUSIC SECTION ----------
-const MUSIC_COLLECTIONS = COLLECTIONS.filter(c => MUSIC[c.id]);
-
-function renderMusicOutput(){
-  const out = document.getElementById('output2');
-  if(!state.musicCollection || !state.musicMood){
-    out.classList.add('empty');
-    out.textContent = 'escolha a coleção e o humor acima para ver o prompt de música...';
-    return;
-  }
-  out.classList.remove('empty');
-  out.textContent = state.musicMood.text;
-}
-
-const musicCollectionGrid = document.getElementById('music-collection-grid');
-MUSIC_COLLECTIONS.forEach((c) => {
-  const card = document.createElement('div');
-  card.className = 'card world';
-  card.innerHTML = `<div class="swatch-bar" style="background:${c.color}"></div><div class="name">${c.name}</div>`;
-  card.style.setProperty('--card-color', c.color);
-  card.style.setProperty('--card-color-dim', hexToRgba(c.color, 0.14));
-
-  card.addEventListener('click', () => {
-    [...musicCollectionGrid.children].forEach(el => el.classList.remove('selected'));
-    card.classList.add('selected');
-    state.musicCollection = c;
-    state.musicMood = null;
-
-    const moodPills = document.getElementById('music-mood-pills');
-    moodPills.innerHTML = '';
-    MUSIC[c.id].forEach(track => {
-      const pill = document.createElement('div');
-      pill.className = 'pill';
-      pill.textContent = track.mood;
-      pill.addEventListener('click', () => {
-        moodPills.querySelectorAll('.pill').forEach(p => p.classList.remove('selected'));
-        pill.classList.add('selected');
-        state.musicMood = track;
-        renderMusicOutput();
-      });
-      moodPills.appendChild(pill);
-    });
-    document.getElementById('music-mood-wrap').style.display = 'block';
-    renderMusicOutput();
-  });
-  musicCollectionGrid.appendChild(card);
-});
 
 render();
 renderCompanionOutput();
