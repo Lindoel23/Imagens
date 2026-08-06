@@ -1216,11 +1216,11 @@ function render(){
     styleBlock = `Generate a single image split exactly down the vertical center line. 
 LEFT HALF: Render as a realistic, photographic-style image, following the lighting and color-grading notes below normally. 
 RIGHT HALF: Render as retro 2D pixel art following the rules below, ignoring photographic/cinematic lighting for that half. 
-The background architecture, props, and setting must align perfectly across the center line, continuing seamlessly from the left half into the right half. There must be zero discontinuity in background perspective, pose, framing, or composition between the two halves. The vertical split must run precisely along the center line of the face (same eye height, nose position, mouth alignment, and shoulder line continuing seamlessly).
+CRITICAL: Do NOT generate a collage, a diptych, or two separate images placed side-by-side. Do NOT duplicate the background or create two vanishing points. This is ONE single, continuous, unbroken environment with ONE single vanishing point and unified perspective. The ONLY thing that splits down the middle is the rendering style, NOT the physical geometry of the scene. The vertical split must run precisely along the center line of the face (same eye height, nose position, mouth alignment, and shoulder line continuing seamlessly).
 
 ${pixelStyleBlock(state.pixelDepth, 'RIGHT HALF ONLY —')}`;
     const bit = state.pixelDepth === '8' ? '8' : '16';
-    closingReinforcement = `\nFinal reminder: the right half must look like an actual ${bit}-bit pixel art game screenshot, not a stylized illustration. The background environment must continue perfectly and seamlessly across the split line. Do not draw a different room or background on the right side.`;
+    closingReinforcement = `\nFinal reminder: the right half must look like an actual ${bit}-bit pixel art game screenshot. The background environment must continue perfectly and seamlessly across the split line. Do NOT draw a different room, a repeated background, or a second vanishing point on the right side. It is one single continuous room.`;
   }
 
   const usingImageReference = (state.charMode === 'copy' && state.copyMode === 'image');
