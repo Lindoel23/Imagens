@@ -152,6 +152,30 @@
   .char-mode-panel{ display:none; }
   .char-mode-panel.visible{ display:block; }
 
+  /* â”€â”€ companion multi-slot â”€â”€ */
+  .companion-slots{ display:flex; align-items:center; gap:8px; margin-bottom:22px; flex-wrap:wrap; }
+  .slot-btn{
+    width:40px; height:40px; border-radius:50%; border:2px solid transparent;
+    font-family:var(--mono); font-size:15px; font-weight:700; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition:all .15s ease; opacity:0.4; color:#000;
+  }
+  .slot-btn:hover{ opacity:0.7; transform:scale(1.08); }
+  .slot-btn.active{ border-color:#fff; opacity:1; box-shadow:0 0 0 2px var(--bg), 0 0 14px var(--slot-color); }
+  .slot-btn.has-data{ opacity:0.8; }
+  .clear-slot-btn{
+    font-family:var(--mono); font-size:11px; background:transparent; color:var(--ink-dim);
+    border:1px solid var(--panel-line); padding:8px 14px; border-radius:20px; cursor:pointer;
+    letter-spacing:0.05em; transition:all .15s ease; margin-left:4px;
+  }
+  .clear-slot-btn:hover{ border-color:#ff6b6b; color:#ff6b6b; }
+  #sec-companion .pill.selected{
+    border-color: var(--active-slot-color, var(--accent));
+    background: var(--active-slot-color-dim, var(--accent-dim));
+  }
+  .pill .slot-indicators{ display:inline-flex; gap:3px; margin-left:7px; vertical-align:middle; pointer-events:none; }
+  .pill .slot-dot{ width:8px; height:8px; border-radius:50%; display:inline-block; flex-shrink:0; }
+
   @media (max-width: 780px){
     body{ flex-direction: column; }
     .sidebar{ width: 100%; height: auto; position: sticky; top: 0; z-index: 10; border-right:none; border-bottom:1px solid var(--panel-line); padding: 14px 16px; background: var(--bg); }
@@ -435,8 +459,18 @@
   </section>
 
   <section id="sec-companion">
-    <div class="section-label"><span class="n">10</span> Personagem extra — adicionar alguém na cena (usa 2 imagens de referência)</div>
-    <div class="sub" style="margin-bottom:16px;">Esse prompt é feito pra ser usado com <b>duas imagens de referência</b>: a <b>Imagem 1</b> é a cena principal que já saiu (protagonista, cenário e estilo já prontos). A <b>Imagem 2</b> é a foto/referência do personagem extra que você já tem — roupas e aparência dele(a) vêm dessa imagem, então não precisa descrever isso aqui. Escolha a <b>pose</b>, a <b>expressão</b>, se ele(a) vai <b>interagir</b> com o protagonista e a <b>distância</b> entre eles, e o prompt já monta sozinho. O personagem extra agora tem o mesmo peso da protagonista na cena — ele pode ficar em qualquer parte do cenário (perto, longe, atrás, do lado), e o protagonista também pode mudar de posição livremente para acomodar isso.</div>
+    <div class="section-label"><span class="n">10</span> Personagem extra — adicionar até 5 personagens extras na cena</div>
+    <div class="sub" style="margin-bottom:16px;">Esse prompt é feito pra ser usado com <b>múltiplas imagens de referência</b>: a <b>Imagem 1</b> é a cena principal que já saiu (protagonista, cenário e estilo já prontos). As <b>imagens seguintes</b> (2, 3, 4...) são as fotos/referências dos personagens extras. Configure cada personagem extra clicando nos números abaixo — cada número salva suas próprias opções. Escolha <b>pose</b>, <b>expressão</b>, <b>interação</b>, <b>distância</b> e <b>detalhes</b> de cada um, e o prompt monta tudo sozinho num bloco só. As <b>bolinhas coloridas</b> nas opções mostram quais personagens já escolheram aquela opção.</div>
+
+    <div class="companion-slots">
+      <div class="slot-btn active" data-slot="0" style="background:#ff6b6b; --slot-color:#ff6b6b;">1</div>
+      <div class="slot-btn" data-slot="1" style="background:#ffd93d; --slot-color:#ffd93d; color:#333;">2</div>
+      <div class="slot-btn" data-slot="2" style="background:#6bcb77; --slot-color:#6bcb77;">3</div>
+      <div class="slot-btn" data-slot="3" style="background:#4d96ff; --slot-color:#4d96ff;">4</div>
+      <div class="slot-btn" data-slot="4" style="background:#c084fc; --slot-color:#c084fc;">5</div>
+      <button class="clear-slot-btn" id="clear-slot-btn">&#10005; Limpar</button>
+    </div>
+
     <div class="opt-group">
       <div class="label">Pose do personagem extra</div>
       <div class="pills" id="companion-pose-pills"></div>
@@ -464,21 +498,14 @@
     <div class="opt-group">
       <div class="label">Lado da cena (evita o gerador sempre jogar pro mesmo lado)</div>
       <div class="pills" id="companion-side-pills">
-        <div class="pill selected" data-value="livre">Sem preferência — deixe o mais natural pra composição</div>
+        <div class="pill" data-value="livre">Sem preferência — deixe o mais natural pra composição</div>
         <div class="pill" data-value="esquerda">Esquerda</div>
         <div class="pill" data-value="direita">Direita</div>
         <div class="pill" data-value="centro">Centro / fundo central</div>
       </div>
     </div>
     <div class="opt-group">
-      <div class="label">Já existe algum outro personagem extra na cena (Imagem 1)?</div>
-      <div class="pills" id="companion-existing-pills">
-        <div class="pill selected" data-value="nao">Não — Imagem 1 só tem a protagonista</div>
-        <div class="pill" data-value="sim">Sim — já tem 1 ou mais personagens extras que preciso manter</div>
-      </div>
-    </div>
-    <div class="opt-group">
-      <div class="label">Descrição customizada (opcional — some ao final do prompt)</div>
+      <div class="label">Descrição customizada (opcional — some ao final do prompt deste personagem)</div>
       <textarea id="companion-custom" rows="3" placeholder="ex: segurando uma tocha, com uma cicatriz no rosto, etc."></textarea>
     </div>
     <div class="output" style="margin-top:20px;">
@@ -486,9 +513,9 @@
         <span>prompt_personagem_extra.txt</span>
         <button class="copy-btn" id="copy3">copiar</button>
       </div>
-      <div class="output-body empty" id="output3">escolha a pose e a expressão do personagem extra acima para montar o prompt...</div>
+      <div class="output-body empty" id="output3">configure pelo menos um personagem extra acima para montar o prompt...</div>
     </div>
-    <div class="note">Cole a <b>Imagem 1</b> (gerada pelo prompt principal) e a <b>Imagem 2</b> (referência do personagem extra) junto com esse texto no seu gerador (image-to-image / edição multi-imagem). Ele preserva 100% a arte da Imagem 1, ajusta a escala dele conforme a distância/profundidade escolhida, e agora <b>não pede mais pro gerador "adivinhar" o estilo olhando a imagem</b> — ele usa como referência nomeada exatamente o estilo que você escolheu lá na seção 07 (Realista / Pixel Art / Metade). Se ainda não escolheu um estilo lá, escolha antes de copiar este prompt.</div>
+    <div class="note">Cole a <b>Imagem 1</b> (gerada pelo prompt principal) e as <b>imagens de referência</b> dos personagens extras (Imagem 2, 3, 4...) <b>em ordem</b> junto com esse texto no seu gerador. Ele preserva 100% a arte da Imagem 1 e adiciona todos os personagens extras de uma vez. Se ainda não escolheu um estilo na seção 07, escolha antes de copiar este prompt.</div>
   </section>
 
 </div>
@@ -750,10 +777,6 @@ const state = {
   pixelDepth: '8', // '16' | '8'
   style: null,
   colorFilter: 'nenhum', // 'nenhum', 'teal', 'red', 'cyan', 'amber', 'magenta'
-  // companion
-  companionPose: null, companionExpression: null,
-  companionInteraction: null, companionDistance: null,
-  companionSide: 'livre', companionExisting: 'nao',
   // music
   musicCollection: null, musicMood: null,
 };
@@ -1258,16 +1281,24 @@ ${referenceStyleNote}
 1792x1024, landscape widescreen format.${closingReinforcement}${referenceStyleClosing}`;
 }
 
-// ---------- COMPANION (personagem extra) ----------
+// ---------- COMPANION MULTI-SLOT SYSTEM ----------
+const SLOT_COLORS = ['#ff6b6b', '#ffd93d', '#6bcb77', '#4d96ff', '#c084fc'];
+let activeCompanionSlot = 0;
+const companionSlots = Array.from({length: 5}, () => ({
+  pose: null, expression: null, interaction: null, distance: null,
+  side: 'livre', custom: ''
+}));
+
 const companionPosePills = document.getElementById('companion-pose-pills');
 POSES.forEach(p => {
   const pill = document.createElement('div');
   pill.className = 'pill';
+  pill.dataset.poseTag = p.tag;
   pill.textContent = p.name;
   pill.addEventListener('click', () => {
-    companionPosePills.querySelectorAll('.pill').forEach(el => el.classList.remove('selected'));
-    pill.classList.add('selected');
-    state.companionPose = p;
+    const slot = companionSlots[activeCompanionSlot];
+    slot.pose = (slot.pose && slot.pose.tag === p.tag) ? null : p;
+    loadSlotUI();
     renderCompanionOutput();
   });
   companionPosePills.appendChild(pill);
@@ -1277,143 +1308,248 @@ const companionExpressionPills = document.getElementById('companion-expression-p
 EXPRESSIONS.forEach(exp => {
   const pill = document.createElement('div');
   pill.className = 'pill';
+  pill.dataset.expName = exp.name;
   pill.textContent = exp.name;
   pill.addEventListener('click', () => {
-    companionExpressionPills.querySelectorAll('.pill').forEach(el => el.classList.remove('selected'));
-    pill.classList.add('selected');
-    state.companionExpression = exp;
+    const slot = companionSlots[activeCompanionSlot];
+    slot.expression = (slot.expression && slot.expression.name === exp.name) ? null : exp;
+    loadSlotUI();
     renderCompanionOutput();
   });
   companionExpressionPills.appendChild(pill);
 });
 
-// ---------- COMPANION INTERACTION / DISTANCE ----------
 document.querySelectorAll('#companion-interaction-pills .pill').forEach(pill => {
   pill.addEventListener('click', () => {
-    document.querySelectorAll('#companion-interaction-pills .pill').forEach(p => p.classList.remove('selected'));
-    pill.classList.add('selected');
-    state.companionInteraction = pill.dataset.value;
-    document.getElementById('companion-distance-wrap').style.display = '';
+    const slot = companionSlots[activeCompanionSlot];
+    slot.interaction = (slot.interaction === pill.dataset.value) ? null : pill.dataset.value;
+    document.getElementById('companion-distance-wrap').style.display = slot.interaction ? '' : 'none';
+    loadSlotUI();
     renderCompanionOutput();
   });
 });
+
 document.querySelectorAll('#companion-distance-pills .pill').forEach(pill => {
   pill.addEventListener('click', () => {
-    document.querySelectorAll('#companion-distance-pills .pill').forEach(p => p.classList.remove('selected'));
-    pill.classList.add('selected');
-    state.companionDistance = pill.dataset.value;
+    const slot = companionSlots[activeCompanionSlot];
+    slot.distance = (slot.distance === pill.dataset.value) ? null : pill.dataset.value;
+    loadSlotUI();
     renderCompanionOutput();
   });
 });
-document.getElementById('companion-custom').addEventListener('input', renderCompanionOutput);
 
 document.querySelectorAll('#companion-side-pills .pill').forEach(pill => {
   pill.addEventListener('click', () => {
-    document.querySelectorAll('#companion-side-pills .pill').forEach(p => p.classList.remove('selected'));
-    pill.classList.add('selected');
-    state.companionSide = pill.dataset.value;
-    renderCompanionOutput();
-  });
-});
-document.querySelectorAll('#companion-existing-pills .pill').forEach(pill => {
-  pill.addEventListener('click', () => {
-    document.querySelectorAll('#companion-existing-pills .pill').forEach(p => p.classList.remove('selected'));
-    pill.classList.add('selected');
-    state.companionExisting = pill.dataset.value;
+    companionSlots[activeCompanionSlot].side = pill.dataset.value;
+    loadSlotUI();
     renderCompanionOutput();
   });
 });
 
+document.getElementById('companion-custom').addEventListener('input', () => {
+  companionSlots[activeCompanionSlot].custom = document.getElementById('companion-custom').value;
+  renderCompanionOutput();
+});
+
+document.querySelectorAll('.slot-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    companionSlots[activeCompanionSlot].custom = document.getElementById('companion-custom').value;
+    activeCompanionSlot = parseInt(btn.dataset.slot);
+    document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const sec = document.getElementById('sec-companion');
+    sec.style.setProperty('--active-slot-color', SLOT_COLORS[activeCompanionSlot]);
+    sec.style.setProperty('--active-slot-color-dim', hexToRgba(SLOT_COLORS[activeCompanionSlot], 0.12));
+    loadSlotUI();
+  });
+});
+
+document.getElementById('clear-slot-btn').addEventListener('click', () => {
+  companionSlots[activeCompanionSlot] = {
+    pose: null, expression: null, interaction: null, distance: null,
+    side: 'livre', custom: ''
+  };
+  loadSlotUI();
+  renderCompanionOutput();
+});
+
+(function(){
+  const sec = document.getElementById('sec-companion');
+  sec.style.setProperty('--active-slot-color', SLOT_COLORS[0]);
+  sec.style.setProperty('--active-slot-color-dim', hexToRgba(SLOT_COLORS[0], 0.12));
+})();
+
+function loadSlotUI(){
+  const slot = companionSlots[activeCompanionSlot];
+
+  companionPosePills.querySelectorAll('.pill').forEach(pill => {
+    pill.classList.toggle('selected', !!(slot.pose && slot.pose.tag === pill.dataset.poseTag));
+  });
+
+  companionExpressionPills.querySelectorAll('.pill').forEach(pill => {
+    pill.classList.toggle('selected', !!(slot.expression && slot.expression.name === pill.dataset.expName));
+  });
+
+  document.querySelectorAll('#companion-interaction-pills .pill').forEach(pill => {
+    pill.classList.toggle('selected', slot.interaction === pill.dataset.value);
+  });
+
+  document.getElementById('companion-distance-wrap').style.display = slot.interaction ? '' : 'none';
+
+  document.querySelectorAll('#companion-distance-pills .pill').forEach(pill => {
+    pill.classList.toggle('selected', slot.distance === pill.dataset.value);
+  });
+
+  document.querySelectorAll('#companion-side-pills .pill').forEach(pill => {
+    pill.classList.toggle('selected', slot.side === pill.dataset.value);
+  });
+
+  document.getElementById('companion-custom').value = slot.custom || '';
+
+  document.querySelectorAll('.slot-btn').forEach(btn => {
+    const idx = parseInt(btn.dataset.slot);
+    const s = companionSlots[idx];
+    btn.classList.toggle('has-data', !!(s.pose || s.expression || s.interaction || s.custom));
+  });
+
+  updateSlotIndicators();
+}
+
+function updateSlotIndicators(){
+  document.getElementById('sec-companion').querySelectorAll('.pill').forEach(pill => {
+    const existing = pill.querySelector('.slot-indicators');
+    if(existing) existing.remove();
+
+    const usedBy = [];
+    const parentId = pill.parentElement.id;
+
+    for(let i = 0; i < 5; i++){
+      const s = companionSlots[i];
+      if(!s.pose && !s.expression) continue;
+
+      let match = false;
+      if(parentId === 'companion-pose-pills' && s.pose && s.pose.tag === pill.dataset.poseTag) match = true;
+      else if(parentId === 'companion-expression-pills' && s.expression && s.expression.name === pill.dataset.expName) match = true;
+      else if(parentId === 'companion-interaction-pills' && s.interaction === pill.dataset.value) match = true;
+      else if(parentId === 'companion-distance-pills' && s.distance === pill.dataset.value) match = true;
+      else if(parentId === 'companion-side-pills' && s.side === pill.dataset.value) match = true;
+
+      if(match) usedBy.push(i);
+    }
+
+    if(usedBy.length > 0){
+      const container = document.createElement('span');
+      container.className = 'slot-indicators';
+      usedBy.forEach(idx => {
+        const dot = document.createElement('span');
+        dot.className = 'slot-dot';
+        dot.style.background = SLOT_COLORS[idx];
+        container.appendChild(dot);
+      });
+      pill.appendChild(container);
+    }
+  });
+}
+
 function renderCompanionOutput(){
   const out = document.getElementById('output3');
-  if(!state.companionPose || !state.companionExpression || !state.companionInteraction || !state.companionDistance){
+
+  const configuredSlots = [];
+  for(let i = 0; i < 5; i++){
+    const s = companionSlots[i];
+    if(s.pose && s.expression && s.interaction && s.distance){
+      configuredSlots.push({ index: i, data: s });
+    }
+  }
+
+  if(configuredSlots.length === 0){
     out.classList.add('empty');
-    out.textContent = 'escolha a pose, a expressão, a interação e a distância do personagem extra acima para montar o prompt...';
+    out.textContent = 'configure pelo menos um personagem extra acima (pose, expressão, interação e distância) para montar o prompt...';
     return;
   }
 
   out.classList.remove('empty');
-  const customEl = document.getElementById('companion-custom');
-  const custom = customEl ? customEl.value.trim() : '';
-  const customPart = custom ? ` Additional details for the second character: ${custom}.` : '';
+  const totalImages = configuredSlots.length + 1;
 
-  let interactionClause = '';
-  if(state.companionInteraction === 'conversando'){
-    interactionClause = `The second character is actively conversing with the protagonist — both oriented toward each other, making eye contact or clearly engaged in a natural dialogue exchange, body language showing they are talking together.`;
-  } else if(state.companionInteraction === 'interagindo'){
-    interactionClause = `The second character is interacting with the protagonist without necessarily speaking — through eye contact, a gesture, a touch, or a shared action — both clearly aware of and responding to each other's presence.`;
-  } else {
-    interactionClause = `The second character is NOT interacting with the protagonist at all — they are doing their own separate thing, unaware of or unconcerned with her. Because there is no interaction between them, the second character does not need to be placed near the protagonist: position them wherever is most logical within the environment already established in Image 1 (deeper in the background, off to one side, in the foreground, near a different part of the architecture or scenery), wherever best fits what they are doing.`;
-  }
+  let refLines = `Use ${totalImages} reference images together.\nImage 1: The already-generated main scene. Defines the protagonist's identity (face, hairstyle, outfit, colors) and the exact render style, palette, and technique of the whole piece.`;
+  configuredSlots.forEach((cs, idx) => {
+    refLines += `\nImage ${idx + 2}: Design reference for Character #${idx + 1}'s clothing and physical appearance ONLY. It must not influence the final render style.`;
+  });
 
-  let distanceClause = '';
-  if(state.companionDistance === 'perto'){
-    distanceClause = `Distance: keep the second character close to the protagonist — side by side or within a few natural steps of her, occupying roughly the same depth plane in the scene, with a similar apparent size to the protagonist since they are both a similar distance from the camera.`;
-  } else if(state.companionDistance === 'media'){
-    distanceClause = `Distance: place the second character at a moderate distance from the protagonist — clearly separated, not side by side, but still within the same general area of the scene or a plane slightly in front of or behind her, with a small, natural difference in apparent size based on that slight depth change.`;
-  } else {
-    distanceClause = `Distance: place the second character farther away from the protagonist within the same continuous environment already established in Image 1 — deeper in the background or in a distinct part of the scene. Because they are farther from the camera, they MUST be rendered noticeably smaller than the protagonist, following the exact same perspective, vanishing point, and scale-with-depth already visible in Image 1 — use any object already positioned in the background of Image 1 (architecture, altar, stairs, props, trees) as the scale reference for how much smaller something at that depth should appear. Their size must be the natural result of correct perspective at that depth, never an artificial or inconsistent shrink.`;
-  }
+  const preservationClause = `Do not remove, replace, or alter anything already present in Image 1 â€” the protagonist, the environment, and every prop already there must remain exactly as they are. This prompt ADDS ${configuredSlots.length} new character${configuredSlots.length > 1 ? 's' : ''} described below into the existing scene. All new characters must coexist in the same frame together with the protagonist.`;
 
-  let sideClause = '';
-  if(state.companionSide === 'esquerda'){
-    sideClause = `Side of the frame: position the new character on the LEFT side of the frame (adjusting the protagonist's position if needed to make room).`;
-  } else if(state.companionSide === 'direita'){
-    sideClause = `Side of the frame: position the new character on the RIGHT side of the frame (adjusting the protagonist's position if needed to make room).`;
-  } else if(state.companionSide === 'centro'){
-    sideClause = `Side of the frame: position the new character toward the center or center-background of the frame, between/behind the other characters rather than off to either edge.`;
-  } else {
-    sideClause = `Side of the frame: do not default to always placing the new character on the same side (e.g. always the right) purely out of habit — choose whichever side, or the center, best fits the scene's composition, the environment, and the interaction/distance described above. Left, right, and center are all equally valid depending on what makes sense for this specific scene.`;
-  }
+  let characterBlocks = '';
+  configuredSlots.forEach((cs, idx) => {
+    const s = cs.data;
+    const imgNum = idx + 2;
+    const charNum = idx + 1;
+    const customPart = s.custom ? ` Additional details: ${s.custom}.` : '';
 
-  const preservationClause = state.companionExisting === 'sim'
-    ? `PRESERVE EVERYONE ALREADY IN THE SCENE — CRITICAL: Image 1 already contains the protagonist AND one or more previously added extra characters. None of them may be removed, replaced, redesigned, recolored, repositioned against their will, or altered in any way by this edit. This prompt only ADDS ONE MORE new character (described below) into the scene, on top of everyone who is already there. If the new character's requested placement, distance, or interaction would visually conflict with someone already present, adjust the new character's exact spot slightly to avoid overlap — but never remove, hide, or replace an existing character to make room.`
-    : `Do not remove, replace, or alter anything already present in Image 1 — the protagonist, the environment, and every prop already there must remain exactly as they are. This prompt only ADDS the new second character described below into the existing scene.`;
+    let interactionClause = '';
+    if(s.interaction === 'conversando'){
+      interactionClause = `Character #${charNum} is actively conversing with the protagonist â€” both oriented toward each other, making eye contact or clearly engaged in dialogue.`;
+    } else if(s.interaction === 'interagindo'){
+      interactionClause = `Character #${charNum} is interacting with the protagonist without speaking â€” through eye contact, a gesture, a touch, or a shared action.`;
+    } else {
+      interactionClause = `Character #${charNum} is NOT interacting with the protagonist â€” they are doing their own thing independently. Position them wherever is most logical within the environment.`;
+    }
+
+    let distanceClause = '';
+    if(s.distance === 'perto'){
+      distanceClause = `Distance: close to the protagonist â€” side by side or within a few steps, similar apparent size.`;
+    } else if(s.distance === 'media'){
+      distanceClause = `Distance: moderate distance from the protagonist â€” clearly separated but in the same general area, small natural size difference.`;
+    } else {
+      distanceClause = `Distance: farther away â€” deeper in the background, rendered noticeably smaller following correct perspective and scale.`;
+    }
+
+    let sideClause = '';
+    if(s.side === 'esquerda'){
+      sideClause = `Side: LEFT of the frame.`;
+    } else if(s.side === 'direita'){
+      sideClause = `Side: RIGHT of the frame.`;
+    } else if(s.side === 'centro'){
+      sideClause = `Side: CENTER or center-background of the frame.`;
+    } else {
+      sideClause = `Side: choose whichever position best fits the composition â€” left, right, or center.`;
+    }
+
+    characterBlocks += `\n\n[ NEW CHARACTER #${charNum} (from Image ${imgNum}) ]\nIdentity & Clothing: Replicate proportions, outfit, colors, and facial features faithfully from Image ${imgNum}.\nPose: ${s.pose.text}.\nExpression: ${s.expression.text}.${customPart}\n${gazeNote('companion')}\nInteraction: ${interactionClause}\n${distanceClause}\n${sideClause}`;
+  });
 
   const bit = state.pixelDepth === '8' ? '8' : '16';
   let companionClosingReminder = '';
   if(state.style === 'pixel' || state.style === 'metade'){
-    companionClosingReminder = ` The second character must NOT look sharper, smoother, cleaner, more detailed, or higher-resolution than the protagonist or the environment — if it looks like a polished illustration next to a pixel-art scene, that is wrong. It must be built from the exact same ${bit}-bit chunky pixel grid, flat color bands, and hard jagged edges as everything else in the frame, with zero anti-aliasing and zero soft shading, regardless of how detailed or smooth Image 2's original photo/art happens to be.`;
+    companionClosingReminder = ` All new characters must be built from the exact same ${bit}-bit chunky pixel grid, flat color bands, and hard jagged edges as everything else in the frame.`;
   } else if(state.style === 'realista'){
-    companionClosingReminder = ` The second character must match the same photographic realism, lighting, and level of detail as the protagonist and environment — not look like an illustration, painting, or different rendering quality pasted into a photo.`;
+    companionClosingReminder = ` All new characters must match the same photographic realism, lighting, and level of detail as the protagonist and environment.`;
   }
 
-  const filterBlock = state.colorFilter !== 'nenhum' 
-    ? `\nColor Grading and Texture: ${FILTER_INSTRUCTIONS[state.colorFilter]}` 
+  const filterBlock = state.colorFilter !== 'nenhum'
+    ? `\nColor Grading and Texture: ${FILTER_INSTRUCTIONS[state.colorFilter]}`
     : '';
 
   out.textContent = `[ REFERENCES SETUP ]
-Use two reference images together. 
-Image 1: The already-generated main scene. Defines the protagonist's identity (face, hairstyle, outfit, colors)${state.companionExisting === 'sim' ? ', the identity of any other previously added character(s),' : ''} and the exact render style, palette, and technique of the whole piece. 
-Image 2: Design reference for the new second character's clothing and physical appearance ONLY. It must not influence the final render style.
+${refLines}
 
 ${preservationClause}
 
 [ PROTAGONIST ]
 Identity: Keep her face, hairstyle, outfit, and colors exactly as shown in Image 1.
-Positioning: Her position and pose can be adjusted freely to accommodate the new character and interaction.
+Positioning: Her position and pose can be adjusted freely to accommodate the new character${configuredSlots.length > 1 ? 's' : ''} and interaction${configuredSlots.length > 1 ? 's' : ''}.${characterBlocks}
 
-[ NEW SECOND CHARACTER (from Image 2) ]
-Identity & Clothing: Replicate proportions, outfit, colors, and facial features faithfully from Image 2.
-Pose: ${state.companionPose.text}. 
-Expression: ${state.companionExpression.text}.${customPart}
-${gazeNote('companion')}
-
-[ COMPOSITION & INTERACTION ]
-Interaction: ${interactionClause}
-${distanceClause}
-${sideClause}
-Placement Freedom: The new character is not just a background add-on. Place them anywhere in the environment established in Image 1, slightly extending or rearranging props around them if needed, while keeping the core setting recognizable.
+[ COMPOSITION & SPACING ]
+${configuredSlots.length > 1 ? `There are ${configuredSlots.length} new characters being added. Distribute them across the scene so they do not overlap or crowd each other. Each character's distance and side-of-frame instructions above should be followed, adjusting slightly if needed to avoid visual collision.` : 'Place the new character according to the interaction, distance, and side instructions above.'}
+Placement Freedom: New characters are not just background add-ons. Place them anywhere in the environment established in Image 1, slightly extending or rearranging props if needed, while keeping the core setting recognizable.
 Perspective and Scale: Every character must share the same camera angle, horizon line, and vanishing point established in Image 1. Match depth and apparent size precisely.
 
 [ RENDER STYLE & MATCHING ]
-Image 1 Match: Reproduce Image 1's exact rendering technique for the new character (same color palette, detail level, and shading). Override any style from Image 2.
+Image 1 Match: Reproduce Image 1's exact rendering technique for all new characters (same color palette, detail level, and shading). Override any style from their reference images.
 ${namedStyleReferenceBlock()}${filterBlock}
-Cohesion: Both characters and the environment must look like they were rendered together in a single, unified frame, with consistent resolution, linework, and lighting.
+Cohesion: All characters and the environment must look like they were rendered together in a single, unified frame, with consistent resolution, linework, and lighting.
 
-1792x1024, landscape widescreen format. Maintain the camera perspective from Image 1, adjusted only to fit both characters.${companionClosingReminder}`;
+1792x1024, landscape widescreen format. Maintain the camera perspective from Image 1, adjusted only to fit all characters.${companionClosingReminder}`;
 }
-
 // ---------- COPY BUTTONS ----------
 function fallbackCopy(text){
   const ta = document.createElement('textarea');
@@ -1444,6 +1580,7 @@ setupCopy('copy1','output1');
 setupCopy('copy3','output3');
 
 render();
+loadSlotUI();
 renderCompanionOutput();
 </script>
 </body>
