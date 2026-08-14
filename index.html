@@ -169,7 +169,7 @@
     letter-spacing:0.05em; transition:all .15s ease; margin-left:4px;
   }
   .clear-slot-btn:hover{ border-color:#ff6b6b; color:#ff6b6b; }
-  #sec-companion .pill.selected, #sec-objects .pill.selected {
+  #sec-companion .pill.selected{
     border-color: var(--active-slot-color, var(--accent));
     background: var(--active-slot-color-dim, var(--accent-dim));
   }
@@ -207,8 +207,8 @@
     <a href="#sec-style"><span class="dot"></span>07 Estilo</a>
     <a href="#sec-filter"><span class="dot"></span>08 Filtro de cor</a>
     <a href="#sec-output"><span class="dot"></span>09 Prompt final</a>
+    <a href="#sec-items"><span class="dot"></span>05½ Objetos / Itens</a>
     <a href="#sec-companion"><span class="dot"></span>10 Personagem extra</a>
-    <a href="#sec-objects"><span class="dot"></span>11 Objetos</a>
   </div>
 </div>
 
@@ -406,6 +406,86 @@
     <div class="note" id="clothing-ref-note" style="display:none;">Anexe também a imagem de referência da roupa junto com o prompt final ao gerar a imagem — o prompt vai instruir a IA a reproduzir esse outfit exatamente.</div>
   </section>
 
+  <section id="sec-items">
+    <div class="section-label"><span class="n">05½</span> Objetos / Itens <span style="font-size:10px;color:var(--ink-dim);text-transform:none;letter-spacing:0;">(opcional)</span></div>
+    <div class="sub" style="margin-bottom:16px;">Adicione até 3 objetos que o personagem já vai estar usando/segurando/vestindo <b>quando a imagem for criada</b>. Se usar imagem de referência do objeto, anexe junto com o prompt na hora de gerar. Deixe vazio se não quiser nenhum objeto.</div>
+
+    <div class="opt-group">
+      <div class="label">Objeto 1</div>
+      <div class="pills" id="item1-interaction-pills">
+        <div class="pill" data-value="">Nenhum</div>
+        <div class="pill" data-value="empunhando">Empunhando / Segurando</div>
+        <div class="pill" data-value="mascara">Máscara / Capacete</div>
+        <div class="pill" data-value="vestindo">Vestindo no Corpo</div>
+        <div class="pill" data-value="posse">Em posse (Costas, Cintura)</div>
+        <div class="pill" data-value="cenario">No cenário (Chão, Parede)</div>
+      </div>
+      <div class="sub-panel" id="item1-detail" style="display:none;">
+        <div class="label">Modo de referência</div>
+        <div class="pills" id="item1-ref-pills">
+          <div class="pill selected" data-value="text">Descrever por texto</div>
+          <div class="pill" data-value="image">Imagem de referência</div>
+        </div>
+        <div id="item1-text-wrap" style="margin-top:10px;">
+          <textarea id="item1-desc" rows="2" placeholder="ex: uma katana negra com lâmina brilhante, uma máscara kitsune branca com detalhes dourados..."></textarea>
+        </div>
+        <div id="item1-image-wrap" style="display:none; margin-top:10px;">
+          <div class="note">Anexe a imagem de referência deste objeto junto com o prompt. O prompt vai instruir a IA a replicar o design exato do objeto mostrado nessa imagem.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="opt-group">
+      <div class="label">Objeto 2</div>
+      <div class="pills" id="item2-interaction-pills">
+        <div class="pill" data-value="">Nenhum</div>
+        <div class="pill" data-value="empunhando">Empunhando / Segurando</div>
+        <div class="pill" data-value="mascara">Máscara / Capacete</div>
+        <div class="pill" data-value="vestindo">Vestindo no Corpo</div>
+        <div class="pill" data-value="posse">Em posse (Costas, Cintura)</div>
+        <div class="pill" data-value="cenario">No cenário (Chão, Parede)</div>
+      </div>
+      <div class="sub-panel" id="item2-detail" style="display:none;">
+        <div class="label">Modo de referência</div>
+        <div class="pills" id="item2-ref-pills">
+          <div class="pill selected" data-value="text">Descrever por texto</div>
+          <div class="pill" data-value="image">Imagem de referência</div>
+        </div>
+        <div id="item2-text-wrap" style="margin-top:10px;">
+          <textarea id="item2-desc" rows="2" placeholder="ex: um escudo redondo de madeira com símbolo de lobo..."></textarea>
+        </div>
+        <div id="item2-image-wrap" style="display:none; margin-top:10px;">
+          <div class="note">Anexe a imagem de referência deste objeto junto com o prompt.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="opt-group">
+      <div class="label">Objeto 3</div>
+      <div class="pills" id="item3-interaction-pills">
+        <div class="pill" data-value="">Nenhum</div>
+        <div class="pill" data-value="empunhando">Empunhando / Segurando</div>
+        <div class="pill" data-value="mascara">Máscara / Capacete</div>
+        <div class="pill" data-value="vestindo">Vestindo no Corpo</div>
+        <div class="pill" data-value="posse">Em posse (Costas, Cintura)</div>
+        <div class="pill" data-value="cenario">No cenário (Chão, Parede)</div>
+      </div>
+      <div class="sub-panel" id="item3-detail" style="display:none;">
+        <div class="label">Modo de referência</div>
+        <div class="pills" id="item3-ref-pills">
+          <div class="pill selected" data-value="text">Descrever por texto</div>
+          <div class="pill" data-value="image">Imagem de referência</div>
+        </div>
+        <div id="item3-text-wrap" style="margin-top:10px;">
+          <textarea id="item3-desc" rows="2" placeholder="ex: uma lanterna antiga de metal com chama verde..."></textarea>
+        </div>
+        <div id="item3-image-wrap" style="display:none; margin-top:10px;">
+          <div class="note">Anexe a imagem de referência deste objeto junto com o prompt.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section id="sec-world">
     <div class="section-label"><span class="n">06</span> Cenário</div>
     <div class="opt-group">
@@ -519,48 +599,7 @@
     <div class="note">Cole a <b>Imagem 1</b> (gerada pelo prompt principal) e as <b>imagens de referência</b> dos personagens extras (Imagem 2, 3, 4...) <b>em ordem</b> junto com esse texto no seu gerador. Ele preserva 100% a arte da Imagem 1 e adiciona todos os personagens extras de uma vez. Se ainda não escolheu um estilo na seção 07, escolha antes de copiar este prompt.</div>
   </section>
 
-  <section id="sec-objects">
-    <div class="section-label"><span class="n">11</span> Objetos — adicionar até 3 objetos com referência</div>
-    <div class="sub" style="margin-bottom:16px;">Adicione até 3 objetos (como espadas, máscaras, itens mágicos) usando imagens de referência exclusivas. A <b>Imagem 1</b> deve ser a cena principal/personagem. As imagens seguintes (2, 3 e 4) serão usadas puramente como <b>design blueprint</b> para os objetos. O gerador vai manter o personagem intacto e colocar o objeto com ele.</div>
 
-    <div class="companion-slots" id="object-slots-container">
-      <div class="slot-btn active object-slot-btn" data-slot="0" style="background:#ff9f43; --slot-color:#ff9f43;">1</div>
-      <div class="slot-btn object-slot-btn" data-slot="1" style="background:#00d2d3; --slot-color:#00d2d3; color:#333;">2</div>
-      <div class="slot-btn object-slot-btn" data-slot="2" style="background:#feca57; --slot-color:#feca57; color:#333;">3</div>
-      <button class="clear-slot-btn" id="clear-object-btn">&#10005; Limpar</button>
-    </div>
-
-    <div class="opt-group">
-      <div class="label">Ação / Interação</div>
-      <div class="pills" id="object-interaction-pills">
-        <div class="pill" data-value="empunhando">Empunhando / Segurando nas mãos</div>
-        <div class="pill" data-value="mascara">Vestindo como Máscara / Capacete</div>
-        <div class="pill" data-value="vestindo">Vestindo no Corpo / Armadura</div>
-        <div class="pill" data-value="posse">Em posse (Cintura, Costas, Ombro)</div>
-        <div class="pill" data-value="cenario">No cenário (Chão, Parede)</div>
-      </div>
-    </div>
-    <div class="opt-group" id="object-target-wrap" style="display:none;">
-      <div class="label">Quem está interagindo?</div>
-      <div class="pills" id="object-target-pills">
-        <div class="pill selected" data-value="protagonist">Protagonista</div>
-        <div class="pill" data-value="companion1">Personagem Extra 1</div>
-        <div class="pill" data-value="companion2">Personagem Extra 2</div>
-      </div>
-    </div>
-    <div class="opt-group">
-      <div class="label">Descrição customizada do objeto (opcional — cor, tamanho, brilho)</div>
-      <textarea id="object-custom" rows="3" placeholder="ex: é uma espada enorme de duas mãos, com chamas azuis ao redor da lâmina."></textarea>
-    </div>
-    <div class="output" style="margin-top:20px;">
-      <div class="output-head">
-        <span>prompt_objetos.txt</span>
-        <button class="copy-btn" id="copy4">copiar</button>
-      </div>
-      <div class="output-body empty" id="output4">configure pelo menos um objeto acima para montar o prompt...</div>
-    </div>
-    <div class="note">Cole a <b>Imagem 1</b> (cena principal gerada) e as <b>imagens de referência</b> dos objetos <b>em ordem</b> junto com esse texto no seu gerador. Se ainda não escolheu um estilo na seção 07, escolha antes de copiar este prompt.</div>
-  </section>
 
 </div>
 
@@ -1097,7 +1136,6 @@ document.querySelectorAll('#style-pills .pill').forEach(pill => {
     document.getElementById('pixel-depth-wrap').style.display = showDepth ? '' : 'none';
     render();
     renderCompanionOutput();
-    if (typeof renderObjectOutput === 'function') renderObjectOutput();
   });
 });
 
@@ -1109,7 +1147,6 @@ document.querySelectorAll('#pixel-depth-pills .pill').forEach(pill => {
     state.pixelDepth = pill.dataset.value;
     render();
     renderCompanionOutput();
-    if (typeof renderObjectOutput === 'function') renderObjectOutput();
   });
 });
 
@@ -1122,7 +1159,6 @@ document.querySelectorAll('#filter-pills .pill').forEach(pill => {
     state.colorFilter = 'nenhum';
     render();
     renderCompanionOutput();
-    if (typeof renderObjectOutput === 'function') renderObjectOutput();
   });
 });
 document.querySelectorAll('#filter-swatches .swatch-btn').forEach(sw => {
@@ -1133,7 +1169,6 @@ document.querySelectorAll('#filter-swatches .swatch-btn').forEach(sw => {
     state.colorFilter = sw.dataset.value;
     render();
     renderCompanionOutput();
-    if (typeof renderObjectOutput === 'function') renderObjectOutput();
   });
 });
 
@@ -1240,6 +1275,32 @@ function gazeNote(subject){
 }
 
 
+function buildItemsClause(){
+  const items = [];
+  for(let i = 1; i <= 3; i++){
+    const interaction = state[`item${i}Interaction`];
+    if(!interaction) continue;
+    const refMode = state[`item${i}Ref`] || 'text';
+    const desc = state[`item${i}Desc`] || '';
+    items.push({ num: i, interaction, refMode, desc });
+  }
+  return items;
+}
+
+function itemInteractionText(interaction, desc, refMode, imgLabel){
+  const designSource = refMode === 'image'
+    ? `Replicate the exact design, shape, material, and colors of the object shown in ${imgLabel}.`
+    : (desc ? `Object design: ${desc}.` : '');
+
+  let verb = '';
+  if(interaction === 'empunhando') verb = 'She is actively holding/wielding this object in her hands.';
+  else if(interaction === 'mascara') verb = 'She is wearing this object on her face/head as a mask or helmet — it must be fitted on her, not held.';
+  else if(interaction === 'vestindo') verb = 'She is wearing/equipping this object on her body as armor or gear.';
+  else if(interaction === 'posse') verb = 'She is carrying this object — slung over her shoulder, strapped to her back, or hanging from her waist.';
+  else if(interaction === 'cenario') verb = 'This object is placed nearby in the environment — on the ground, leaning against a wall, or resting on a surface close to her.';
+  return `${designSource} ${verb}`.trim();
+}
+
 function render(){
   const out = document.getElementById('output1');
 
@@ -1306,6 +1367,40 @@ ${pixelStyleBlock(state.pixelDepth, 'RIGHT HALF ONLY —')}`;
     ? `\nColor Grading and Texture: ${FILTER_INSTRUCTIONS[state.colorFilter]}` 
     : '';
 
+  // --- ITEMS / OBJECTS ---
+  const configuredItems = buildItemsClause();
+  let itemsBlock = '';
+  let itemsRefSetup = '';
+  const imageRefItems = configuredItems.filter(it => it.refMode === 'image');
+
+  if(imageRefItems.length > 0){
+    // figure out image numbering: character ref image may be Image 1 already
+    let nextImg = usingImageReference ? 2 : 1;
+    const imgLabels = {};
+    imageRefItems.forEach(it => {
+      imgLabels[it.num] = `the attached Object ${it.num} reference image`;
+      nextImg++;
+    });
+
+    let refLines = '';
+    if(usingImageReference){
+      refLines = `\nMultiple reference images are attached. The character reference image is for her identity/face ONLY.`;
+    }
+    imageRefItems.forEach(it => {
+      refLines += `\nOne attached image is the design blueprint for Object #${it.num} ONLY — do NOT extract its art style, background, or character features from it.`;
+    });
+    itemsRefSetup = refLines;
+  }
+
+  if(configuredItems.length > 0){
+    itemsBlock = '\n\n[ OBJECTS / ITEMS ]';
+    configuredItems.forEach(it => {
+      const imgLabel = it.refMode === 'image' ? `the attached Object ${it.num} reference image` : '';
+      itemsBlock += `\nObject #${it.num}: ${itemInteractionText(it.interaction, it.desc, it.refMode, imgLabel)}`;
+    });
+    itemsBlock += `\nAll objects must be rendered in the exact same style, lighting, and level of detail as the character and environment — they are part of the same scene, not pasted on.`;
+  }
+
   out.classList.remove('empty');
   out.textContent = `[ CHARACTER & OUTFIT ]
 ${characterClause}. 
@@ -1320,11 +1415,11 @@ ${state.world.text}
 ${cultureNote}
 
 [ CAMERA & COMPOSITION ]
-Camera angle: ${state.camera.text}. (Focus strictly on the camera framing; if the body pose description conflicts with the framing, prioritize the camera framing).
+Camera angle: ${state.camera.text}. (Focus strictly on the camera framing; if the body pose description conflicts with the framing, prioritize the camera framing).${itemsBlock}
 
 [ RENDER STYLE & COLOR GRADING ]
 ${styleBlock}${filterBlock}
-${referenceStyleNote}
+${referenceStyleNote}${itemsRefSetup}
 
 1792x1024, landscape widescreen format.${closingReinforcement}${referenceStyleClosing}`;
 }
@@ -1626,204 +1721,48 @@ function setupCopy(btnId, outId){
 }
 setupCopy('copy1','output1');
 setupCopy('copy3','output3');
-setupCopy('copy4','output4');
 
-// ---------- OBJECT MULTI-SLOT SYSTEM ----------
-const OBJ_SLOT_COLORS = ['#ff9f43', '#00d2d3', '#feca57'];
-let activeObjectSlot = 0;
-const objectSlots = Array.from({length: 3}, () => ({
-  interaction: null, target: 'protagonist', custom: ''
-}));
+// ---------- ITEM / OBJECT UI (integrated into main prompt) ----------
+for(let i = 1; i <= 3; i++){
+  state[`item${i}Interaction`] = '';
+  state[`item${i}Ref`] = 'text';
+  state[`item${i}Desc`] = '';
 
-document.querySelectorAll('#object-interaction-pills .pill').forEach(pill => {
-  pill.addEventListener('click', () => {
-    const slot = objectSlots[activeObjectSlot];
-    slot.interaction = (slot.interaction === pill.dataset.value) ? null : pill.dataset.value;
-    document.getElementById('object-target-wrap').style.display = slot.interaction && slot.interaction !== 'cenario' ? '' : 'none';
-    loadObjectSlotUI();
-    renderObjectOutput();
+  const interactionPills = document.getElementById(`item${i}-interaction-pills`);
+  interactionPills.querySelectorAll('.pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      interactionPills.querySelectorAll('.pill').forEach(p => p.classList.remove('selected'));
+      pill.classList.add('selected');
+      state[`item${i}Interaction`] = pill.dataset.value;
+      document.getElementById(`item${i}-detail`).style.display = pill.dataset.value ? 'block' : 'none';
+      render();
+    });
   });
-});
 
-document.querySelectorAll('#object-target-pills .pill').forEach(pill => {
-  pill.addEventListener('click', () => {
-    objectSlots[activeObjectSlot].target = pill.dataset.value;
-    loadObjectSlotUI();
-    renderObjectOutput();
+  const refPills = document.getElementById(`item${i}-ref-pills`);
+  refPills.querySelectorAll('.pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      refPills.querySelectorAll('.pill').forEach(p => p.classList.remove('selected'));
+      pill.classList.add('selected');
+      state[`item${i}Ref`] = pill.dataset.value;
+      document.getElementById(`item${i}-text-wrap`).style.display = pill.dataset.value === 'text' ? '' : 'none';
+      document.getElementById(`item${i}-image-wrap`).style.display = pill.dataset.value === 'image' ? '' : 'none';
+      render();
+    });
   });
-});
 
-document.getElementById('object-custom').addEventListener('input', () => {
-  objectSlots[activeObjectSlot].custom = document.getElementById('object-custom').value;
-  renderObjectOutput();
-});
-
-document.querySelectorAll('.object-slot-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    activeObjectSlot = parseInt(btn.dataset.slot);
-    document.querySelectorAll('.object-slot-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const sec = document.getElementById('sec-objects');
-    sec.style.setProperty('--active-slot-color', OBJ_SLOT_COLORS[activeObjectSlot]);
-    sec.style.setProperty('--active-slot-color-dim', hexToRgba(OBJ_SLOT_COLORS[activeObjectSlot], 0.12));
-    loadObjectSlotUI();
-  });
-});
-
-document.getElementById('clear-object-btn').addEventListener('click', () => {
-  objectSlots[activeObjectSlot] = { interaction: null, target: 'protagonist', custom: '' };
-  loadObjectSlotUI();
-  renderObjectOutput();
-});
-
-(function(){
-  const sec = document.getElementById('sec-objects');
-  if(sec){
-    sec.style.setProperty('--active-slot-color', OBJ_SLOT_COLORS[0]);
-    sec.style.setProperty('--active-slot-color-dim', hexToRgba(OBJ_SLOT_COLORS[0], 0.12));
+  const descTA = document.getElementById(`item${i}-desc`);
+  if(descTA){
+    descTA.addEventListener('input', () => {
+      state[`item${i}Desc`] = descTA.value;
+      render();
+    });
   }
-})();
-
-function loadObjectSlotUI(){
-  const slot = objectSlots[activeObjectSlot];
-  
-  document.querySelectorAll('#object-interaction-pills .pill').forEach(pill => {
-    pill.classList.toggle('selected', slot.interaction === pill.dataset.value);
-  });
-  
-  document.getElementById('object-target-wrap').style.display = slot.interaction && slot.interaction !== 'cenario' ? '' : 'none';
-  
-  document.querySelectorAll('#object-target-pills .pill').forEach(pill => {
-    pill.classList.toggle('selected', slot.target === pill.dataset.value);
-  });
-  
-  document.getElementById('object-custom').value = slot.custom || '';
-  
-  document.querySelectorAll('.object-slot-btn').forEach(btn => {
-    const idx = parseInt(btn.dataset.slot);
-    const s = objectSlots[idx];
-    btn.classList.toggle('has-data', !!(s.interaction || s.custom));
-  });
-  
-  updateObjectSlotIndicators();
-}
-
-function updateObjectSlotIndicators(){
-  document.getElementById('sec-objects').querySelectorAll('.pill').forEach(pill => {
-    const existing = pill.querySelector('.slot-indicators');
-    if(existing) existing.remove();
-    
-    const usedBy = [];
-    const parentId = pill.parentElement.id;
-    
-    for(let i = 0; i < 3; i++){
-      const s = objectSlots[i];
-      if(!s.interaction && !s.custom) continue;
-      
-      let match = false;
-      if(parentId === 'object-interaction-pills' && s.interaction === pill.dataset.value) match = true;
-      else if(parentId === 'object-target-pills' && s.target === pill.dataset.value) match = true;
-      
-      if(match) usedBy.push(i);
-    }
-    
-    if(usedBy.length > 0){
-      const container = document.createElement('span');
-      container.className = 'slot-indicators';
-      usedBy.forEach(idx => {
-        const dot = document.createElement('span');
-        dot.className = 'slot-dot';
-        dot.style.background = OBJ_SLOT_COLORS[idx];
-        container.appendChild(dot);
-      });
-      pill.appendChild(container);
-    }
-  });
-}
-
-function renderObjectOutput(){
-  const out = document.getElementById('output4');
-  if(!out) return;
-  
-  const configuredSlots = [];
-  for(let i = 0; i < 3; i++){
-    const s = objectSlots[i];
-    if(s.interaction){
-      configuredSlots.push({ index: i, data: s });
-    }
-  }
-  
-  if(configuredSlots.length === 0){
-    out.classList.add('empty');
-    out.textContent = 'configure pelo menos um objeto acima (ação/interação) para montar o prompt...';
-    return;
-  }
-  
-  out.classList.remove('empty');
-  const totalImages = configuredSlots.length + 1;
-  
-  let refLines = `Use ${totalImages} reference images together.\nImage 1: The already-generated main scene. Defines the character's identity, the environment, and the exact render style.`;
-  configuredSlots.forEach((cs, idx) => {
-    refLines += `\nImage ${idx + 2}: Design blueprint for Object #${idx + 1} ONLY. Do NOT extract its art style or background.`;
-  });
-  
-  let objectBlocks = '';
-  configuredSlots.forEach((cs, idx) => {
-    const s = cs.data;
-    const imgNum = idx + 2;
-    const objNum = idx + 1;
-    const customPart = s.custom ? ` Additional details: ${s.custom}.` : '';
-    
-    let targetName = s.target === 'protagonist' ? 'the protagonist' : (s.target === 'companion1' ? 'Character Extra 1' : 'Character Extra 2');
-    if(s.interaction === 'cenario') targetName = 'the environment';
-    
-    let interactionClause = '';
-    if(s.interaction === 'empunhando'){
-      interactionClause = `Interaction: ${targetName} is actively wielding/holding this object in their hands.`;
-    } else if(s.interaction === 'mascara'){
-      interactionClause = `Interaction: ${targetName} is wearing this object on their head/face like a mask or helmet.`;
-    } else if(s.interaction === 'vestindo'){
-      interactionClause = `Interaction: ${targetName} is wearing/equipping this object on their body.`;
-    } else if(s.interaction === 'posse'){
-      interactionClause = `Interaction: ${targetName} is carrying this object (e.g., slung over the shoulder, on their back, or hanging from the waist).`;
-    } else if(s.interaction === 'cenario'){
-      interactionClause = `Interaction: This object is placed in the environment, leaning against a surface or lying on the ground.`;
-    }
-    
-    objectBlocks += `\n\n[ NEW OBJECT #${objNum} (from Image ${imgNum}) ]\nDesign: Replicate the exact design, shape, and material of the object shown in Image ${imgNum}.\n${interactionClause}${customPart}`;
-  });
-  
-  const bit = state.pixelDepth === '8' ? '8' : '16';
-  let objectClosingReminder = '';
-  if(state.style === 'pixel' || state.style === 'metade'){
-    objectClosingReminder = `\n\nAll objects must be built from the exact same ${bit}-bit chunky pixel grid, flat color bands, and hard jagged edges as everything else in the frame.`;
-  } else if(state.style === 'realista'){
-    objectClosingReminder = `\n\nAll objects must match the same photographic realism, lighting, and level of detail as the rest of the scene.`;
-  }
-  
-  const filterBlock = state.colorFilter !== 'nenhum'
-    ? `\nColor Grading and Texture: ${FILTER_INSTRUCTIONS[state.colorFilter]}`
-    : '';
-  
-  out.textContent = `[ REFERENCES SETUP ]
-${refLines}
-CRITICAL RULE: Do NOT blend the facial features or art style of the Object reference images into the characters or scene. The object images are STRICTLY design blueprints for the items themselves.
-
-[ PRESERVATION ]
-Do not remove, replace, or alter the protagonist or the environment established in Image 1. Keep them exactly as they are. This prompt seamlessly integrates ${configuredSlots.length} new object${configuredSlots.length > 1 ? 's' : ''} described below into the existing scene.${objectBlocks}
-
-[ RENDER STYLE & MATCHING ]
-Image 1 Match: Reproduce Image 1's exact rendering technique for the new objects (same lighting, color palette, detail level, and shading). Override the original rendering style of the object reference images completely.
-${namedStyleReferenceBlock()}${filterBlock}
-
-1792x1024, landscape widescreen format. Maintain the camera perspective from Image 1.${objectClosingReminder}`;
 }
 
 render();
 loadSlotUI();
 renderCompanionOutput();
-loadObjectSlotUI();
-renderObjectOutput();
 </script>
 </body>
 </html>
