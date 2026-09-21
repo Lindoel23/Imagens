@@ -152,7 +152,7 @@
   .char-mode-panel{ display:none; }
   .char-mode-panel.visible{ display:block; }
 
-  /* â”€â”€ companion multi-slot â”€â”€ */
+  /* ── companion multi-slot ── */
   .companion-slots{ display:flex; align-items:center; gap:8px; margin-bottom:22px; flex-wrap:wrap; }
   .slot-btn{
     width:40px; height:40px; border-radius:50%; border:2px solid transparent;
@@ -169,6 +169,12 @@
     letter-spacing:0.05em; transition:all .15s ease; margin-left:4px;
   }
   .clear-slot-btn:hover{ border-color:#ff6b6b; color:#ff6b6b; }
+  .clear-main-btn{
+    font-family:var(--mono); font-size:11px; background:transparent; color:var(--ink-dim);
+    border:1px solid var(--panel-line); padding:6px 12px; border-radius:4px; cursor:pointer;
+    letter-spacing:0.05em; transition:all .15s ease;
+  }
+  .clear-main-btn:hover{ border-color:#ff6b6b; color:#ff6b6b; }
   #sec-companion .pill.selected{
     border-color: var(--active-slot-color, var(--accent));
     background: var(--active-slot-color-dim, var(--accent-dim));
@@ -203,11 +209,12 @@
     <a href="#sec-pose"><span class="dot"></span>03 Pose</a>
     <a href="#sec-expression"><span class="dot"></span>04 Expressão</a>
     <a href="#sec-clothing"><span class="dot"></span>05 Roupa</a>
+    <a href="#sec-items"><span class="dot"></span>05½ Objetos / Itens</a>
     <a href="#sec-world"><span class="dot"></span>06 Cenário</a>
     <a href="#sec-style"><span class="dot"></span>07 Estilo</a>
     <a href="#sec-filter"><span class="dot"></span>08 Filtro de cor</a>
+    <a href="#sec-ratio"><span class="dot"></span>08½ Proporção</a>
     <a href="#sec-output"><span class="dot"></span>09 Prompt final</a>
-    <a href="#sec-items"><span class="dot"></span>05½ Objetos / Itens</a>
     <a href="#sec-companion"><span class="dot"></span>10 Personagem extra</a>
   </div>
 </div>
@@ -528,12 +535,24 @@
     </div>
   </section>
 
+  <section id="sec-ratio">
+    <div class="section-label"><span class="n">08½</span> Proporção / Formato</div>
+    <div class="pills" id="ratio-pills">
+      <div class="pill selected" data-value="16:9">16:9 Widescreen (YouTube / Desktop)</div>
+      <div class="pill" data-value="9:16">9:16 Vertical (Shorts / Reels / TikTok)</div>
+      <div class="pill" data-value="1:1">1:1 Quadrado (Capas / Feeds)</div>
+    </div>
+  </section>
+
   <section id="sec-output">
     <div class="section-label"><span class="n">09</span> Prompt final</div>
     <div class="output">
       <div class="output-head">
         <span>prompt_final.txt</span>
-        <button class="copy-btn" id="copy1">copiar</button>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <button class="clear-main-btn" id="clear-main-btn" title="Limpar todas as escolhas da cena principal">✕ Limpar cena</button>
+          <button class="copy-btn" id="copy1">copiar</button>
+        </div>
       </div>
       <div class="output-body empty" id="output1">preencha o personagem, câmera, pose, expressão, roupa, cenário e estilo acima...</div>
     </div>
@@ -831,6 +850,14 @@ const WORLD_VARIATIONS = {
 };
 
 
+const FILTER_MOODS = {
+  teal: "moody teal, emerald green, and deep blue neon lighting typical of drum and bass / jungle music visuals",
+  red: "moody deep red and purple neon lighting typical of drum and bass / jungle rave visuals",
+  cyan: "cold cyan and steel blue lighting with eerie fluorescent glow like liminal space or security camera footage",
+  amber: "warm sodium-orange and amber lighting like streetlights or old parking garage lighting",
+  magenta: "vibrant magenta and hot pink neon lighting typical of cyberpunk and vaporwave-adjacent jungle visuals"
+};
+
 const FILTER_INSTRUCTIONS = {
   teal: "Apply moody teal, green, or deep blue neon color grading typical of drum and bass / jungle music visuals. This color grading must affect the ENTIRE image uniformly, including her skin tone, face, and clothing, not just the background lighting or ambient glow — her face and skin must be visibly tinted by the same teal/green light as the environment, no neutral or naturally-lit skin. Add heavy film grain and slight motion blur, early-2000s digital camera / camcorder texture, desaturate skin tones slightly, add strobe light glow and lens flare, dark nostalgic rave aesthetic, gritty underground atmosphere.",
   red: "Apply moody deep red and purple neon color grading typical of drum and bass / jungle rave visuals. This color grading must affect the ENTIRE image uniformly, including her skin tone, face, and clothing, not just the background lighting or ambient glow — her face and skin must be visibly tinted by the same red/purple light as the environment, no neutral or naturally-lit skin. Add heavy film grain and slight motion blur, early-2000s digital camera / camcorder texture, desaturate skin tones slightly, add strobe light glow and lens flare, dark intense rave aesthetic, gritty underground atmosphere.",
@@ -860,6 +887,7 @@ const state = {
   pixelDepth: '8', // '16' | '8'
   style: null,
   colorFilter: 'nenhum', // 'nenhum', 'teal', 'red', 'cyan', 'amber', 'magenta'
+  aspectRatio: '16:9', // '16:9', '9:16', '1:1'
   // music
   musicCollection: null, musicMood: null,
 };
@@ -1172,6 +1200,23 @@ document.querySelectorAll('#filter-swatches .swatch-btn').forEach(sw => {
   });
 });
 
+// ---------- RATIO PILLS ----------
+document.querySelectorAll('#ratio-pills .pill').forEach(pill => {
+  pill.addEventListener('click', () => {
+    document.querySelectorAll('#ratio-pills .pill').forEach(p => p.classList.remove('selected'));
+    pill.classList.add('selected');
+    state.aspectRatio = pill.dataset.value;
+    render();
+    renderCompanionOutput();
+  });
+});
+
+function getAspectRatioText(ratio){
+  if(ratio === '9:16') return '1024x1792, vertical 9:16 portrait format for Shorts / Reels.';
+  if(ratio === '1:1') return '1024x1024, square 1:1 format.';
+  return '1792x1024, landscape widescreen format.';
+}
+
 // ---------- BUILD CHARACTER CLAUSE ----------
 function buildCharacterClause(){
   if(state.charMode === 'new'){
@@ -1257,11 +1302,13 @@ Style requirements:
 // Retorna um bloco de estilo NOMEADO (não "olhe pra imagem e copie o estilo") pra usar no prompt do personagem extra,
 // reaproveitando o estilo já escolhido na seção 07.
 function namedStyleReferenceBlock(){
+  const bit = state.pixelDepth === '8' ? '8' : '16';
+  const eraLabel = bit === '8' ? 'NES / Game Boy-era 8-bit' : 'SNES / Sega Genesis-era 16-bit';
   if(state.style === 'pixel'){
     return pixelStyleBlock(state.pixelDepth, '');
   }
   if(state.style === 'metade'){
-    return `The main scene (Image 1) is a split-style image: left half realistic photographic rendering, right half retro 2D pixel art. Apply that exact same split logic and technique to the second character depending on which half of the frame they end up in — if placed on the pixel-art half, render them with: ${pixelStyleBlock(state.pixelDepth, '').split('\n').slice(1).join(' ')}`;
+    return `The main scene (Image 1) is a seamless split-style image: left half realistic photographic rendering, right half retro 2D pixel art. Apply that exact same split logic to all new characters depending on which side of the frame they are placed in — if on the left half, render them with realistic photographic detail and natural lighting; if on the right half, render them as authentic ${eraLabel} pixel art with chunky square pixels, flat posterized color steps, and hard stair-stepped edges; if straddling the center vertical seam, bisect their rendering style cleanly down their center line.`;
   }
   if(state.style === 'realista'){
     return `Named render style reference: realistic photo, cinematic lighting, high detail, natural textures — the same as defined for the main scene. Render the second character with photographic realism to match, not as an illustration, painting, or stylized render.`;
@@ -1305,21 +1352,36 @@ function render(){
   const out = document.getElementById('output1');
 
   const characterClause = buildCharacterClause();
-  const missingBase = !characterClause || !state.camera || !state.pose || !state.expression || !state.clothing || !state.world || !state.style || !state.lipstick;
 
-  if(missingBase){
-    out.classList.add('empty');
-    out.textContent = 'preencha o personagem, câmera, pose, expressão, batom, roupa, cenário e estilo acima...';
-    return;
+  const missing = [];
+  if(!characterClause){
+    if(state.charMode === 'new'){
+      const charMissing = [];
+      if(!state.hairLength || !state.hairStyle) charMissing.push('cabelo');
+      else if((state.hairStyle === 'highlights' || state.hairStyle === 'full' || state.hairStyle === 'roots') && !state.hairColor) charMissing.push('cor do cabelo');
+      if(!state.glasses) charMissing.push('óculos');
+      else if(state.glasses === 'yes' && (!state.frameColor || !state.lensColor)) charMissing.push('cor dos óculos');
+      if(!state.earrings) charMissing.push('brincos');
+      if(!state.piercing) charMissing.push('piercing');
+      if(!state.tattoo) charMissing.push('tatuagem');
+      missing.push(`01 Personagem (${charMissing.join(', ') || 'incompleto'})`);
+    } else {
+      if(state.copyMode === 'text' && !document.getElementById('charDescription').value.trim()) missing.push('01 Descrição do personagem');
+    }
   }
-  if(state.lipstick === 'yes' && !state.lipstickColor){
+  if(!state.camera) missing.push('02 Câmera');
+  if(!state.pose) missing.push('03 Pose');
+  if(!state.expression) missing.push('04 Expressão');
+  if(!state.clothing) missing.push('05 Roupa');
+  if(!state.lipstick) missing.push('Batom');
+  else if(state.lipstick === 'yes' && !state.lipstickColor) missing.push('Cor do batom');
+  if(state.charMode === 'copy' && !state.accessories) missing.push('Acessórios');
+  if(!state.world) missing.push('06 Cenário');
+  if(!state.style) missing.push('07 Estilo');
+
+  if(missing.length > 0){
     out.classList.add('empty');
-    out.textContent = 'escolha uma cor de batom...';
-    return;
-  }
-  if(state.charMode === 'copy' && !state.accessories){
-    out.classList.add('empty');
-    out.textContent = 'escolha os acessórios (ou "nenhum") acima...';
+    out.textContent = `Aguardando preenchimento. Falta escolher: ${missing.join(' • ')}...`;
     return;
   }
 
@@ -1338,21 +1400,39 @@ function render(){
 
   let styleBlock = '';
   let closingReinforcement = '';
+  let filterBlock = '';
+
   if(state.style === 'realista'){
     styleBlock = `Render style: realistic photo, cinematic lighting, high detail, natural textures.`;
+    if(state.colorFilter !== 'nenhum'){
+      filterBlock = `\nColor Grading and Texture: ${FILTER_INSTRUCTIONS[state.colorFilter]}`;
+    }
   } else if(state.style === 'pixel'){
     styleBlock = pixelStyleBlock(state.pixelDepth, '');
     const bit = state.pixelDepth === '8' ? '8' : '16';
+    if(state.colorFilter !== 'nenhum'){
+      filterBlock = `\nColor Palette & Lighting Mood: Translate ${FILTER_MOODS[state.colorFilter]} uniformly across the scene, tinting the pixel art color bands of her skin, clothes, and the environment into the matching neon palette.`;
+    }
     closingReinforcement = `\n\nFinal reminder: this is a ${bit}-bit pixel art game screenshot, not a realistic or painterly image — flat colors, visible pixel grid, hard edges, everywhere in the frame, including the background.`;
   } else if(state.style === 'metade'){
-    styleBlock = `Generate a single image split exactly down the vertical center line. 
-LEFT HALF: Render as a realistic, photographic-style image, following the lighting and color-grading notes below normally. 
-RIGHT HALF: Render as retro 2D pixel art following the rules below, ignoring photographic/cinematic lighting for that half. 
-CRITICAL: Do NOT generate a collage, a diptych, or two separate images placed side-by-side. Do NOT duplicate the background or create two vanishing points. This is ONE single, continuous, unbroken environment with ONE single vanishing point and unified perspective. The ONLY thing that splits down the middle is the rendering style, NOT the physical geometry of the scene. The vertical split must run precisely along the center line of the face (same eye height, nose position, mouth alignment, and shoulder line continuing seamlessly).
-
-${pixelStyleBlock(state.pixelDepth, 'RIGHT HALF ONLY —')}`;
     const bit = state.pixelDepth === '8' ? '8' : '16';
-    closingReinforcement = `\nFinal reminder: the right half must look like an actual ${bit}-bit pixel art game screenshot. The background environment must continue perfectly and seamlessly across the split line. Do NOT draw a different room, a repeated background, or a second vanishing point on the right side. It is one single continuous room.`;
+    const eraLabel = bit === '8' ? 'NES / Game Boy-era 8-bit' : 'SNES / Sega Genesis-era 16-bit';
+    const paletteCap = bit === '8' ? 'no more than 16 to 24 total colors' : 'no more than 32 to 48 total colors';
+    const pixelScale = bit === '8'
+      ? 'very large, chunky, unmistakably visible square pixel blocks'
+      : 'large, clearly visible square pixel blocks';
+
+    const ambientLight = state.colorFilter !== 'nenhum'
+      ? `Ambient Lighting & Color Grading: Uniformly illuminate the entire scene and subject with ${FILTER_MOODS[state.colorFilter]}. This unified lighting affects the ENTIRE image uniformly, including her skin tone, face, clothing, and the environment — her skin is visibly tinted by this ambient light, with no neutral or naturally-lit skin. Dark nostalgic rave aesthetic, gritty underground atmosphere.\n\n`
+      : '';
+
+    styleBlock = `${ambientLight}Seamless Half-and-Half Rendering Technique:
+A single continuous widescreen frame with a single vanishing point and unbroken horizon line, bisected down the vertical center line:
+- LEFT HALF: Photorealistic cinematic rendering with natural skin textures, authentic materials, subtle film grain, and photographic depth.
+- RIGHT HALF: Authentic ${eraLabel} retro 2D pixel art video game aesthetic. Low native resolution scaled up with nearest-neighbor (no smoothing or blurring), ${pixelScale} aligned to a consistent grid, flat posterized colors (${paletteCap}), hard stair-stepped pixel edges (no anti-aliasing), and stepped color banding.
+- SEAMLESS CONTINUITY: The environment architecture, fixtures, reflections, and the character's body align 1:1 and connect perfectly across the central dividing line, maintaining a single cohesive 3D space with one continuous perspective.`;
+
+    closingReinforcement = `\nFinal reminder: This is a single continuous scene with one shared perspective and vanishing point across the entire canvas. The left half is photorealistic and the right half is ${bit}-bit pixel art, with the subject centered directly along the dividing line.`;
   }
 
   const usingImageReference = (state.charMode === 'copy' && state.copyMode === 'image');
@@ -1361,10 +1441,6 @@ ${pixelStyleBlock(state.pixelDepth, 'RIGHT HALF ONLY —')}`;
     : '';
   const referenceStyleClosing = (usingImageReference && state.style !== 'realista')
     ? ` The reference photo's own rendering style must not appear in the output.`
-    : '';
-
-  const filterBlock = state.colorFilter !== 'nenhum' 
-    ? `\nColor Grading and Texture: ${FILTER_INSTRUCTIONS[state.colorFilter]}` 
     : '';
 
   // --- ITEMS / OBJECTS ---
@@ -1401,6 +1477,10 @@ ${pixelStyleBlock(state.pixelDepth, 'RIGHT HALF ONLY —')}`;
     itemsBlock += `\nAll objects must be rendered in the exact same style, lighting, and level of detail as the character and environment — they are part of the same scene, not pasted on.`;
   }
 
+  const splitCompositionClause = state.style === 'metade'
+    ? `\nSplit composition alignment: The scene is framed as a single continuous perspective with the character positioned directly along the central vertical axis, so that the vertical seam cleanly bisects her body down the midline.`
+    : '';
+
   out.classList.remove('empty');
   out.textContent = `[ CHARACTER & OUTFIT ]
 ${characterClause}. 
@@ -1415,13 +1495,13 @@ ${state.world.text}
 ${cultureNote}
 
 [ CAMERA & COMPOSITION ]
-Camera angle: ${state.camera.text}. (Focus strictly on the camera framing; if the body pose description conflicts with the framing, prioritize the camera framing).${itemsBlock}
+Camera angle: ${state.camera.text}. (Focus strictly on the camera framing; if the body pose description conflicts with the framing, prioritize the camera framing).${splitCompositionClause}${itemsBlock}
 
 [ RENDER STYLE & COLOR GRADING ]
 ${styleBlock}${filterBlock}
 ${referenceStyleNote}${itemsRefSetup}
 
-1792x1024, landscape widescreen format.${closingReinforcement}${referenceStyleClosing}`;
+${getAspectRatioText(state.aspectRatio)}${closingReinforcement}${referenceStyleClosing}`;
 }
 
 // ---------- COMPANION MULTI-SLOT SYSTEM ----------
@@ -1619,7 +1699,7 @@ function renderCompanionOutput(){
     refLines += `\nImage ${idx + 2}: Design reference for Character #${idx + 1}'s clothing and physical appearance ONLY. It must not influence the final render style.`;
   });
 
-  const preservationClause = `Do not remove, replace, or alter anything already present in Image 1 â€” the protagonist, the environment, and every prop already there must remain exactly as they are. This prompt ADDS ${configuredSlots.length} new character${configuredSlots.length > 1 ? 's' : ''} described below into the existing scene. All new characters must coexist in the same frame together with the protagonist.`;
+  const preservationClause = `Do not remove, replace, or alter anything already present in Image 1 — the protagonist, the environment, and every prop already there must remain exactly as they are. This prompt ADDS ${configuredSlots.length} new character${configuredSlots.length > 1 ? 's' : ''} described below into the existing scene. All new characters must coexist in the same frame together with the protagonist.`;
 
   let characterBlocks = '';
   configuredSlots.forEach((cs, idx) => {
@@ -1630,20 +1710,20 @@ function renderCompanionOutput(){
 
     let interactionClause = '';
     if(s.interaction === 'conversando'){
-      interactionClause = `Character #${charNum} is actively conversing with the protagonist â€” both oriented toward each other, making eye contact or clearly engaged in dialogue.`;
+      interactionClause = `Character #${charNum} is actively conversing with the protagonist — both oriented toward each other, making eye contact or clearly engaged in dialogue.`;
     } else if(s.interaction === 'interagindo'){
-      interactionClause = `Character #${charNum} is interacting with the protagonist without speaking â€” through eye contact, a gesture, a touch, or a shared action.`;
+      interactionClause = `Character #${charNum} is interacting with the protagonist without speaking — through eye contact, a gesture, a touch, or a shared action.`;
     } else {
-      interactionClause = `Character #${charNum} is NOT interacting with the protagonist â€” they are doing their own thing independently. Position them wherever is most logical within the environment.`;
+      interactionClause = `Character #${charNum} is NOT interacting with the protagonist — they are doing their own thing independently. Position them wherever is most logical within the environment.`;
     }
 
     let distanceClause = '';
     if(s.distance === 'perto'){
-      distanceClause = `Distance: close to the protagonist â€” side by side or within a few steps, similar apparent size.`;
+      distanceClause = `Distance: close to the protagonist — side by side or within a few steps, similar apparent size.`;
     } else if(s.distance === 'media'){
-      distanceClause = `Distance: moderate distance from the protagonist â€” clearly separated but in the same general area, small natural size difference.`;
+      distanceClause = `Distance: moderate distance from the protagonist — clearly separated but in the same general area, small natural size difference.`;
     } else {
-      distanceClause = `Distance: farther away â€” deeper in the background, rendered noticeably smaller following correct perspective and scale.`;
+      distanceClause = `Distance: farther away — deeper in the background, rendered noticeably smaller following correct perspective and scale.`;
     }
 
     let sideClause = '';
@@ -1654,7 +1734,7 @@ function renderCompanionOutput(){
     } else if(s.side === 'centro'){
       sideClause = `Side: CENTER or center-background of the frame.`;
     } else {
-      sideClause = `Side: choose whichever position best fits the composition â€” left, right, or center.`;
+      sideClause = `Side: choose whichever position best fits the composition — left, right, or center.`;
     }
 
     characterBlocks += `\n\n[ NEW CHARACTER #${charNum} (from Image ${imgNum}) ]\nIdentity & Clothing: Replicate proportions, outfit, colors, and facial features faithfully from Image ${imgNum}.\nPose: ${s.pose.text}.\nExpression: ${s.expression.text}.${customPart}\n${gazeNote('companion')}\nInteraction: ${interactionClause}\n${distanceClause}\n${sideClause}`;
@@ -1662,15 +1742,24 @@ function renderCompanionOutput(){
 
   const bit = state.pixelDepth === '8' ? '8' : '16';
   let companionClosingReminder = '';
-  if(state.style === 'pixel' || state.style === 'metade'){
+  if(state.style === 'pixel'){
     companionClosingReminder = ` All new characters must be built from the exact same ${bit}-bit chunky pixel grid, flat color bands, and hard jagged edges as everything else in the frame.`;
+  } else if(state.style === 'metade'){
+    companionClosingReminder = ` New characters must match the rendering style of whichever half of the frame they are placed in: realistic photographic rendering if on the left, or ${bit}-bit pixel art if on the right.`;
   } else if(state.style === 'realista'){
     companionClosingReminder = ` All new characters must match the same photographic realism, lighting, and level of detail as the protagonist and environment.`;
   }
 
-  const filterBlock = state.colorFilter !== 'nenhum'
-    ? `\nColor Grading and Texture: ${FILTER_INSTRUCTIONS[state.colorFilter]}`
-    : '';
+  let companionFilterBlock = '';
+  if(state.colorFilter !== 'nenhum'){
+    if(state.style === 'pixel'){
+      companionFilterBlock = `\nColor Palette & Lighting Mood: Translate ${FILTER_MOODS[state.colorFilter]} uniformly across all characters and the scene, tinting the pixel art color bands of skin, clothes, and the environment into the matching neon palette.`;
+    } else if(state.style === 'metade'){
+      companionFilterBlock = `\nAmbient Lighting & Color Grading: Uniformly illuminate the entire scene and all characters with ${FILTER_MOODS[state.colorFilter]}. This unified lighting affects the ENTIRE image uniformly, including all skin tones, faces, clothing, and the environment — skin is visibly tinted by this ambient light, with no neutral or naturally-lit skin.`;
+    } else {
+      companionFilterBlock = `\nColor Grading and Texture: ${FILTER_INSTRUCTIONS[state.colorFilter]}`;
+    }
+  }
 
   out.textContent = `[ REFERENCES SETUP ]
 ${refLines}
@@ -1688,10 +1777,10 @@ Perspective and Scale: Every character must share the same camera angle, horizon
 
 [ RENDER STYLE & MATCHING ]
 Image 1 Match: Reproduce Image 1's exact rendering technique for all new characters (same color palette, detail level, and shading). Override any style from their reference images.
-${namedStyleReferenceBlock()}${filterBlock}
+${namedStyleReferenceBlock()}${companionFilterBlock}
 Cohesion: All characters and the environment must look like they were rendered together in a single, unified frame, with consistent resolution, linework, and lighting.
 
-1792x1024, landscape widescreen format. Maintain the camera perspective from Image 1, adjusted only to fit all characters.${companionClosingReminder}`;
+${getAspectRatioText(state.aspectRatio)} Maintain the camera perspective from Image 1, adjusted only to fit all characters.${companionClosingReminder}`;
 }
 // ---------- COPY BUTTONS ----------
 function fallbackCopy(text){
@@ -1758,6 +1847,75 @@ for(let i = 1; i <= 3; i++){
       render();
     });
   }
+}
+
+// ---------- RESET MAIN SCENE ----------
+function resetMainScene(){
+  state.charMode = 'new';
+  state.copyMode = 'text';
+  state.hairLength = null; state.hairStyle = null; state.hairColor = null;
+  state.glasses = null; state.frameColor = null; state.lensColor = null;
+  state.earrings = null; state.piercing = null; state.tattoo = null;
+  state.accessories = [];
+  state.lipstick = null; state.lipstickColor = null;
+  state.camera = null; state.pose = null; state.expression = null;
+  state.clothingTheme = null; state.clothing = null;
+  state.collection = null; state.world = null;
+  state.pixelDepth = '8';
+  state.style = null;
+  state.colorFilter = 'nenhum';
+  state.aspectRatio = '16:9';
+  for(let i = 1; i <= 3; i++){
+    state[`item${i}Interaction`] = '';
+    state[`item${i}Ref`] = 'text';
+    state[`item${i}Desc`] = '';
+  }
+
+  // Remove seleções visuais das seções 01 a 08
+  document.querySelectorAll('#sec-character .pill, #sec-character .card, #sec-character .swatch-btn, #sec-camera .pill, #sec-pose .pill, #sec-expression .pill, #sec-clothing .card, #sec-world .card, #sec-style .pill, #sec-filter .pill, #sec-filter .swatch-btn, #sec-items .pill, #ratio-pills .pill').forEach(el => el.classList.remove('selected'));
+
+  // Reset modo personagem (volta para 'new')
+  document.querySelectorAll('.char-mode-card').forEach(c => c.classList.remove('selected'));
+  document.querySelector('.char-mode-card[data-charmode="new"]')?.classList.add('selected');
+  document.getElementById('charmode-new')?.classList.add('visible');
+  document.getElementById('charmode-copy')?.classList.remove('visible');
+
+  // Esconde painéis condicionais
+  const hideIds = ['panel-hairColor', 'panel-glassesColor', 'panel-lipstickColor', 'clothing-variation-wrap', 'clothing-ref-note', 'world-card-grid', 'pixel-depth-wrap', 'item1-detail', 'item2-detail', 'item3-detail'];
+  hideIds.forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.style.display = 'none';
+  });
+
+  const variationGrid = document.getElementById('clothing-variation-grid');
+  if(variationGrid) variationGrid.innerHTML = '';
+  const worldGrid = document.getElementById('world-card-grid');
+  if(worldGrid) worldGrid.innerHTML = '';
+
+  // Limpa campos de texto
+  ['charDescription', 'item1-desc', 'item2-desc', 'item3-desc'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.value = '';
+  });
+
+  // Restaura defaults das pills
+  document.querySelector('#filter-pills [data-value="nenhum"]')?.classList.add('selected');
+  document.querySelector('#pixel-depth-pills [data-value="8"]')?.classList.add('selected');
+  document.querySelector('#ratio-pills [data-value="16:9"]')?.classList.add('selected');
+  for(let i = 1; i <= 3; i++){
+    document.querySelector(`#item${i}-interaction-pills [data-value=""]`)?.classList.add('selected');
+  }
+
+  render();
+}
+
+const clearMainBtn = document.getElementById('clear-main-btn');
+if(clearMainBtn){
+  clearMainBtn.addEventListener('click', () => {
+    if(confirm('Deseja limpar todas as opções selecionadas da cena principal?')){
+      resetMainScene();
+    }
+  });
 }
 
 render();
