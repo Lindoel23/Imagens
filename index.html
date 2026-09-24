@@ -277,7 +277,6 @@
       <div class="opt-group">
         <div class="label">Óculos</div>
         <div class="pills" data-group="glasses">
-          <div class="pill" data-value="none">Sem óculos</div>
           <div class="pill" data-value="yes">Com óculos</div>
         </div>
         <div class="sub-panel" id="panel-glassesDetail">
@@ -303,7 +302,6 @@
       <div class="opt-group">
         <div class="label">Brincos</div>
         <div class="pills" data-group="earrings" data-multi="true">
-          <div class="pill" data-value="none">Sem brincos</div>
           <div class="pill" data-value="small gold stud">Pequenos (studs)</div>
           <div class="pill" data-value="hoop">Argolas</div>
           <div class="pill" data-value="long dangling">Pendentes</div>
@@ -313,7 +311,6 @@
       <div class="opt-group">
         <div class="label">Piercing</div>
         <div class="pills" data-group="piercing" data-multi="true">
-          <div class="pill" data-value="none">Nenhum</div>
           <div class="pill" data-value="a small silver septum">Septo</div>
           <div class="pill" data-value="a small gold nose stud">Narina</div>
           <div class="pill" data-value="a small eyebrow">Sobrancelha</div>
@@ -324,7 +321,6 @@
       <div class="opt-group">
         <div class="label">Tatuagem</div>
         <div class="pills" data-group="tattoo" data-multi="true">
-          <div class="pill" data-value="none">Nenhuma</div>
           <div class="pill" data-value="a floral tattoo sleeve on one arm">Manga floral (braço)</div>
           <div class="pill" data-value="a dragon tattoo along one arm">Dragão (braço)</div>
           <div class="pill" data-value="a small symbolic tattoo on one shoulder">Símbolo (ombro)</div>
@@ -354,7 +350,6 @@
       <div class="opt-group">
         <div class="label">Acessórios (pode marcar mais de um)</div>
         <div class="pills" id="accessory-pills">
-          <div class="pill" data-value="none">Nenhum</div>
           <div class="pill" data-value="small gold earrings">Brincos</div>
           <div class="pill" data-value="stylish sunglasses">Óculos de sol</div>
           <div class="pill" data-value="a simple necklace">Colar</div>
@@ -369,7 +364,6 @@
     <div class="opt-group">
       <div class="label">Batom</div>
       <div class="pills" id="lipstick-pills">
-        <div class="pill" data-value="none">Sem batom</div>
         <div class="pill" data-value="yes">Com batom</div>
       </div>
       <div class="sub-panel" id="panel-lipstickColor">
@@ -420,7 +414,6 @@
     <div class="opt-group">
       <div class="label">Objeto 1</div>
       <div class="pills" id="item1-interaction-pills">
-        <div class="pill" data-value="">Nenhum</div>
         <div class="pill" data-value="empunhando">Empunhando / Segurando</div>
         <div class="pill" data-value="mascara">Máscara / Capacete</div>
         <div class="pill" data-value="vestindo">Vestindo no Corpo</div>
@@ -445,7 +438,6 @@
     <div class="opt-group">
       <div class="label">Objeto 2</div>
       <div class="pills" id="item2-interaction-pills">
-        <div class="pill" data-value="">Nenhum</div>
         <div class="pill" data-value="empunhando">Empunhando / Segurando</div>
         <div class="pill" data-value="mascara">Máscara / Capacete</div>
         <div class="pill" data-value="vestindo">Vestindo no Corpo</div>
@@ -470,7 +462,6 @@
     <div class="opt-group">
       <div class="label">Objeto 3</div>
       <div class="pills" id="item3-interaction-pills">
-        <div class="pill" data-value="">Nenhum</div>
         <div class="pill" data-value="empunhando">Empunhando / Segurando</div>
         <div class="pill" data-value="mascara">Máscara / Capacete</div>
         <div class="pill" data-value="vestindo">Vestindo no Corpo</div>
@@ -523,9 +514,6 @@
 
   <section id="sec-filter">
     <div class="section-label"><span class="n">08</span> Filtro de cor</div>
-    <div class="pills" id="filter-pills">
-      <div class="pill selected" data-value="nenhum">Nenhum</div>
-    </div>
     <div class="swatches" id="filter-swatches" style="margin-top:14px;">
       <div class="swatch-btn" style="background:#2b9c60" data-value="teal" title="Verde / Esmeralda (Lavanderia)"></div>
       <div class="swatch-btn" style="background:#ff2e4d" data-value="red" title="Vermelho / Roxo"></div>
@@ -584,7 +572,6 @@
       <div class="pills" id="companion-interaction-pills">
         <div class="pill" data-value="conversando">Conversando</div>
         <div class="pill" data-value="interagindo">Interagindo (sem fala — olhar, gesto, contato)</div>
-        <div class="pill" data-value="nenhuma">Sem interação — cada um faz o seu, em qualquer ponto da cena</div>
       </div>
     </div>
     <div class="opt-group" id="companion-distance-wrap" style="display:none;">
@@ -931,30 +918,29 @@ document.querySelectorAll('#charmode-new .pills').forEach(group => {
   group.querySelectorAll('.pill').forEach(pill => {
     pill.addEventListener('click', () => {
       if(isMulti){
-        if(pill.dataset.value === 'none'){
-          group.querySelectorAll('.pill').forEach(p => p.classList.remove('selected'));
-          pill.classList.add('selected');
-          state[key] = ['none'];
-        } else {
-          const noneEl = group.querySelector('.pill[data-value="none"]');
-          if(noneEl) noneEl.classList.remove('selected');
-          pill.classList.toggle('selected');
-          const selectedVals = [...group.querySelectorAll('.pill.selected')].map(p => p.dataset.value);
-          state[key] = selectedVals.length ? selectedVals : null;
-        }
+        pill.classList.toggle('selected');
+        const selectedVals = [...group.querySelectorAll('.pill.selected')].map(p => p.dataset.value);
+        state[key] = selectedVals.length ? selectedVals : null;
       } else {
+        const wasSelected = pill.classList.contains('selected');
         group.querySelectorAll('.pill').forEach(p => p.classList.remove('selected'));
-        pill.classList.add('selected');
-        state[key] = pill.dataset.value;
+        if(wasSelected){
+          state[key] = null;
+        } else {
+          pill.classList.add('selected');
+          state[key] = pill.dataset.value;
+        }
       }
 
       if(key === 'hairStyle'){
-        document.getElementById('panel-hairColor').classList.toggle('visible', pill.dataset.value !== 'natural');
-        if(pill.dataset.value === 'natural'){ state.hairColor = null; }
+        const isCustom = state.hairStyle && state.hairStyle !== 'natural';
+        document.getElementById('panel-hairColor').classList.toggle('visible', !!isCustom);
+        if(!isCustom){ state.hairColor = null; }
       }
       if(key === 'glasses'){
-        document.getElementById('panel-glassesDetail').classList.toggle('visible', pill.dataset.value === 'yes');
-        if(pill.dataset.value === 'none'){ state.frameColor = null; state.lensColor = null; }
+        const hasGlasses = state.glasses === 'yes';
+        document.getElementById('panel-glassesDetail').classList.toggle('visible', hasGlasses);
+        if(!hasGlasses){ state.frameColor = null; state.lensColor = null; }
       }
       render();
     });
@@ -964,9 +950,14 @@ document.querySelectorAll('#charmode-new .swatches').forEach(group => {
   const key = group.dataset.group;
   group.querySelectorAll('.swatch-btn').forEach(sw => {
     sw.addEventListener('click', () => {
+      const wasSelected = sw.classList.contains('selected');
       group.querySelectorAll('.swatch-btn').forEach(s => s.classList.remove('selected'));
-      sw.classList.add('selected');
-      state[key] = sw.dataset.value;
+      if(wasSelected){
+        state[key] = null;
+      } else {
+        sw.classList.add('selected');
+        state[key] = sw.dataset.value;
+      }
       render();
     });
   });
@@ -975,16 +966,8 @@ document.querySelectorAll('#charmode-new .swatches').forEach(group => {
 // ---------- ACCESSORIES (copiar existente, multi-select) ----------
 document.querySelectorAll('#accessory-pills .pill').forEach(pill => {
   pill.addEventListener('click', () => {
-    if(pill.dataset.value === 'none'){
-      document.querySelectorAll('#accessory-pills .pill').forEach(p => p.classList.remove('selected'));
-      pill.classList.add('selected');
-      state.accessories = [];
-    } else {
-      const noneEl = document.querySelector('#accessory-pills .pill[data-value="none"]');
-      if(noneEl) noneEl.classList.remove('selected');
-      pill.classList.toggle('selected');
-      state.accessories = [...document.querySelectorAll('#accessory-pills .pill.selected')].map(p => p.dataset.value);
-    }
+    pill.classList.toggle('selected');
+    state.accessories = [...document.querySelectorAll('#accessory-pills .pill.selected')].map(p => p.dataset.value);
     render();
   });
 });
@@ -992,19 +975,30 @@ document.querySelectorAll('#accessory-pills .pill').forEach(pill => {
 // ---------- BATOM (compartilhado) ----------
 document.querySelectorAll('#lipstick-pills .pill').forEach(pill => {
   pill.addEventListener('click', () => {
+    const wasSelected = pill.classList.contains('selected');
     document.querySelectorAll('#lipstick-pills .pill').forEach(p => p.classList.remove('selected'));
-    pill.classList.add('selected');
-    state.lipstick = pill.dataset.value;
-    document.getElementById('panel-lipstickColor').classList.toggle('visible', pill.dataset.value === 'yes');
-    if(pill.dataset.value === 'none'){ state.lipstickColor = null; }
+    if(wasSelected){
+      state.lipstick = null;
+      state.lipstickColor = null;
+      document.getElementById('panel-lipstickColor').classList.remove('visible');
+    } else {
+      pill.classList.add('selected');
+      state.lipstick = pill.dataset.value;
+      document.getElementById('panel-lipstickColor').classList.add('visible');
+    }
     render();
   });
 });
 document.querySelectorAll('#lipstick-color-swatches .swatch-btn').forEach(sw => {
   sw.addEventListener('click', () => {
+    const wasSelected = sw.classList.contains('selected');
     document.querySelectorAll('#lipstick-color-swatches .swatch-btn').forEach(s => s.classList.remove('selected'));
-    sw.classList.add('selected');
-    state.lipstickColor = sw.dataset.value;
+    if(wasSelected){
+      state.lipstickColor = null;
+    } else {
+      sw.classList.add('selected');
+      state.lipstickColor = sw.dataset.value;
+    }
     render();
   });
 });
@@ -1016,9 +1010,14 @@ CAMERA_ANGLES.forEach((c) => {
   card.className = 'card';
   card.innerHTML = `<span class="tag">${c.tag}</span><div class="name">${c.name}</div><div class="desc">${c.desc}</div>`;
   card.addEventListener('click', () => {
-    [...cameraGrid.children].forEach(el => el.classList.remove('selected'));
-    card.classList.add('selected');
-    state.camera = c;
+    if(state.camera === c){
+      card.classList.remove('selected');
+      state.camera = null;
+    } else {
+      [...cameraGrid.children].forEach(el => el.classList.remove('selected'));
+      card.classList.add('selected');
+      state.camera = c;
+    }
     render();
   });
   cameraGrid.appendChild(card);
@@ -1031,9 +1030,14 @@ POSES.forEach((p) => {
   card.className = 'card';
   card.innerHTML = `<span class="tag">${p.tag}</span><div class="name">${p.name}</div><div class="desc">${p.desc}</div>`;
   card.addEventListener('click', () => {
-    [...poseGrid.children].forEach(c => c.classList.remove('selected'));
-    card.classList.add('selected');
-    state.pose = p;
+    if(state.pose === p){
+      card.classList.remove('selected');
+      state.pose = null;
+    } else {
+      [...poseGrid.children].forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      state.pose = p;
+    }
     render();
   });
   poseGrid.appendChild(card);
@@ -1046,9 +1050,14 @@ EXPRESSIONS.forEach(exp => {
   pill.className = 'pill';
   pill.textContent = exp.name;
   pill.addEventListener('click', () => {
-    [...expressionPills.children].forEach(p => p.classList.remove('selected'));
-    pill.classList.add('selected');
-    state.expression = exp;
+    if(state.expression === exp){
+      pill.classList.remove('selected');
+      state.expression = null;
+    } else {
+      [...expressionPills.children].forEach(p => p.classList.remove('selected'));
+      pill.classList.add('selected');
+      state.expression = exp;
+    }
     render();
   });
   expressionPills.appendChild(pill);
@@ -1077,6 +1086,16 @@ CLOTHING_THEMES.forEach((theme) => {
   card.style.setProperty('--card-color', theme.color);
   card.style.setProperty('--card-color-dim', hexToRgba(theme.color, 0.14));
   card.addEventListener('click', () => {
+    if(state.clothingTheme === theme){
+      card.classList.remove('selected');
+      state.clothingTheme = null;
+      state.clothing = null;
+      document.getElementById('clothing-variation-wrap').style.display = 'none';
+      document.getElementById('clothing-ref-note').style.display = 'none';
+      render();
+      return;
+    }
+
     [...clothingThemeGrid.children].forEach(el => el.classList.remove('selected'));
     card.classList.add('selected');
     state.clothingTheme = theme;
@@ -1101,9 +1120,14 @@ CLOTHING_THEMES.forEach((theme) => {
       vcard.style.setProperty('--card-color', theme.color);
       vcard.style.setProperty('--card-color-dim', hexToRgba(theme.color, 0.14));
       vcard.addEventListener('click', () => {
-        [...variationGrid.children].forEach(el => el.classList.remove('selected'));
-        vcard.classList.add('selected');
-        state.clothing = v;
+        if(state.clothing === v){
+          vcard.classList.remove('selected');
+          state.clothing = null;
+        } else {
+          [...variationGrid.children].forEach(el => el.classList.remove('selected'));
+          vcard.classList.add('selected');
+          state.clothing = v;
+        }
         render();
       });
       variationGrid.appendChild(vcard);
@@ -1124,6 +1148,15 @@ COLLECTIONS.forEach((c) => {
   card.style.setProperty('--card-color', c.color);
   card.style.setProperty('--card-color-dim', hexToRgba(c.color, 0.14));
   card.addEventListener('click', () => {
+    if(state.collection === c){
+      card.classList.remove('selected');
+      state.collection = null;
+      state.world = null;
+      document.getElementById('variation-wrap').style.display = 'none';
+      render();
+      return;
+    }
+
     [...collectionGrid.children].forEach(el => el.classList.remove('selected'));
     card.classList.add('selected');
     state.collection = c;
@@ -1141,9 +1174,14 @@ COLLECTIONS.forEach((c) => {
       vcard.style.setProperty('--card-color', c.color);
       vcard.style.setProperty('--card-color-dim', hexToRgba(c.color, 0.14));
       vcard.addEventListener('click', () => {
-        [...variationGrid.children].forEach(el => el.classList.remove('selected'));
-        vcard.classList.add('selected');
-        state.world = v;
+        if(state.world === v){
+          vcard.classList.remove('selected');
+          state.world = null;
+        } else {
+          [...variationGrid.children].forEach(el => el.classList.remove('selected'));
+          vcard.classList.add('selected');
+          state.world = v;
+        }
         render();
       });
       variationGrid.appendChild(vcard);
@@ -1157,11 +1195,17 @@ COLLECTIONS.forEach((c) => {
 // ---------- STYLE PILLS ----------
 document.querySelectorAll('#style-pills .pill').forEach(pill => {
   pill.addEventListener('click', () => {
-    document.querySelectorAll('#style-pills .pill').forEach(p => p.classList.remove('selected'));
-    pill.classList.add('selected');
-    state.style = pill.dataset.value;
-    const showDepth = (state.style === 'pixel' || state.style === 'metade');
-    document.getElementById('pixel-depth-wrap').style.display = showDepth ? '' : 'none';
+    if(state.style === pill.dataset.value){
+      pill.classList.remove('selected');
+      state.style = null;
+      document.getElementById('pixel-depth-wrap').style.display = 'none';
+    } else {
+      document.querySelectorAll('#style-pills .pill').forEach(p => p.classList.remove('selected'));
+      pill.classList.add('selected');
+      state.style = pill.dataset.value;
+      const showDepth = (state.style === 'pixel' || state.style === 'metade');
+      document.getElementById('pixel-depth-wrap').style.display = showDepth ? '' : 'none';
+    }
     render();
     renderCompanionOutput();
   });
@@ -1178,23 +1222,17 @@ document.querySelectorAll('#pixel-depth-pills .pill').forEach(pill => {
   });
 });
 
-// ---------- FILTER PILLS & SWATCHES ----------
-document.querySelectorAll('#filter-pills .pill').forEach(pill => {
-  pill.addEventListener('click', () => {
-    document.querySelectorAll('#filter-swatches .swatch-btn').forEach(s => s.classList.remove('selected'));
-    document.querySelectorAll('#filter-pills .pill').forEach(p => p.classList.remove('selected'));
-    pill.classList.add('selected');
-    state.colorFilter = 'nenhum';
-    render();
-    renderCompanionOutput();
-  });
-});
+// ---------- FILTER SWATCHES ----------
 document.querySelectorAll('#filter-swatches .swatch-btn').forEach(sw => {
   sw.addEventListener('click', () => {
-    document.querySelectorAll('#filter-pills .pill').forEach(p => p.classList.remove('selected'));
-    document.querySelectorAll('#filter-swatches .swatch-btn').forEach(s => s.classList.remove('selected'));
-    sw.classList.add('selected');
-    state.colorFilter = sw.dataset.value;
+    if(state.colorFilter === sw.dataset.value){
+      sw.classList.remove('selected');
+      state.colorFilter = 'nenhum';
+    } else {
+      document.querySelectorAll('#filter-swatches .swatch-btn').forEach(s => s.classList.remove('selected'));
+      sw.classList.add('selected');
+      state.colorFilter = sw.dataset.value;
+    }
     render();
     renderCompanionOutput();
   });
@@ -1237,14 +1275,9 @@ function buildCharacterClause(){
     }
     if(!hair) return null;
 
-    if(!state.glasses) return null;
-    if(!state.earrings) return null;
-    if(!state.piercing) return null;
-    if(!state.tattoo) return null;
-
     const parts = [`a young East Asian woman with ${hair}`];
 
-    if(!state.piercing || state.piercing[0] === 'none'){
+    if(!state.piercing || state.piercing.length === 0){
       parts.push(`no piercings of any kind`);
     } else {
       parts.push(`${state.piercing.join(' and ')} piercing${state.piercing.length>1?'s':''}, no other piercings`);
@@ -1257,13 +1290,13 @@ function buildCharacterClause(){
       parts.push(`not wearing glasses`);
     }
 
-    if(!state.earrings || state.earrings[0] === 'none'){
+    if(!state.earrings || state.earrings.length === 0){
       parts.push(`no earrings`);
     } else {
       parts.push(`${state.earrings.join(' and ')} earrings, no other earrings`);
     }
 
-    if(!state.tattoo || state.tattoo[0] === 'none'){
+    if(!state.tattoo || state.tattoo.length === 0){
       parts.push(`no visible tattoos`);
     } else {
       parts.push(`${state.tattoo.join(', and ')}, no other tattoos`);
@@ -1359,11 +1392,7 @@ function render(){
       const charMissing = [];
       if(!state.hairLength || !state.hairStyle) charMissing.push('cabelo');
       else if((state.hairStyle === 'highlights' || state.hairStyle === 'full' || state.hairStyle === 'roots') && !state.hairColor) charMissing.push('cor do cabelo');
-      if(!state.glasses) charMissing.push('óculos');
-      else if(state.glasses === 'yes' && (!state.frameColor || !state.lensColor)) charMissing.push('cor dos óculos');
-      if(!state.earrings) charMissing.push('brincos');
-      if(!state.piercing) charMissing.push('piercing');
-      if(!state.tattoo) charMissing.push('tatuagem');
+      if(state.glasses === 'yes' && (!state.frameColor || !state.lensColor)) charMissing.push('cor dos óculos');
       missing.push(`01 Personagem (${charMissing.join(', ') || 'incompleto'})`);
     } else {
       if(state.copyMode === 'text' && !document.getElementById('charDescription').value.trim()) missing.push('01 Descrição do personagem');
@@ -1373,9 +1402,7 @@ function render(){
   if(!state.pose) missing.push('03 Pose');
   if(!state.expression) missing.push('04 Expressão');
   if(!state.clothing) missing.push('05 Roupa');
-  if(!state.lipstick) missing.push('Batom');
-  else if(state.lipstick === 'yes' && !state.lipstickColor) missing.push('Cor do batom');
-  if(state.charMode === 'copy' && !state.accessories) missing.push('Acessórios');
+  if(state.lipstick === 'yes' && !state.lipstickColor) missing.push('Cor do batom');
   if(!state.world) missing.push('06 Cenário');
   if(!state.style) missing.push('07 Estilo');
 
@@ -1680,14 +1707,14 @@ function renderCompanionOutput(){
   const configuredSlots = [];
   for(let i = 0; i < 5; i++){
     const s = companionSlots[i];
-    if(s.pose && s.expression && s.interaction && s.distance){
+    if(s.pose && s.expression){
       configuredSlots.push({ index: i, data: s });
     }
   }
 
   if(configuredSlots.length === 0){
     out.classList.add('empty');
-    out.textContent = 'configure pelo menos um personagem extra acima (pose, expressão, interação e distância) para montar o prompt...';
+    out.textContent = 'configure pelo menos um personagem extra acima (pose e expressão) para montar o prompt...';
     return;
   }
 
@@ -1820,10 +1847,16 @@ for(let i = 1; i <= 3; i++){
   const interactionPills = document.getElementById(`item${i}-interaction-pills`);
   interactionPills.querySelectorAll('.pill').forEach(pill => {
     pill.addEventListener('click', () => {
-      interactionPills.querySelectorAll('.pill').forEach(p => p.classList.remove('selected'));
-      pill.classList.add('selected');
-      state[`item${i}Interaction`] = pill.dataset.value;
-      document.getElementById(`item${i}-detail`).style.display = pill.dataset.value ? 'block' : 'none';
+      if(state[`item${i}Interaction`] === pill.dataset.value){
+        pill.classList.remove('selected');
+        state[`item${i}Interaction`] = '';
+        document.getElementById(`item${i}-detail`).style.display = 'none';
+      } else {
+        interactionPills.querySelectorAll('.pill').forEach(p => p.classList.remove('selected'));
+        pill.classList.add('selected');
+        state[`item${i}Interaction`] = pill.dataset.value;
+        document.getElementById(`item${i}-detail`).style.display = 'block';
+      }
       render();
     });
   });
@@ -1872,7 +1905,7 @@ function resetMainScene(){
   }
 
   // Remove seleções visuais das seções 01 a 08
-  document.querySelectorAll('#sec-character .pill, #sec-character .card, #sec-character .swatch-btn, #sec-camera .pill, #sec-pose .pill, #sec-expression .pill, #sec-clothing .card, #sec-world .card, #sec-style .pill, #sec-filter .pill, #sec-filter .swatch-btn, #sec-items .pill, #ratio-pills .pill').forEach(el => el.classList.remove('selected'));
+  document.querySelectorAll('#sec-character .pill, #sec-character .card, #sec-character .swatch-btn, #sec-camera .card, #sec-pose .card, #sec-expression .pill, #sec-clothing .card, #sec-world .card, #sec-style .pill, #sec-filter .swatch-btn, #sec-items .pill, #ratio-pills .pill').forEach(el => el.classList.remove('selected'));
 
   // Reset modo personagem (volta para 'new')
   document.querySelectorAll('.char-mode-card').forEach(c => c.classList.remove('selected'));
@@ -1881,7 +1914,7 @@ function resetMainScene(){
   document.getElementById('charmode-copy')?.classList.remove('visible');
 
   // Esconde painéis condicionais
-  const hideIds = ['panel-hairColor', 'panel-glassesColor', 'panel-lipstickColor', 'clothing-variation-wrap', 'clothing-ref-note', 'world-card-grid', 'pixel-depth-wrap', 'item1-detail', 'item2-detail', 'item3-detail'];
+  const hideIds = ['panel-hairColor', 'panel-glassesDetail', 'panel-lipstickColor', 'clothing-variation-wrap', 'clothing-ref-note', 'pixel-depth-wrap', 'item1-detail', 'item2-detail', 'item3-detail'];
   hideIds.forEach(id => {
     const el = document.getElementById(id);
     if(el) el.style.display = 'none';
@@ -1889,7 +1922,7 @@ function resetMainScene(){
 
   const variationGrid = document.getElementById('clothing-variation-grid');
   if(variationGrid) variationGrid.innerHTML = '';
-  const worldGrid = document.getElementById('world-card-grid');
+  const worldGrid = document.getElementById('variation-grid');
   if(worldGrid) worldGrid.innerHTML = '';
 
   // Limpa campos de texto
@@ -1899,12 +1932,8 @@ function resetMainScene(){
   });
 
   // Restaura defaults das pills
-  document.querySelector('#filter-pills [data-value="nenhum"]')?.classList.add('selected');
   document.querySelector('#pixel-depth-pills [data-value="8"]')?.classList.add('selected');
   document.querySelector('#ratio-pills [data-value="16:9"]')?.classList.add('selected');
-  for(let i = 1; i <= 3; i++){
-    document.querySelector(`#item${i}-interaction-pills [data-value=""]`)?.classList.add('selected');
-  }
 
   render();
 }
